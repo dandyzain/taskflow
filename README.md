@@ -90,14 +90,27 @@ Gunakan kredensial berikut untuk mencoba fitur aplikasi:
 
 ---
 
-## 🚢 Panduan Deploy (Vercel / Cloud)
+## 🚢 Panduan Deploy
 
-1. Pastikan repository sudah dipush ke GitHub / GitLab.
-2. Impor project di [Vercel](https://vercel.com).
-3. Atur environment variable:
-   - `DATABASE_URL`: URL database production (PostgreSQL / Turso LibSQL / Supabase).
+### 🚄 Deploy ke Railway (Rekomendasi untuk SQLite)
+Railway mendukung deployment langsung dari repository GitLab atau GitHub:
+
+1. Buka dashboard [Railway](https://railway.com) lalu klik **New Project**.
+2. Pilih **Deploy from GitHub repo** atau **Deploy from GitLab repo**, lalu pilih repository `taskflow`.
+3. Tambahkan **Environment Variables** di tab *Variables*:
+   - `DATABASE_URL`: `file:./dev.db` (atau path volume `/app/prisma/dev.db`)
+   - `AUTH_SECRET`: Generate string acak minimal 32 karakter (misal: `openssl rand -base64 32`)
+4. *(Opsional - Persistent Storage)*: Di tab *Settings* -> *Volumes*, buat volume baru dengan mount path `/app/prisma` agar data database SQLite tetap tersimpan saat restart container.
+5. Railway akan mendeteksi [`railway.json`](./railway.json) atau [`Dockerfile`](./Dockerfile), menjalankan migrasi & seed otomatis, dan memberikan domain live publik gratis (`https://xxxx.up.railway.app`)!
+
+---
+
+### ▲ Deploy ke Vercel
+1. Buka [Vercel](https://vercel.com/new) dan impor repository `taskflow`.
+2. Di bagian **Environment Variables**, tambahkan:
+   - `DATABASE_URL`: URL database hosted (PostgreSQL / Turso LibSQL / Supabase).
    - `AUTH_SECRET`: Kunci rahasia JWT minimal 32 karakter.
-4. Build command default: `npm run build` (secara otomatis menjalankan `prisma generate && next build`).
+3. Build command: `npm run build` (otomatis menjalankan `prisma generate && next build`).
 
 ---
 
