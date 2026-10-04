@@ -120,7 +120,7 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
           items={filteredColumns.map(col => col.id)}
           strategy={horizontalListSortingStrategy}
         >
-          <div className="flex gap-4 overflow-x-auto pb-4 flex-1">
+          <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 flex-1 items-start snap-x snap-mandatory sm:snap-none -mx-3 px-3 sm:mx-0 sm:px-0">
             {filteredColumns.map(column => (
               <KanbanColumn
                 key={column.id}
@@ -151,7 +151,7 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
             />
           ) : null}
           {activeColumn ? (
-            <div className="w-[300px] min-w-[300px] bg-secondary/80 backdrop-blur-md rounded-2xl shadow-float rotate-[2deg] scale-[1.02] border border-primary/30 p-3.5">
+            <div className="w-[280px] sm:w-[300px] min-w-[280px] sm:min-w-[300px] bg-secondary/80 backdrop-blur-md rounded-2xl shadow-float rotate-[2deg] scale-[1.02] border border-primary/30 p-3.5">
               <div className="flex items-center gap-2 px-1 py-1">
                 <span className="w-2.5 h-2.5 rounded-full bg-primary/60 shrink-0" />
                 <h3 className="font-semibold text-sm">{activeColumn.title}</h3>

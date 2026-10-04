@@ -67,29 +67,30 @@ export function KpiCards({ summary, boardsCount }: KpiCardsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3.5">
       {cards.map((card, idx) => {
         const Icon = card.icon;
         return (
           <div
             key={idx}
             className={cn(
-              'group relative rounded-2xl bg-card/80 dark:bg-card/40 backdrop-blur-md p-4 border border-border/80 shadow-xs hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5',
-              card.borderGlow
+              'group relative rounded-2xl bg-card/80 dark:bg-card/40 backdrop-blur-md p-3 sm:p-4 border border-border/80 shadow-xs hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5',
+              card.borderGlow,
+              idx === 4 ? 'col-span-2 sm:col-span-1' : ''
             )}
           >
-            <div className="flex items-center justify-between gap-2 mb-3">
+            <div className="flex items-center justify-between gap-1.5 mb-2 sm:mb-3">
               <div
                 className={cn(
-                  'w-9 h-9 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-xs',
+                  'w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-xs shrink-0',
                   card.iconBg
                 )}
               >
-                <Icon className="w-5 h-5" />
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <span
                 className={cn(
-                  'text-[10px] font-semibold px-2 py-0.5 rounded-full border',
+                  'text-[9px] sm:text-[10px] font-semibold px-2 py-0.5 rounded-full border truncate',
                   card.badgeColor
                 )}
               >
@@ -98,9 +99,9 @@ export function KpiCards({ summary, boardsCount }: KpiCardsProps) {
             </div>
 
             <div className="space-y-0.5">
-              <p className="text-xs font-medium text-muted-foreground">{card.title}</p>
-              <h3 className="text-2xl font-bold tracking-tight text-foreground">{card.value}</h3>
-              <p className="text-[11px] text-muted-foreground/80 truncate pt-0.5">{card.subtitle}</p>
+              <p className="text-[11px] sm:text-xs font-medium text-muted-foreground truncate">{card.title}</p>
+              <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{card.value}</h3>
+              <p className="text-[10px] sm:text-[11px] text-muted-foreground/80 truncate pt-0.5">{card.subtitle}</p>
             </div>
           </div>
         );

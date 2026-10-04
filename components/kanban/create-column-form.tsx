@@ -66,7 +66,7 @@ export function CreateColumnForm({
 
   if (!isOpen) {
     return (
-      <div className="w-[300px] min-w-[300px] h-fit">
+      <div className="w-[280px] sm:w-[300px] min-w-[280px] sm:min-w-[300px] h-fit snap-center sm:snap-align-none shrink-0">
         <Button
           variant="outline"
           className="w-full h-12 border-2 border-dashed border-border/80 hover:border-primary/50 bg-secondary/30 hover:bg-secondary/70 rounded-2xl justify-center text-muted-foreground hover:text-foreground transition-all duration-200 active:scale-[0.98] font-semibold text-xs shadow-xs"
@@ -80,7 +80,7 @@ export function CreateColumnForm({
   }
 
   return (
-    <div className="w-[300px] min-w-[300px] h-fit bg-card/90 backdrop-blur-md border border-primary/30 rounded-2xl p-3.5 shadow-pastel flex flex-col gap-2.5 animate-scale-in">
+    <div className="w-[280px] sm:w-[300px] min-w-[280px] sm:min-w-[300px] h-fit bg-card/90 backdrop-blur-md border border-primary/30 rounded-2xl p-3.5 shadow-pastel flex flex-col gap-2.5 animate-scale-in snap-center sm:snap-align-none shrink-0">
       <Input
         autoFocus
         placeholder="Column title (e.g. In Review)..."

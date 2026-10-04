@@ -209,37 +209,37 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
   };
 
   return (
-    <div className="h-full flex flex-col overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+    <div className="h-full flex flex-col overflow-y-auto p-3 sm:p-5 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto w-full">
       {/* Top Header & Reporting Action Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-border/60">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3.5 pb-2 border-b border-border/60 shrink-0">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary border border-primary/20 shadow-xs">
-              <BarChart3 className="w-5 h-5" />
+            <span className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary border border-primary/20 shadow-xs shrink-0">
+              <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />
             </span>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-                Dashboard & Laporan Kinerja
-                <span className="text-[11px] font-semibold bg-pastel-mint text-emerald-800 dark:text-emerald-200 px-2.5 py-0.5 rounded-full border border-emerald-300/40 shadow-xs">
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-foreground flex items-center gap-2 flex-wrap">
+                <span>Dashboard & Laporan Kinerja</span>
+                <span className="text-[10px] sm:text-[11px] font-semibold bg-pastel-mint text-emerald-800 dark:text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-300/40 shadow-xs">
                   Live Analytics
                 </span>
               </h1>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Workspace: <span className="font-semibold text-foreground">{initialData.workspace.name}</span> • Analitik tugas dan evaluasi produktivitas tim
+              <p className="text-xs text-muted-foreground mt-0.5 truncate sm:whitespace-normal">
+                Workspace: <span className="font-semibold text-foreground">{initialData.workspace.name}</span> • Analitik tugas & tim
               </p>
             </div>
           </div>
         </div>
 
         {/* Global Controls & Export */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           {/* Board Selector */}
-          <div className="flex items-center gap-1.5 bg-card/70 border border-border/80 rounded-xl px-2.5 py-1 text-xs shadow-xs">
-            <Layers className="w-3.5 h-3.5 text-muted-foreground" />
+          <div className="flex-1 min-w-[140px] sm:flex-initial flex items-center gap-1.5 bg-card/70 border border-border/80 rounded-xl px-2.5 py-1 text-xs shadow-xs">
+            <Layers className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
             <select
               value={selectedBoardId}
               onChange={(e) => setSelectedBoardId(e.target.value)}
-              className="bg-transparent text-xs font-semibold text-foreground focus:outline-none cursor-pointer"
+              className="bg-transparent text-xs font-semibold text-foreground focus:outline-none cursor-pointer w-full"
             >
               <option value="all">Semua Board ({initialData.boards.length})</option>
               {initialData.boards.map((b) => (
@@ -251,12 +251,12 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
           </div>
 
           {/* Time Range Filter */}
-          <div className="flex items-center gap-1.5 bg-card/70 border border-border/80 rounded-xl px-2.5 py-1 text-xs shadow-xs">
-            <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
+          <div className="flex-1 min-w-[130px] sm:flex-initial flex items-center gap-1.5 bg-card/70 border border-border/80 rounded-xl px-2.5 py-1 text-xs shadow-xs">
+            <Calendar className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
             <select
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value as 'all' | '30d' | '7d')}
-              className="bg-transparent text-xs font-semibold text-foreground focus:outline-none cursor-pointer"
+              className="bg-transparent text-xs font-semibold text-foreground focus:outline-none cursor-pointer w-full"
             >
               <option value="all">Semua Waktu</option>
               <option value="30d">30 Hari Terakhir</option>
@@ -270,10 +270,11 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-xl border-border/80 text-xs gap-1.5 shadow-xs bg-card/80 hover:bg-card"
+                className="rounded-xl border-border/80 text-xs gap-1.5 shadow-xs bg-card/80 hover:bg-card h-8"
               >
                 <Download className="w-3.5 h-3.5 text-primary" />
-                Ekspor Laporan
+                <span className="hidden sm:inline">Ekspor</span>
+                <span className="sm:hidden">Ekspor</span>
                 <ChevronDown className="w-3 h-3 text-muted-foreground" />
               </Button>
             </PopoverTrigger>
@@ -302,7 +303,7 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
             onClick={handlePrint}
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-xl border border-border/70 hover:bg-secondary/80 text-muted-foreground hover:text-foreground"
+            className="h-8 w-8 rounded-xl border border-border/70 hover:bg-secondary/80 text-muted-foreground hover:text-foreground shrink-0"
             title="Cetak Laporan"
           >
             <Printer className="w-3.5 h-3.5" />
@@ -311,44 +312,44 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
       </div>
 
       {/* Tabs Navigation */}
-      <div className="flex items-center gap-2 p-1 bg-secondary/50 rounded-2xl border border-border/60 max-w-fit">
+      <div className="flex items-center gap-1.5 p-1 bg-secondary/50 rounded-2xl border border-border/60 overflow-x-auto scrollbar-none w-full sm:max-w-fit shrink-0">
         <button
           onClick={() => setActiveTab('tasks')}
           className={cn(
-            'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200',
+            'flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 whitespace-nowrap',
             activeTab === 'tasks'
               ? 'bg-card text-foreground shadow-xs border border-border/50'
               : 'text-muted-foreground hover:text-foreground'
           )}
         >
-          <BarChart3 className="w-3.5 h-3.5 text-primary" />
-          Ringkasan & Analitik Tugas
+          <BarChart3 className="w-3.5 h-3.5 text-primary shrink-0" />
+          <span>Analitik Tugas</span>
         </button>
 
         <button
           onClick={() => setActiveTab('employees')}
           className={cn(
-            'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200',
+            'flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 whitespace-nowrap',
             activeTab === 'employees'
               ? 'bg-card text-foreground shadow-xs border border-border/50'
               : 'text-muted-foreground hover:text-foreground'
           )}
         >
-          <Users className="w-3.5 h-3.5 text-purple-500" />
-          Kinerja & Evaluasi Karyawan
+          <Users className="w-3.5 h-3.5 text-purple-500 shrink-0" />
+          <span>Kinerja Karyawan</span>
         </button>
 
         <button
           onClick={() => setActiveTab('table')}
           className={cn(
-            'flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200',
+            'flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 whitespace-nowrap',
             activeTab === 'table'
               ? 'bg-card text-foreground shadow-xs border border-border/50'
               : 'text-muted-foreground hover:text-foreground'
           )}
         >
-          <ListFilter className="w-3.5 h-3.5 text-amber-500" />
-          Daftar Rincian Task
+          <ListFilter className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+          <span>Rincian Task</span>
         </button>
       </div>
 

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useParams, usePathname } from 'next/navigation';
-import { LayoutDashboard, Plus, Trash2, LogOut, User as UserIcon, Sparkles, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, Plus, Trash2, LogOut, User as UserIcon, Sparkles, BarChart3, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { CreateBoardDialog } from '@/components/layout/create-board-dialog';
@@ -18,9 +18,12 @@ interface SidebarProps {
   boards: Array<{ id: string; title: string; description: string | null }>;
   currentBoardId?: string;
   currentUser?: { id: string; name: string; email: string; avatarUrl?: string | null } | null;
+  className?: string;
+  /** Provided when rendered inside the mobile drawer; shows a close button. */
+  onClose?: () => void;
 }
 
-export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, currentUser }: SidebarProps) {
+export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, currentUser, className, onClose }: SidebarProps) {
   const router = useRouter();
   const params = useParams();
   const pathname = usePathname();
@@ -65,10 +68,10 @@ export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, cu
   };
 
   return (
-    <div className="h-screen w-[260px] border-r border-border/70 bg-card/70 backdrop-blur-md flex flex-col justify-between shadow-xs">
+    <div className={cn("h-full w-[260px] border-r border-border/70 bg-card/70 backdrop-blur-md flex flex-col justify-between shadow-xs", className)}>
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Workspace Brand Header */}
-        <div className="p-4 border-b border-border/50 flex items-center justify-between">
+        <div className="p-4 pt-[max(1rem,env(safe-area-inset-top))] border-b border-border/50 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary/80 to-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-pastel shrink-0">
               📋
@@ -81,13 +84,27 @@ export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, cu
               </span>
             </div>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-0.5 shrink-0">
+            <ThemeToggle />
+            {onClose && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/70"
+                onClick={onClose}
+                aria-label="Close navigation"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Main Navigation (Dashboard & Reports) */}
         <div className="p-3 pb-1 border-b border-border/40">
           <Link
             href={`/workspace/${workspaceId}/reports`}
+            onClick={() => onClose?.()}
             className={cn(
               'flex items-center space-x-2.5 rounded-xl px-3 py-2 text-xs font-medium transition-all duration-200',
               pathname?.includes('/reports')
@@ -122,6 +139,7 @@ export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, cu
                 <div key={board.id} className="group flex items-center">
                   <Link
                     href={`/workspace/${workspaceId}/board/${board.id}`}
+                    onClick={() => onClose?.()}
                     className={cn(
                       'flex-1 flex items-center space-x-2.5 rounded-xl px-3 py-2 text-xs font-medium transition-all duration-200',
                       isActive
@@ -135,7 +153,7 @@ export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, cu
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 rounded-lg opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all shrink-0 ml-1"
+                    className="h-7 w-7 rounded-lg hover-reveal text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all shrink-0 ml-1"
                     onClick={() => handleDeleteBoard(board.id)}
                     title="Delete board"
                   >
@@ -149,7 +167,7 @@ export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, cu
       </div>
 
       {/* User profile & logout footer */}
-      <div className="p-3 border-t border-border/50 bg-secondary/30 backdrop-blur-sm">
+      <div className="p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] border-t border-border/50 bg-secondary/30 backdrop-blur-sm">
         <div className="flex items-center justify-between gap-2 p-1.5 rounded-xl bg-card/60 border border-border/40 shadow-xs">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 rounded-full bg-pastel-lavender text-pastel-lavender-text flex items-center justify-center font-bold text-xs shrink-0 shadow-xs ring-2 ring-primary/20">

@@ -106,7 +106,7 @@ export function CardItemComponent({ card, boardId, workspaceId, isDragOverlay, o
       >
         {/* Grip Handle */}
         <div
-          className="absolute top-2.5 right-2.5 text-muted-foreground/60 hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-muted/60 cursor-grab active:cursor-grabbing"
+          className="absolute top-2.5 right-2.5 text-muted-foreground/60 hover:text-foreground hover-reveal transition-opacity p-1 rounded-md hover:bg-muted/60 cursor-grab active:cursor-grabbing touch-none"
           {...listeners}
           onClick={(e) => e.stopPropagation()}
           title="Drag card"

@@ -147,3 +147,51 @@
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--primary) / 0.5);
 }
+
+/* ─── Responsive & Touch Utilities ───────────────────────────────────────── */
+@layer utilities {
+  /*
+   * Elements that should only appear on hover for mouse users.
+   * On touch devices (no hover capability) they stay visible, so actions like
+   * drag handles and delete buttons remain reachable.
+   */
+  .hover-reveal {
+    opacity: 1;
+    transition: opacity 0.2s ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .hover-reveal {
+      opacity: 0;
+    }
+    .group:hover .hover-reveal,
+    .group:focus-within .hover-reveal {
+      opacity: 1;
+    }
+  }
+
+  /* Horizontal scrollers (tabs, filter pills) without visible scrollbar */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Respect iPhone notch / home indicator */
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Prevent iOS Safari from auto-zooming when focusing small inputs */
+@supports (-webkit-touch-callout: none) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}

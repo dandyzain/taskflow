@@ -104,12 +104,12 @@ export function BoardHeader({ title: initialTitle, description: initialDescripti
   }
 
   return (
-    <div className="flex justify-between items-start mb-5 pb-3 border-b border-border/50">
-      <div className="flex flex-col gap-1 w-full max-w-2xl">
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3 sm:mb-5 pb-3 border-b border-border/50 shrink-0">
+      <div className="flex flex-col gap-1 w-full max-w-2xl min-w-0">
         {isEditingTitle ? (
           <input
             autoFocus
-            className="h-auto text-2xl font-bold border-none bg-transparent outline-none focus:ring-0 p-0 text-foreground"
+            className="h-auto text-xl sm:text-2xl font-bold border-none bg-transparent outline-none focus:ring-0 p-0 text-foreground w-full"
             value={editTitle}
             onChange={(e) => setEditTitle(e.target.value)}
             onBlur={handleTitleSave}
@@ -117,14 +117,14 @@ export function BoardHeader({ title: initialTitle, description: initialDescripti
             disabled={isSaving}
           />
         ) : (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <h1 
-              className="text-2xl font-bold tracking-tight cursor-pointer hover:opacity-85 transition-all flex items-center gap-2 group text-foreground"
+              className="text-xl sm:text-2xl font-bold tracking-tight cursor-pointer hover:opacity-85 transition-all flex items-center gap-2 group text-foreground truncate"
               onClick={() => setIsEditingTitle(true)}
               title="Click to rename board"
             >
-              {title}
-              <Pencil className="h-4 w-4 text-muted-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <span className="truncate">{title}</span>
+              <Pencil className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground/60 hover-reveal shrink-0" />
             </h1>
           </div>
         )}
@@ -145,7 +145,7 @@ export function BoardHeader({ title: initialTitle, description: initialDescripti
             onClick={() => setIsEditingDescription(true)}
           >
             {description ? (
-              <p className="text-muted-foreground text-xs leading-relaxed hover:opacity-85 transition-opacity">
+              <p className="text-muted-foreground text-xs leading-relaxed hover:opacity-85 transition-opacity line-clamp-2 sm:line-clamp-none">
                 {description}
               </p>
             ) : (
@@ -153,7 +153,7 @@ export function BoardHeader({ title: initialTitle, description: initialDescripti
                 Add a description for this board...
               </p>
             )}
-            <Pencil className="h-3 w-3 ml-1.5 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground mt-0.5" />
+            <Pencil className="h-3 w-3 ml-1.5 hover-reveal text-muted-foreground shrink-0 mt-0.5" />
           </div>
         )}
       </div>
@@ -161,11 +161,11 @@ export function BoardHeader({ title: initialTitle, description: initialDescripti
       <Button
         variant="outline"
         size="sm"
-        className="gap-2 shrink-0 rounded-xl bg-card/80 hover:bg-accent border-border/70 shadow-xs hover:shadow-sm transition-all duration-200 active:scale-95 text-xs font-medium"
+        className="gap-2 shrink-0 rounded-xl bg-card/80 hover:bg-accent border-border/70 shadow-xs hover:shadow-sm transition-all duration-200 active:scale-95 text-xs font-medium self-end sm:self-auto h-8 sm:h-9"
         onClick={() => setActivityOpen(true)}
       >
         <ActivityIcon className="h-3.5 w-3.5 text-primary" />
-        Activity Feed
+        <span>Activity Feed</span>
       </Button>
 
       <ActivityFeed 

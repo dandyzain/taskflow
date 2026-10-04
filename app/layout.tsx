@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -9,6 +9,16 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'TaskFlow - Collaborative Task Management',
   description: 'A modern Kanban board for team collaboration',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#F8F9FD' },
+    { media: '(prefers-color-scheme: dark)', color: '#141624' },
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

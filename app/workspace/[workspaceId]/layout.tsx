@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getWorkspaceBoards } from '@/lib/queries/board-queries';
-import { Sidebar } from '@/components/layout/sidebar';
+import { WorkspaceShell } from '@/components/layout/workspace-shell';
 import { prisma } from '@/lib/prisma';
 import { getOptionalUser } from '@/lib/auth';
 
@@ -53,16 +53,13 @@ export default async function WorkspaceLayout({ children, params }: WorkspaceLay
   const boards = await getWorkspaceBoards(workspaceId);
   
   return (
-    <div className="flex h-screen pastel-mesh-bg overflow-hidden">
-      <Sidebar
-        workspaceId={workspaceId}
-        workspaceName={workspace?.name ?? 'Workspace'}
-        boards={boards}
-        currentUser={user}
-      />
-      <main className="flex-1 overflow-hidden">
-        {children}
-      </main>
-    </div>
+    <WorkspaceShell
+      workspaceId={workspaceId}
+      workspaceName={workspace?.name ?? 'Workspace'}
+      boards={boards}
+      currentUser={user}
+    >
+      {children}
+    </WorkspaceShell>
   );
 }

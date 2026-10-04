@@ -229,7 +229,7 @@ export function CardDetailModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[520px] rounded-3xl border border-border/80 shadow-pastel bg-card/95 backdrop-blur-xl">
+      <DialogContent className="sm:max-w-[540px] rounded-3xl border border-border/80 shadow-pastel bg-card/95 backdrop-blur-xl p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle className="sr-only">Card Details</DialogTitle>
           <div className="pr-6 pt-1">
@@ -242,13 +242,13 @@ export function CardDetailModal({
                   e.currentTarget.blur();
                 }
               }}
-              className="text-lg font-bold border-none px-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none text-foreground placeholder:text-muted-foreground/60"
+              className="text-base sm:text-lg font-bold border-none px-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none text-foreground placeholder:text-muted-foreground/60"
               placeholder="Card Title"
             />
           </div>
         </DialogHeader>
 
-        <div className="grid gap-5 py-3">
+        <div className="grid gap-4 sm:gap-5 py-2 sm:py-3">
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5 font-medium">
               <Calendar className="w-3.5 h-3.5 text-primary" />
@@ -265,7 +265,7 @@ export function CardDetailModal({
               onChange={(e) => setDescription(e.target.value)}
               onBlur={handleBlurDescription}
               placeholder="Add more details or notes about this task..."
-              className="min-h-[100px] resize-none rounded-xl text-xs border-border/80 focus-visible:ring-primary/40 leading-relaxed bg-background/50"
+              className="min-h-[85px] sm:min-h-[100px] resize-none rounded-xl text-xs border-border/80 focus-visible:ring-primary/40 leading-relaxed bg-background/50"
             />
           </div>
 
@@ -321,7 +321,7 @@ export function CardDetailModal({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4 pt-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-1">
             <div className="grid gap-1.5">
               <Label htmlFor="dueDate" className="flex items-center gap-1.5 text-xs font-semibold">
                 <CalendarDays className="w-3.5 h-3.5 text-primary" /> Due Date
@@ -332,14 +332,14 @@ export function CardDetailModal({
                   type="date"
                   value={dueDateInput}
                   onChange={(e) => handleDueDateChange(e.target.value)}
-                  className="h-9 text-xs rounded-xl border-border/80 bg-background/50 focus-visible:ring-primary/40"
+                  className="h-9 text-xs rounded-xl border-border/80 bg-background/50 focus-visible:ring-primary/40 flex-1"
                 />
                 {dueDate && (
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={handleClearDueDate}
-                    className="h-9 px-2 text-xs text-muted-foreground hover:text-destructive rounded-xl"
+                    className="h-9 px-2 text-xs text-muted-foreground hover:text-destructive rounded-xl shrink-0"
                   >
                     Clear
                   </Button>
@@ -366,7 +366,7 @@ export function CardDetailModal({
           </div>
         </div>
 
-        <DialogFooter className="flex items-center sm:justify-between pt-3 border-t border-border/50">
+        <DialogFooter className="flex flex-row items-center justify-between gap-2 pt-3 border-t border-border/50">
           <Button
             type="button"
             variant="destructive"

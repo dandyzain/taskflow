@@ -118,7 +118,7 @@ export function KanbanColumn({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "w-[300px] min-w-[300px] flex flex-col bg-secondary/50 dark:bg-card/40 backdrop-blur-md rounded-2xl border border-border/70 shadow-xs transition-all duration-200",
+        "w-[280px] sm:w-[300px] min-w-[280px] sm:min-w-[300px] flex flex-col bg-secondary/50 dark:bg-card/40 backdrop-blur-md rounded-2xl border border-border/70 shadow-xs transition-all duration-200 snap-center sm:snap-align-none shrink-0",
         isDragging && "opacity-40 ring-2 ring-primary/40 scale-[0.98]"
       )}
     >
@@ -128,7 +128,7 @@ export function KanbanColumn({
           <div 
             {...attributes} 
             {...listeners}
-            className="cursor-grab active:cursor-grabbing text-muted-foreground/50 hover:text-foreground transition-colors p-0.5 rounded"
+            className="cursor-grab active:cursor-grabbing text-muted-foreground/60 hover:text-foreground transition-colors p-1 sm:p-0.5 rounded touch-none"
             title="Drag column"
           >
             <GripVertical size={15} />
@@ -171,7 +171,7 @@ export function KanbanColumn({
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 text-muted-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity hover:text-destructive hover:bg-destructive/10 rounded-lg"
+            className="h-6 w-6 text-muted-foreground/60 hover-reveal hover:text-destructive hover:bg-destructive/10 rounded-lg"
             onClick={handleDelete}
             title="Delete column"
           >
@@ -181,7 +181,7 @@ export function KanbanColumn({
       </div>
       
       {/* Cards Scroll Area */}
-      <ScrollArea className="flex-1 max-h-[calc(100vh-230px)]">
+      <ScrollArea className="flex-1 max-h-[calc(100dvh-260px)] sm:max-h-[calc(100vh-230px)]">
         <div className="px-2.5 pb-2.5 space-y-2.5">
           <SortableContext
             items={column.cards.map((c) => c.id)}

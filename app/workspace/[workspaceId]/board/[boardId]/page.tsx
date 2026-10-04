@@ -18,7 +18,7 @@ export default async function BoardPage({ params }: BoardPageProps) {
   }
 
   return (
-    <div className="h-full p-6">
+    <div className="h-full w-full p-3 sm:p-5 lg:p-6 overflow-hidden flex flex-col">
       <KanbanBoard initialData={boardData} />
     </div>
   );

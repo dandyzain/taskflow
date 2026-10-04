@@ -36,7 +36,7 @@ export function TaskTable({ tasks }: TaskTableProps) {
   });
 
   return (
-    <div className="rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-md p-5 shadow-xs space-y-4">
+    <div className="rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-md p-3.5 sm:p-5 shadow-xs space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h3 className="text-sm font-bold text-foreground">
@@ -48,7 +48,7 @@ export function TaskTable({ tasks }: TaskTableProps) {
         </div>
 
         {/* Filter & Search Bar */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           {/* Search */}
           <div className="relative w-full sm:w-56">
             <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -56,16 +56,16 @@ export function TaskTable({ tasks }: TaskTableProps) {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari judul task, assignee..."
-              className="pl-8 h-8 text-xs rounded-xl bg-background/60 border-border/80"
+              className="pl-8 h-8 text-xs rounded-xl bg-background/60 border-border/80 w-full"
             />
           </div>
 
           {/* Status Filter Buttons */}
-          <div className="flex items-center gap-1 bg-secondary/50 p-0.5 rounded-xl border border-border/60 text-xs">
+          <div className="flex items-center gap-1 bg-secondary/50 p-0.5 rounded-xl border border-border/60 text-xs overflow-x-auto scrollbar-none w-full sm:w-auto">
             <button
               onClick={() => setStatusFilter('all')}
               className={cn(
-                'px-2.5 py-1 rounded-lg font-semibold text-[11px] transition-all',
+                'px-2.5 py-1 rounded-lg font-semibold text-[11px] transition-all whitespace-nowrap',
                 statusFilter === 'all' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -74,7 +74,7 @@ export function TaskTable({ tasks }: TaskTableProps) {
             <button
               onClick={() => setStatusFilter('progress')}
               className={cn(
-                'px-2.5 py-1 rounded-lg font-semibold text-[11px] transition-all',
+                'px-2.5 py-1 rounded-lg font-semibold text-[11px] transition-all whitespace-nowrap',
                 statusFilter === 'progress' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -83,7 +83,7 @@ export function TaskTable({ tasks }: TaskTableProps) {
             <button
               onClick={() => setStatusFilter('completed')}
               className={cn(
-                'px-2.5 py-1 rounded-lg font-semibold text-[11px] transition-all',
+                'px-2.5 py-1 rounded-lg font-semibold text-[11px] transition-all whitespace-nowrap',
                 statusFilter === 'completed' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -92,7 +92,7 @@ export function TaskTable({ tasks }: TaskTableProps) {
             <button
               onClick={() => setStatusFilter('overdue')}
               className={cn(
-                'px-2.5 py-1 rounded-lg font-semibold text-[11px] transition-all',
+                'px-2.5 py-1 rounded-lg font-semibold text-[11px] transition-all whitespace-nowrap',
                 statusFilter === 'overdue' ? 'bg-card text-rose-600 dark:text-rose-400 shadow-xs' : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -103,8 +103,8 @@ export function TaskTable({ tasks }: TaskTableProps) {
       </div>
 
       {/* Task Table */}
-      <div className="overflow-x-auto rounded-xl border border-border/70">
-        <table className="w-full text-left text-xs">
+      <div className="overflow-x-auto rounded-xl border border-border/70 scrollbar-none -mx-1 sm:mx-0">
+        <table className="w-full text-left text-xs min-w-[640px]">
           <thead className="bg-secondary/40 border-b border-border/70 text-muted-foreground uppercase text-[10px] font-bold tracking-wider">
             <tr>
               <th className="px-4 py-3">Judul Task</th>

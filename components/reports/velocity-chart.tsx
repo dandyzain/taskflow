@@ -63,7 +63,10 @@ export function VelocityChart({ dailyTrends }: VelocityChartProps) {
               >
                 {/* Floating Tooltip */}
                 {isHovered && (
-                  <div className="absolute -top-16 z-20 bg-popover/95 backdrop-blur-md border border-border/80 shadow-pastel px-2.5 py-1.5 rounded-xl text-center pointer-events-none whitespace-nowrap animate-in fade-in-up duration-150">
+                  <div className={cn(
+                    "absolute -top-16 z-20 bg-popover/95 backdrop-blur-md border border-border/80 shadow-pastel px-2.5 py-1.5 rounded-xl text-center pointer-events-none whitespace-nowrap animate-in fade-in-up duration-150",
+                    idx === 0 ? "left-0" : idx === dailyTrends.length - 1 ? "right-0" : "left-1/2 -translate-x-1/2"
+                  )}>
                     <p className="text-[11px] font-bold text-foreground">{day.formattedDate}</p>
                     <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-0.5">
                       <span className="text-sky-600 dark:text-sky-400 font-semibold">+{day.createdCount} dibuat</span>
@@ -74,12 +77,12 @@ export function VelocityChart({ dailyTrends }: VelocityChartProps) {
                 )}
 
                 {/* Bars Pair */}
-                <div className="w-full flex items-end justify-center gap-1 sm:gap-1.5 h-full pb-1">
+                <div className="w-full flex items-end justify-center gap-0.5 sm:gap-1.5 h-full pb-1">
                   {/* Created Bar */}
                   <div
                     style={{ height: `${createdHeight}%` }}
                     className={cn(
-                      'w-3 sm:w-4 rounded-t-lg bg-pastel-sky transition-all duration-300 shadow-xs hover:brightness-105',
+                      'w-2 sm:w-4 rounded-t-md sm:rounded-t-lg bg-pastel-sky transition-all duration-300 shadow-xs hover:brightness-105',
                       isHovered ? 'ring-2 ring-sky-400/40' : ''
                     )}
                   />
@@ -87,7 +90,7 @@ export function VelocityChart({ dailyTrends }: VelocityChartProps) {
                   <div
                     style={{ height: `${completedHeight}%` }}
                     className={cn(
-                      'w-3 sm:w-4 rounded-t-lg bg-pastel-mint transition-all duration-300 shadow-xs hover:brightness-105',
+                      'w-2 sm:w-4 rounded-t-md sm:rounded-t-lg bg-pastel-mint transition-all duration-300 shadow-xs hover:brightness-105',
                       isHovered ? 'ring-2 ring-emerald-400/40' : ''
                     )}
                   />

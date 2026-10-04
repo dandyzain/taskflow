@@ -53,24 +53,24 @@ export function EmployeePerformanceView({ employeeMetrics, leaderboard }: Employ
     <div className="space-y-6">
       {/* Top Performers Podium / Highlights */}
       {topThree.length > 0 && (
-        <div className="rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-md p-5 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
+        <div className="rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-md p-4 sm:p-5 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-4">
             <div>
               <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-                <Trophy className="w-4 h-4 text-amber-500" />
+                <Trophy className="w-4 h-4 text-amber-500 shrink-0" />
                 Leaderboard Kinerja Tim
               </h3>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Karyawan dengan tingkat penyelesaian tugas dan kontribusi tertinggi
               </p>
             </div>
-            <span className="text-xs font-semibold text-muted-foreground bg-secondary/80 px-2.5 py-1 rounded-full border border-border/60 flex items-center gap-1.5">
+            <span className="self-start sm:self-auto text-xs font-semibold text-muted-foreground bg-secondary/80 px-2.5 py-1 rounded-full border border-border/60 flex items-center gap-1.5 shrink-0">
               <Award className="w-3.5 h-3.5 text-amber-500" />
               Top Performers
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
             {topThree.map((member, index) => {
               const medalColors = [
                 'from-amber-400 to-amber-500 text-white shadow-amber-300/40',
@@ -144,11 +144,11 @@ export function EmployeePerformanceView({ employeeMetrics, leaderboard }: Employ
       )}
 
       {/* Complete Employee Performance Table */}
-      <div className="rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-md p-5 shadow-xs space-y-4">
+      <div className="rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-md p-4 sm:p-5 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-primary" />
+              <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
               Daftar Evaluasi Kinerja Karyawan ({filteredMembers.length})
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
@@ -170,7 +170,7 @@ export function EmployeePerformanceView({ employeeMetrics, leaderboard }: Employ
 
         {/* Table View */}
         <div className="overflow-x-auto rounded-xl border border-border/70">
-          <table className="w-full text-left text-xs">
+          <table className="w-full text-left text-xs min-w-[720px]">
             <thead className="bg-secondary/40 border-b border-border/70 text-muted-foreground uppercase text-[10px] font-bold tracking-wider">
               <tr>
                 <th className="px-4 py-3">Karyawan</th>
