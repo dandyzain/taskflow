@@ -1,0 +1,190 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── User ────────────────────────────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String?
+  avatarUrl String?  @map("avatar_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  memberships   WorkspaceMember[]
+  assignedCards CardAssignee[]
+  activities    Activity[]
+
+  @@map("users")
+}
+
+// ─── Workspace ───────────────────────────────────────────────────────────────
+
+model Workspace {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  members    WorkspaceMember[]
+  boards     Board[]
+  activities Activity[]
+
+  @@map("workspaces")
+}
+
+// ─── WorkspaceMember ─────────────────────────────────────────────────────────
+// role: "ADMIN" | "MEMBER" | "VIEWER"
+
+model WorkspaceMember {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  workspaceId String   @map("workspace_id")
+  role        String   @default("MEMBER")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, workspaceId])
+  @@index([workspaceId])
+  @@index([userId])
+  @@map("workspace_members")
+}
+
+// ─── Board ───────────────────────────────────────────────────────────────────
+
+model Board {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  workspaceId String   @map("workspace_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  columns   Column[]
+  labels    Label[]
+
+  @@index([workspaceId])
+  @@map("boards")
+}
+
+// ─── Column ──────────────────────────────────────────────────────────────────
+
+model Column {
+  id        String   @id @default(cuid())
+  title     String
+  boardId   String   @map("board_id")
+  position  Float
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  board Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  cards Card[]
+
+  @@index([boardId])
+  @@map("columns")
+}
+
+// ─── Card ────────────────────────────────────────────────────────────────────
+
+model Card {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  columnId    String   @map("column_id")
+  position    Float
+  priority    Int      @default(0)
+  dueDate     DateTime? @map("due_date")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  column    Column         @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  assignees CardAssignee[]
+  labels    CardLabel[]
+
+  @@index([columnId])
+  @@index([columnId, position])
+  @@map("cards")
+}
+
+// ─── CardAssignee ────────────────────────────────────────────────────────────
+
+model CardAssignee {
+  id         String   @id @default(cuid())
+  cardId     String   @map("card_id")
+  userId     String   @map("user_id")
+  assignedAt DateTime @default(now()) @map("assigned_at")
+
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([cardId, userId])
+  @@index([cardId])
+  @@index([userId])
+  @@map("card_assignees")
+}
+
+// ─── Activity (Audit Trail) ─────────────────────────────────────────────────
+// action: "CARD_CREATED" | "CARD_UPDATED" | "CARD_MOVED" | "CARD_REORDERED" | ...
+// entityType: "CARD" | "COLUMN" | "BOARD" | "WORKSPACE" | "MEMBER"
+
+model Activity {
+  id          String   @id @default(cuid())
+  action      String
+  userId      String   @map("user_id")
+  workspaceId String   @map("workspace_id")
+  entityType  String   @map("entity_type")
+  entityId    String   @map("entity_id")
+  metadata    String   @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("activities")
+}
+
+// ─── Label ───────────────────────────────────────────────────────────────────
+
+model Label {
+  id        String   @id @default(cuid())
+  name      String
+  color     String
+  boardId   String   @map("board_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  board Board      @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  cards CardLabel[]
+
+  @@unique([name, boardId])
+  @@index([boardId])
+  @@map("labels")
+}
+
+// ─── CardLabel ───────────────────────────────────────────────────────────────
+
+model CardLabel {
+  cardId  String @map("card_id")
+  labelId String @map("label_id")
+
+  card  Card  @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  label Label @relation(fields: [labelId], references: [id], onDelete: Cascade)
+
+  @@id([cardId, labelId])
+  @@map("card_labels")
+}

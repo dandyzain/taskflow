@@ -1,0 +1,21 @@
+image: node:22-alpine
+
+stages:
+  - build
+
+cache:
+  paths:
+    - node_modules/
+    - .next/cache/
+
+build_app:
+  stage: build
+  before_script:
+    - npm ci
+    - npx prisma generate
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - .next/
+    expire_in: 1 day

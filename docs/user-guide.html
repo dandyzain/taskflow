@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaskFlow — User Guide</title>
+<style>
+  @page { margin: 1.5cm 2cm; size: A4; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 11pt; line-height: 1.6; color: #1a1a2e; max-width: 210mm; margin: 0 auto; padding: 2cm; }
+  
+  /* Cover */
+  .cover { text-align: center; padding: 80px 0 60px; page-break-after: always; }
+  .cover h1 { font-size: 42pt; font-weight: 800; color: #2563eb; margin-bottom: 8px; letter-spacing: -1px; }
+  .cover .subtitle { font-size: 16pt; color: #64748b; margin-bottom: 40px; }
+  .cover .badge { display: inline-block; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 18px; border-radius: 20px; font-size: 10pt; color: #475569; margin: 4px; }
+  .cover .meta { margin-top: 60px; font-size: 10pt; color: #94a3b8; }
+  .cover .logo { font-size: 64pt; margin-bottom: 16px; }
+
+  /* Headings */
+  h1 { font-size: 22pt; color: #1e293b; border-bottom: 3px solid #2563eb; padding-bottom: 6px; margin: 30px 0 16px; page-break-after: avoid; }
+  h2 { font-size: 16pt; color: #1e40af; margin: 24px 0 12px; page-break-after: avoid; }
+  h3 { font-size: 13pt; color: #334155; margin: 18px 0 8px; page-break-after: avoid; }
+  
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 16px; font-size: 10pt; }
+  th { background: #f1f5f9; color: #334155; font-weight: 600; text-align: left; padding: 8px 10px; border: 1px solid #e2e8f0; }
+  td { padding: 6px 10px; border: 1px solid #e2e8f0; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  
+  /* Code */
+  code { background: #f1f5f9; padding: 2px 5px; border-radius: 3px; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 9.5pt; color: #dc2626; }
+  pre { background: #1e293b; color: #e2e8f0; padding: 14px 16px; border-radius: 8px; overflow-x: auto; margin: 10px 0 16px; font-size: 9pt; line-height: 1.5; }
+  pre code { background: none; color: inherit; padding: 0; }
+  
+  /* Lists */
+  ul, ol { margin: 6px 0 12px 20px; }
+  li { margin-bottom: 4px; }
+  
+  /* Callouts */
+  .note, .tip, .warning, .important { padding: 12px 16px; border-radius: 6px; margin: 12px 0; font-size: 10pt; page-break-inside: avoid; }
+  .note { background: #eff6ff; border-left: 4px solid #3b82f6; }
+  .tip { background: #f0fdf4; border-left: 4px solid #22c55e; }
+  .warning { background: #fef3c7; border-left: 4px solid #f59e0b; }
+  .important { background: #fef2f2; border-left: 4px solid #ef4444; }
+  .note strong, .tip strong, .warning strong, .important strong { display: block; margin-bottom: 4px; }
+  
+  /* TOC */
+  .toc { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px 24px; margin: 16px 0; }
+  .toc h2 { margin-top: 0; border: none; color: #334155; }
+  .toc ol { margin-left: 16px; }
+  .toc li { margin-bottom: 6px; color: #2563eb; }
+  
+  /* Section break */
+  .page-break { page-break-before: always; }
+  
+  /* Flow diagrams as text */
+  .diagram { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 12px 0; text-align: center; font-size: 10pt; }
+  .diagram .arrow { color: #64748b; }
+  .diagram .box { display: inline-block; background: white; border: 2px solid #2563eb; border-radius: 8px; padding: 6px 14px; margin: 4px; font-weight: 600; }
+  .diagram .box.green { border-color: #22c55e; }
+  .diagram .box.orange { border-color: #f59e0b; }
+  
+  /* Badge inline */
+  .badge-inline { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 9pt; font-weight: 600; color: white; }
+  .badge-red { background: #ef4444; }
+  .badge-blue { background: #3b82f6; }
+  .badge-orange { background: #f97316; }
+  .badge-purple { background: #8b5cf6; }
+  .badge-green { background: #10b981; }
+  .badge-gray { background: #64748b; }
+
+  /* Checklist */
+  .check { color: #22c55e; font-weight: bold; }
+  .cross { color: #ef4444; font-weight: bold; }
+  
+  p { margin-bottom: 8px; }
+  hr { border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }
+  
+  @media print {
+    body { padding: 0; }
+    .no-print { display: none; }
+    pre { background: #f1f5f9 !important; color: #1e293b !important; border: 1px solid #e2e8f0; }
+    pre code { color: #1e293b !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="logo">📋</div>
+  <h1 style="border:none; font-size:42pt;">TaskFlow</h1>
+  <div class="subtitle">User Guide — Developer · Tester · Superadmin</div>
+  <div>
+    <span class="badge">Next.js 15</span>
+    <span class="badge">React 19</span>
+    <span class="badge">TypeScript</span>
+    <span class="badge">Tailwind CSS</span>
+    <span class="badge">Prisma ORM</span>
+    <span class="badge">SQLite</span>
+    <span class="badge">Shadcn UI</span>
+    <span class="badge">@dnd-kit</span>
+  </div>
+  <div class="meta">
+    <p>Version 1.0 — Phase 1 s/d 7</p>
+    <p>Tanggal: 2 Oktober 2026</p>
+    <p>65+ Source Files · 10 Database Models · 16+ Server Actions</p>
+  </div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+  <h2>📑 Daftar Isi</h2>
+  <ol>
+    <li><strong>Quick Start</strong> — Setup & menjalankan aplikasi</li>
+    <li><strong>Arsitektur Proyek</strong> — Tech stack, struktur folder, database schema</li>
+    <li><strong>Panduan Fitur</strong> — Navigasi, board, kolom, kartu, labels, due dates, assignees, filter</li>
+    <li><strong>Panduan Superadmin</strong> — Database, manajemen user, audit trail</li>
+    <li><strong>Panduan Developer</strong> — Build, migrasi, konvensi kode, template action</li>
+    <li><strong>Panduan Tester</strong> — 50 test cases, edge cases, performance</li>
+    <li><strong>Keyboard Shortcuts</strong></li>
+    <li><strong>Troubleshooting</strong></li>
+  </ol>
+</div>
+
+<!-- SECTION 1 -->
+<div class="page-break"></div>
+<h1>1. Quick Start</h1>
+
+<h2>Prasyarat</h2>
+<table>
+  <tr><th>Tool</th><th>Versi</th><th>Keterangan</th></tr>
+  <tr><td>Node.js</td><td>v22+</td><td>Path: <code>C:\laragon\bin\nodejs\node-v22</code></td></tr>
+  <tr><td>npm</td><td>10+</td><td>Bawaan Node.js v22</td></tr>
+  <tr><td>SQLite</td><td>Built-in</td><td>Via Prisma, file <code>prisma/dev.db</code></td></tr>
+</table>
+
+<h2>Menjalankan Aplikasi</h2>
+<pre><code># Set PATH (wajib di setiap terminal baru)
+$env:PATH = "C:\laragon\bin\nodejs\node-v22;$env:PATH"
+
+# Masuk ke folder proyek
+cd C:\Users\dandy\.gemini\antigravity\scratch\taskflow
+
+# Install dependencies (pertama kali)
+npm install --legacy-peer-deps
+
+# Generate Prisma Client + Migrasi
+npx prisma migrate dev
+
+# Seed data demo
+npx prisma db seed
+
+# Jalankan dev server
+npx next dev --port 3000</code></pre>
+<p>Buka browser: <strong>http://localhost:3000</strong></p>
+
+<h2>Demo Accounts & Autentikasi</h2>
+<table>
+  <tr><th>User</th><th>Email</th><th>Password</th><th>Role</th><th>Keterangan</th></tr>
+  <tr><td>Demo User</td><td>demo@taskflow.dev</td><td><code>password123</code></td><td><span class="badge-inline badge-red">ADMIN</span></td><td>Workspace Owner</td></tr>
+  <tr><td>Sarah Chen</td><td>sarah@taskflow.dev</td><td><code>password123</code></td><td><span class="badge-inline badge-blue">MEMBER</span></td><td>Core Member</td></tr>
+  <tr><td>Alex Kim</td><td>alex@taskflow.dev</td><td><code>password123</code></td><td><span class="badge-inline badge-blue">MEMBER</span></td><td>Core Member</td></tr>
+</table>
+
+<div class="tip">
+  <strong>🔐 Fitur Login & Register Telah Aktif</strong>
+  Akses <code>/login</code> untuk masuk atau gunakan tombol <em>Quick Login</em> 1-klik untuk akun demo di atas. Pengguna baru dapat mendaftar akun di <code>/register</code>; sistem akan secara otomatis membuatkan workspace dan papan Kanban starter.
+</div>
+
+<!-- SECTION 2 -->
+<div class="page-break"></div>
+<h1>2. Arsitektur Proyek</h1>
+
+<h2>Tech Stack</h2>
+<div class="diagram">
+  <span class="box">🌐 Browser</span>
+  <span class="arrow"> → </span>
+  <span class="box">⚡ Next.js 15 (App Router)</span>
+  <span class="arrow"> → </span>
+  <span class="box green">🔧 Server Actions</span>
+  <span class="arrow"> → </span>
+  <span class="box orange">🗄️ Prisma ORM</span>
+  <span class="arrow"> → </span>
+  <span class="box">💾 SQLite</span>
+</div>
+
+<h2>Struktur Folder</h2>
+<pre><code>taskflow/                         (65 file TypeScript/TSX)
+├── app/                          # Next.js App Router
+│   ├── page.tsx                  # Redirect → board demo
+│   ├── layout.tsx                # Root layout
+│   └── workspace/[workspaceId]/
+│       ├── layout.tsx            # Sidebar layout
+│       └── board/[boardId]/
+│           └── page.tsx          # Board page
+│
+├── actions/                      # Server Actions
+│   ├── card-actions.ts           # reorderCard, moveCardToColumn
+│   ├── card-crud-actions.ts      # createCard, updateCard, deleteCard
+│   ├── column-actions.ts         # CRUD + reorder kolom
+│   ├── board-actions.ts          # CRUD board
+│   ├── label-actions.ts          # create, delete, toggleCardLabel
+│   ├── assignee-actions.ts       # toggleAssignee, fetchMembers
+│   └── activity-actions.ts       # fetchActivities
+│
+├── components/
+│   ├── kanban/                   # Komponen Kanban (13 files)
+│   ├── layout/                   # Sidebar, workspace layout
+│   └── ui/                       # Shadcn UI (15+ files)
+│
+├── hooks/                        # Custom React Hooks
+│   ├── use-kanban-board.ts       # DnD state + optimistic updates
+│   ├── use-board-filter.ts       # Search + filter logic
+│   └── use-keyboard-shortcuts.ts # Global keyboard handler
+│
+├── lib/
+│   ├── prisma.ts                 # Prisma Client singleton
+│   ├── auth.ts                   # getCurrentUser() stub
+│   ├── rbac.ts                   # Role-Based Access Control
+│   ├── fractional.ts             # Position calculator
+│   ├── queries/board-queries.ts  # Database read queries
+│   └── validations/              # Zod schemas (6 files)
+│
+├── prisma/
+│   ├── schema.prisma             # 10 models
+│   ├── seed.ts                   # Demo data
+│   └── dev.db                    # SQLite database
+│
+└── types/kanban.ts               # TypeScript interfaces</code></pre>
+
+<h2>Database Schema — 10 Models</h2>
+<table>
+  <tr><th>Model</th><th>Deskripsi</th><th>Relasi Utama</th></tr>
+  <tr><td><strong>User</strong></td><td>Pengguna sistem</td><td>→ WorkspaceMember, CardAssignee, Activity</td></tr>
+  <tr><td><strong>Workspace</strong></td><td>Ruang kerja (multi-tenant)</td><td>→ Board, WorkspaceMember, Activity</td></tr>
+  <tr><td><strong>WorkspaceMember</strong></td><td>Join user ↔ workspace + role</td><td>Role: ADMIN / MEMBER / VIEWER</td></tr>
+  <tr><td><strong>Board</strong></td><td>Papan Kanban</td><td>→ Column, Label</td></tr>
+  <tr><td><strong>Column</strong></td><td>Kolom (Backlog, To Do, dll)</td><td>→ Card, position: Float</td></tr>
+  <tr><td><strong>Card</strong></td><td>Kartu tugas</td><td>→ CardAssignee, CardLabel, position: Float</td></tr>
+  <tr><td><strong>CardAssignee</strong></td><td>Join card ↔ user</td><td>Unique [cardId, userId]</td></tr>
+  <tr><td><strong>Label</strong></td><td>Tag warna per board</td><td>Unique [name, boardId]</td></tr>
+  <tr><td><strong>CardLabel</strong></td><td>Join card ↔ label</td><td>Composite PK [cardId, labelId]</td></tr>
+  <tr><td><strong>Activity</strong></td><td>Audit trail</td><td>action, entityType, metadata (JSON)</td></tr>
+</table>
+
+<h2>RBAC (Role-Based Access Control)</h2>
+<table>
+  <tr><th>Role</th><th>Level</th><th>Hak Akses</th></tr>
+  <tr><td><span class="badge-inline badge-gray">VIEWER</span></td><td>0</td><td>Read-only — lihat board, kartu, activity</td></tr>
+  <tr><td><span class="badge-inline badge-blue">MEMBER</span></td><td>1</td><td>CRUD kartu, pindah kartu, assign member, toggle label</td></tr>
+  <tr><td><span class="badge-inline badge-red">ADMIN</span></td><td>2</td><td>Semua hak MEMBER + kelola board, kolom, member</td></tr>
+</table>
+
+<div class="important">
+  <strong>⚠️ Penting</strong>
+  Setiap Server Action memvalidasi peran via <code>assertWorkspaceRole()</code> sebelum mutasi database. VIEWER tidak bisa membuat/edit/hapus apapun.
+</div>
+
+<!-- SECTION 3 -->
+<div class="page-break"></div>
+<h1>3. Panduan Fitur</h1>
+
+<h2>3.1 Navigasi</h2>
+<table>
+  <tr><th>Elemen</th><th>Lokasi</th><th>Fungsi</th></tr>
+  <tr><td><strong>Sidebar</strong></td><td>Kiri</td><td>Daftar board dalam workspace</td></tr>
+  <tr><td><strong>Board Header</strong></td><td>Atas tengah</td><td>Nama & deskripsi board (double-click untuk edit)</td></tr>
+  <tr><td><strong>Activity Panel</strong></td><td>Kanan atas ("Activity")</td><td>Riwayat aktivitas (slide-out)</td></tr>
+  <tr><td><strong>Dark Mode</strong></td><td>Sidebar ikon ⚙️</td><td>Toggle light/dark theme</td></tr>
+</table>
+
+<h2>3.2 Manajemen Board</h2>
+<table>
+  <tr><th>Aksi</th><th>Cara</th></tr>
+  <tr><td>Buat Board</td><td>Klik <code>+</code> di samping "BOARDS" pada sidebar</td></tr>
+  <tr><td>Hapus Board</td><td>Hover board di sidebar → klik ikon hapus</td></tr>
+  <tr><td>Edit Judul Board</td><td>Double-click pada judul board di header</td></tr>
+  <tr><td>Edit Deskripsi</td><td>Double-click pada deskripsi di bawah judul</td></tr>
+</table>
+
+<h2>3.3 Manajemen Kolom</h2>
+<table>
+  <tr><th>Aksi</th><th>Cara</th></tr>
+  <tr><td>Buat Kolom</td><td>Klik tombol <code>+</code> di ujung kanan board</td></tr>
+  <tr><td>Edit Nama Kolom</td><td>Double-click pada judul kolom</td></tr>
+  <tr><td>Hapus Kolom</td><td>Hover header kolom → klik ikon trash</td></tr>
+  <tr><td>Geser Kolom</td><td>Drag dari ikon ⋮⋮ di header kolom → drop ke posisi baru</td></tr>
+</table>
+
+<div class="warning">
+  <strong>⚠️ Perhatian</strong>
+  Menghapus kolom akan menghapus <strong>semua kartu</strong> di dalamnya secara permanen (cascade delete).
+</div>
+
+<h2>3.4 Manajemen Kartu</h2>
+
+<h3>Membuat Kartu</h3>
+<ol>
+  <li>Klik <strong>"+ Add card"</strong> di bawah kolom mana saja</li>
+  <li>Ketik judul kartu</li>
+  <li>Tekan <code>Enter</code> atau klik tombol centang</li>
+</ol>
+
+<h3>Mengedit Kartu (Modal Detail)</h3>
+<p>Klik kartu untuk membuka modal. Di dalamnya:</p>
+<table>
+  <tr><th>Field</th><th>Cara Edit</th></tr>
+  <tr><td><strong>Title</strong></td><td>Edit teks langsung, tekan Enter / blur untuk simpan</td></tr>
+  <tr><td><strong>Description</strong></td><td>Ketik di textarea, auto-save saat blur</td></tr>
+  <tr><td><strong>Priority</strong></td><td>Pilih dropdown: None / Low / Medium / High</td></tr>
+  <tr><td><strong>Due Date</strong></td><td>Pilih tanggal dari date picker; "Clear" untuk hapus</td></tr>
+  <tr><td><strong>Labels</strong></td><td>Klik "Labels" → toggle on/off, atau buat label baru</td></tr>
+  <tr><td><strong>Assignees</strong></td><td>Klik "Assignees" → toggle member on/off</td></tr>
+</table>
+
+<h3>Drag & Drop Kartu</h3>
+<ul>
+  <li><strong>Pindah dalam kolom:</strong> Drag dari ikon ⋮⋮ (kanan atas kartu) ke posisi baru</li>
+  <li><strong>Pindah ke kolom lain:</strong> Drag kartu ke kolom berbeda</li>
+  <li><strong>Fractional Indexing:</strong> Posisi dihitung otomatis tanpa mengupdate semua kartu di database</li>
+</ul>
+
+<div class="tip">
+  <strong>💡 Optimistic UI</strong>
+  Drag & Drop langsung terlihat instan tanpa menunggu respons server. Jika server gagal, posisi otomatis rollback dan notifikasi error muncul.
+</div>
+
+<h2>3.5 Labels (Tag Warna)</h2>
+<table>
+  <tr><th>Label</th><th>Warna</th><th>Hex</th></tr>
+  <tr><td><span class="badge-inline badge-red">Bug</span></td><td>Merah</td><td><code>#ef4444</code></td></tr>
+  <tr><td><span class="badge-inline badge-blue">Feature</span></td><td>Biru</td><td><code>#3b82f6</code></td></tr>
+  <tr><td><span class="badge-inline badge-orange">Urgent</span></td><td>Oranye</td><td><code>#f97316</code></td></tr>
+  <tr><td><span class="badge-inline badge-purple">Improvement</span></td><td>Ungu</td><td><code>#8b5cf6</code></td></tr>
+  <tr><td><span class="badge-inline badge-green">Docs</span></td><td>Hijau</td><td><code>#10b981</code></td></tr>
+</table>
+
+<h3>Menambah Label Baru</h3>
+<ol>
+  <li>Buka modal kartu → klik <strong>"Labels"</strong></li>
+  <li>Klik <strong>"Create label"</strong> di bawah daftar</li>
+  <li>Isi nama + pilih warna dari 10 preset</li>
+  <li>Klik <strong>"Create"</strong></li>
+</ol>
+
+<h2>3.6 Due Dates</h2>
+<table>
+  <tr><th>Indikator</th><th>Warna</th><th>Arti</th></tr>
+  <tr><td>🔴 Merah</td><td><code>text-red-500</code></td><td><strong>Overdue</strong> — sudah lewat tenggat</td></tr>
+  <tr><td>🟠 Oranye</td><td><code>text-orange-500</code></td><td><strong>Due soon</strong> — kurang dari 2 hari</td></tr>
+  <tr><td>⚪ Abu-abu</td><td><code>text-muted</code></td><td>Normal — masih jauh</td></tr>
+</table>
+<p>Format tampilan: "Today", "Tomorrow", atau "Oct 6", "Nov 15", dsb.</p>
+
+<h2>3.7 Assignees</h2>
+<p>Kartu menampilkan <strong>avatar initials</strong> (lingkaran dengan huruf pertama nama):</p>
+<ul>
+  <li>Maksimal 3 avatar ditampilkan, sisanya "+N"</li>
+  <li>Contoh: <strong>D</strong> (Demo User), <strong>S</strong> (Sarah Chen), <strong>A</strong> (Alex Kim)</li>
+</ul>
+
+<h3>Assign/Unassign Member</h3>
+<ol>
+  <li>Buka modal kartu → bagian <strong>"Assignees"</strong></li>
+  <li>Klik tombol <strong>"Assignees"</strong> → popover daftar member</li>
+  <li>Klik nama member untuk toggle assign/unassign</li>
+</ol>
+
+<h2>3.8 Filter & Pencarian</h2>
+<table>
+  <tr><th>Filter</th><th>Cara</th></tr>
+  <tr><td><strong>Search</strong></td><td>Ketik di "Search cards..." — filter judul/deskripsi</td></tr>
+  <tr><td><strong>Priority</strong></td><td>Dropdown: All / None(0) / Low(1) / Medium(2) / High(3)</td></tr>
+  <tr><td><strong>Label</strong></td><td>Dropdown: All Labels / Bug / Feature / Urgent / ...</td></tr>
+  <tr><td><strong>Clear</strong></td><td>Klik "Clear filters" atau tekan <code>Escape</code></td></tr>
+</table>
+<p>Semua filter bersifat <strong>AND</strong> — kartu harus cocok dengan semua filter aktif.</p>
+
+<h2>3.9 Activity Feed</h2>
+<ol>
+  <li>Klik <strong>"Activity"</strong> di kanan atas header board</li>
+  <li>Panel slide-out menampilkan riwayat: buat, edit, hapus, pindah kartu, assign member, toggle label</li>
+  <li>Setiap entry menampilkan: aksi, waktu, user, dan metadata detail</li>
+</ol>
+
+<!-- SECTION 4 -->
+<div class="page-break"></div>
+<h1>4. Panduan Superadmin</h1>
+
+<h2>4.1 Akses Database Langsung</h2>
+
+<h3>Prisma Studio (GUI Browser)</h3>
+<pre><code>npx prisma studio
+# Buka http://localhost:5555</code></pre>
+<p>GUI visual untuk browse, edit, dan hapus data di semua tabel.</p>
+
+<h3>SQLite CLI</h3>
+<pre><code>sqlite3 prisma/dev.db
+
+-- Contoh query
+SELECT title, priority FROM cards;
+SELECT * FROM activities ORDER BY created_at DESC LIMIT 20;
+SELECT u.name, wm.role FROM users u JOIN workspace_members wm ON u.id = wm.user_id;</code></pre>
+
+<h2>4.2 Manajemen User</h2>
+
+<h3>Tambah User Baru (via Prisma Studio)</h3>
+<ol>
+  <li>Buka Prisma Studio → tabel <code>users</code></li>
+  <li>Klik "Add record" → isi email, name</li>
+  <li>Buka tabel <code>workspace_members</code></li>
+  <li>Tambah record dengan userId, workspaceId, role</li>
+</ol>
+
+<h3>Ubah Role User</h3>
+<pre><code>-- Via SQLite
+UPDATE workspace_members SET role = 'ADMIN' WHERE user_id = 'user_sarah';
+-- Role options: 'ADMIN', 'MEMBER', 'VIEWER'</code></pre>
+
+<h2>4.3 Reset & Backup Database</h2>
+<pre><code># Reset total (hapus semua + re-create + re-seed)
+npx prisma migrate reset --force
+
+# Hanya re-seed (data baru, schema tetap)
+npx prisma db seed
+
+# Backup
+Copy-Item "prisma/dev.db" "prisma/dev.db.backup"
+
+# Restore
+Copy-Item "prisma/dev.db.backup" "prisma/dev.db" -Force</code></pre>
+
+<h2>4.4 Audit Trail</h2>
+<p>Semua mutasi tercatat di tabel <code>activities</code>:</p>
+<table>
+  <tr><th>Field</th><th>Contoh Isi</th></tr>
+  <tr><td><code>action</code></td><td>CARD_CREATED, CARD_UPDATED, CARD_MOVED, CARD_DELETED, CARD_ASSIGNED</td></tr>
+  <tr><td><code>entity_type</code></td><td>CARD, COLUMN, BOARD, MEMBER</td></tr>
+  <tr><td><code>metadata</code></td><td>JSON detail: <code>{"title":"...", "columnId":"..."}</code></td></tr>
+  <tr><td><code>user_id</code></td><td>Siapa yang melakukan aksi</td></tr>
+  <tr><td><code>created_at</code></td><td>Timestamp aksi</td></tr>
+</table>
+
+<pre><code>-- Lihat aktivitas hari ini
+SELECT a.action, u.name, a.metadata, a.created_at
+FROM activities a JOIN users u ON a.user_id = u.id
+WHERE a.created_at >= date('now') ORDER BY a.created_at DESC;
+
+-- Kartu yang baru dihapus
+SELECT * FROM activities WHERE action = 'CARD_DELETED'
+ORDER BY created_at DESC LIMIT 10;</code></pre>
+
+<!-- SECTION 5 -->
+<div class="page-break"></div>
+<h1>5. Panduan Developer</h1>
+
+<h2>5.1 Build & Dev Commands</h2>
+<pre><code># Wajib set PATH dulu
+$env:PATH = "C:\laragon\bin\nodejs\node-v22;$env:PATH"
+
+# Build production (type check + bundle)
+npx next build
+
+# Dev mode (hot reload)
+npx next dev --port 3000
+
+# Migrasi database setelah edit schema
+npx prisma migrate dev --name deskripsi_singkat
+
+# Generate Prisma Client saja
+npx prisma generate</code></pre>
+
+<h2>5.2 Konvensi Kode</h2>
+<table>
+  <tr><th>Aturan</th><th>Detail</th></tr>
+  <tr><td><strong>Fractional Indexing</strong></td><td>Posisi = <code>Float</code>. Tidak pernah re-index semua. Hitung titik tengah: <code>(before + after) / 2</code></td></tr>
+  <tr><td><strong>Optimistic UI</strong></td><td>UI update instan via <code>useRef</code> snapshot + rollback jika server gagal</td></tr>
+  <tr><td><strong>ActionResult</strong></td><td>Return type: <code>{ success: true; data: T } | { success: false; error: string }</code></td></tr>
+  <tr><td><strong>RBAC</strong></td><td>Wajib panggil <code>assertWorkspaceRole()</code> di setiap Server Action</td></tr>
+  <tr><td><strong>Validation</strong></td><td>Semua input via Zod. ID pakai <code>z.string().min(1)</code> bukan <code>.cuid()</code></td></tr>
+  <tr><td><strong>SQLite</strong></td><td>Tidak ada enum — string literal. Metadata = <code>JSON.stringify()</code></td></tr>
+  <tr><td><strong>No TODO</strong></td><td>Dilarang komentar <code>// TODO</code> atau <code>// implementasikan nanti</code></td></tr>
+</table>
+
+<h2>5.3 Template Server Action Baru</h2>
+<pre><code>'use server';
+import { prisma } from '@/lib/prisma';
+import { getCurrentUser } from '@/lib/auth';
+import { assertWorkspaceRole, assertBoardInWorkspace } from '@/lib/rbac';
+import { mySchema } from '@/lib/validations/my-validation';
+
+type ActionResult&lt;T = void&gt; =
+  | { success: true; data: T }
+  | { success: false; error: string };
+
+export async function myAction(input) {
+  const parsed = mySchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: 'Validation failed...' };
+  }
+
+  try {
+    const user = await getCurrentUser();
+    await assertWorkspaceRole(user.id, parsed.data.workspaceId, 'MEMBER');
+
+    const result = await prisma.$transaction(async (tx) => {
+      // mutasi database...
+      await tx.activity.create({ data: {
+        action: 'MY_ACTION', userId: user.id,
+        workspaceId: parsed.data.workspaceId,
+        entityType: 'CARD', entityId: '...',
+        metadata: JSON.stringify({ /* detail */ }),
+      }});
+      return { id: '...' };
+    });
+
+    return { success: true, data: result };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}</code></pre>
+
+<h2>5.4 Alur Data — Drag & Drop</h2>
+<div class="diagram" style="text-align:left; font-size:9.5pt;">
+  <strong>1.</strong> User drag kartu dari ikon ⋮⋮<br>
+  <strong>2.</strong> <code>handleDragEnd()</code> di <code>use-kanban-board.ts</code><br>
+  <strong>3.</strong> Simpan snapshot state saat ini (useRef) untuk rollback<br>
+  <strong>4.</strong> Update state secara optimistic (UI langsung berubah)<br>
+  <strong>5.</strong> Panggil Server Action: <code>reorderCard()</code> atau <code>moveCardToColumn()</code><br>
+  <strong>6.</strong> Server: Zod validate → RBAC check → <code>calculatePosition()</code> → Prisma update<br>
+  <strong>7a.</strong> ✅ Sukses: state tetap<br>
+  <strong>7b.</strong> ❌ Gagal: rollback ke snapshot + toast error
+</div>
+
+<!-- SECTION 6 -->
+<div class="page-break"></div>
+<h1>6. Panduan Tester — Checklist</h1>
+
+<h2>6.1 Board & Kolom</h2>
+<table>
+  <tr><th>#</th><th>Test Case</th><th>Expected Result</th></tr>
+  <tr><td>1</td><td>Buat board baru dari sidebar <code>+</code></td><td>Board muncul di sidebar, bisa diklik</td></tr>
+  <tr><td>2</td><td>Edit judul board (double-click)</td><td>Judul berubah, tersimpan setelah blur</td></tr>
+  <tr><td>3</td><td>Hapus board dari sidebar</td><td>Board hilang, redirect jika board aktif</td></tr>
+  <tr><td>4</td><td>Buat kolom baru (tombol <code>+</code> kanan)</td><td>Kolom muncul di posisi terakhir</td></tr>
+  <tr><td>5</td><td>Edit nama kolom (double-click)</td><td>Nama berubah, tersimpan</td></tr>
+  <tr><td>6</td><td>Hapus kolom</td><td>Kolom + semua kartunya hilang</td></tr>
+  <tr><td>7</td><td>Drag kolom ke posisi lain</td><td>Kolom berpindah, posisi tersimpan</td></tr>
+</table>
+
+<h2>6.2 Kartu CRUD</h2>
+<table>
+  <tr><th>#</th><th>Test Case</th><th>Expected Result</th></tr>
+  <tr><td>8</td><td>Buat kartu baru ("+ Add card")</td><td>Kartu muncul di bawah kolom</td></tr>
+  <tr><td>9</td><td>Klik kartu → modal terbuka</td><td>Modal detail muncul</td></tr>
+  <tr><td>10</td><td>Edit judul di modal → Enter</td><td>Judul berubah di kartu</td></tr>
+  <tr><td>11</td><td>Edit deskripsi → blur</td><td>Deskripsi tersimpan</td></tr>
+  <tr><td>12</td><td>Ubah priority → pilih High</td><td>Badge "High" merah muncul di kartu</td></tr>
+  <tr><td>13</td><td>Hapus kartu ("Delete Card")</td><td>Kartu hilang dari kolom</td></tr>
+  <tr><td>14</td><td>Klik <strong>Close</strong> di modal</td><td><span class="check">✅</span> Modal tertutup</td></tr>
+  <tr><td>15</td><td>Klik <strong>X</strong> di modal</td><td><span class="check">✅</span> Modal tertutup</td></tr>
+</table>
+
+<h2>6.3 Drag & Drop</h2>
+<table>
+  <tr><th>#</th><th>Test Case</th><th>Expected Result</th></tr>
+  <tr><td>16</td><td>Drag kartu dalam satu kolom</td><td>Kartu berubah posisi, animasi smooth</td></tr>
+  <tr><td>17</td><td>Drag kartu ke kolom lain</td><td>Kartu pindah kolom</td></tr>
+  <tr><td>18</td><td>Drag ke posisi paling atas</td><td>Kartu jadi pertama</td></tr>
+  <tr><td>19</td><td>Drag ke posisi paling bawah</td><td>Kartu jadi terakhir</td></tr>
+  <tr><td>20</td><td>Buka modal → coba drag</td><td><span class="cross">❌</span> Drag disabled (expected)</td></tr>
+  <tr><td>21</td><td>Drag dari ikon ⋮⋮ (grip handle)</td><td><span class="check">✅</span> Drag dimulai</td></tr>
+  <tr><td>22</td><td>Klik body kartu (bukan grip)</td><td><span class="check">✅</span> Modal terbuka (bukan drag)</td></tr>
+</table>
+
+<h2>6.4 Labels</h2>
+<table>
+  <tr><th>#</th><th>Test Case</th><th>Expected Result</th></tr>
+  <tr><td>23</td><td>Buka label picker di modal</td><td>Popover daftar label muncul</td></tr>
+  <tr><td>24</td><td>Toggle label ON</td><td>Label muncul di kartu + centang di picker</td></tr>
+  <tr><td>25</td><td>Toggle label OFF</td><td>Label hilang dari kartu</td></tr>
+  <tr><td>26</td><td>Buat label baru</td><td>Label muncul di daftar + bisa di-toggle</td></tr>
+  <tr><td>27</td><td>Label tampil di kartu</td><td>Badge warna muncul di bawah judul</td></tr>
+</table>
+
+<h2>6.5 Due Dates</h2>
+<table>
+  <tr><th>#</th><th>Test Case</th><th>Expected Result</th></tr>
+  <tr><td>28</td><td>Set due date di modal</td><td>Tanggal muncul di kartu</td></tr>
+  <tr><td>29</td><td>Set due date = hari ini</td><td>"Today" (oranye)</td></tr>
+  <tr><td>30</td><td>Set due date = kemarin</td><td>Tanggal (merah — overdue)</td></tr>
+  <tr><td>31</td><td>Set due date = minggu depan</td><td>Tanggal (abu-abu)</td></tr>
+  <tr><td>32</td><td>Clear due date</td><td>Indikator hilang</td></tr>
+</table>
+
+<h2>6.6 Assignees</h2>
+<table>
+  <tr><th>#</th><th>Test Case</th><th>Expected Result</th></tr>
+  <tr><td>33</td><td>Buka assignee picker</td><td>Popover daftar member workspace</td></tr>
+  <tr><td>34</td><td>Assign member</td><td>Avatar inisial muncul di kartu</td></tr>
+  <tr><td>35</td><td>Unassign member</td><td>Avatar hilang</td></tr>
+  <tr><td>36</td><td>Assign 4+ member</td><td>3 avatar + "+1"</td></tr>
+</table>
+
+<h2>6.7 Filter & Search</h2>
+<table>
+  <tr><th>#</th><th>Test Case</th><th>Expected Result</th></tr>
+  <tr><td>37</td><td>Ketik di search</td><td>Kartu yang cocok saja muncul</td></tr>
+  <tr><td>38</td><td>Filter priority = High</td><td>2 kartu (Implement drag, Build UI)</td></tr>
+  <tr><td>39</td><td>Filter priority = Low</td><td>2 kartu (Design auth, Create docs)</td></tr>
+  <tr><td>40</td><td>Filter label = Bug</td><td>1 kartu (Write unit tests)</td></tr>
+  <tr><td>41</td><td>Kombinasi: priority + label</td><td>AND — kedua filter berlaku</td></tr>
+  <tr><td>42</td><td>Clear filters</td><td>Semua kartu kembali</td></tr>
+  <tr><td>43</td><td>Tekan <code>/</code></td><td>Search bar auto-focus</td></tr>
+  <tr><td>44</td><td>Tekan <code>Escape</code></td><td>Filter direset</td></tr>
+</table>
+
+<h2>6.8 Activity & Theme</h2>
+<table>
+  <tr><th>#</th><th>Test Case</th><th>Expected Result</th></tr>
+  <tr><td>45</td><td>Klik "Activity" di header</td><td>Panel slide-out dari kanan</td></tr>
+  <tr><td>46</td><td>Buat kartu → cek feed</td><td>"CARD_CREATED" muncul</td></tr>
+  <tr><td>47</td><td>Edit kartu → cek feed</td><td>"CARD_UPDATED" muncul</td></tr>
+  <tr><td>48</td><td>Toggle dark mode</td><td>UI berubah dark/light</td></tr>
+  <tr><td>49</td><td>Refresh setelah toggle</td><td>Tema persist</td></tr>
+  <tr><td>50</td><td>Tekan <code>Shift+?</code></td><td>Dialog shortcuts muncul</td></tr>
+</table>
+
+<h2>6.9 Edge Cases</h2>
+<table>
+  <tr><th>#</th><th>Scenario</th><th>Expected</th></tr>
+  <tr><td>E1</td><td>Buat kartu judul kosong</td><td>Tidak boleh (disabled)</td></tr>
+  <tr><td>E2</td><td>Buat kolom judul kosong</td><td>Tidak boleh</td></tr>
+  <tr><td>E3</td><td>Kosongkan judul → blur</td><td>Revert ke judul sebelumnya</td></tr>
+  <tr><td>E4</td><td>Drag lalu lepas di posisi sama</td><td>Tidak ada request ke server</td></tr>
+  <tr><td>E5</td><td>Rapid-click buat kartu</td><td>Setiap kartu posisi unik</td></tr>
+</table>
+
+<!-- SECTION 7 -->
+<div class="page-break"></div>
+<h1>7. Keyboard Shortcuts</h1>
+
+<table>
+  <tr><th style="width:30%">Shortcut</th><th>Fungsi</th></tr>
+  <tr><td><code style="font-size:14pt; padding:4px 12px;">/</code></td><td>Fokus ke search bar</td></tr>
+  <tr><td><code style="font-size:14pt; padding:4px 12px;">Escape</code></td><td>Clear semua filter + blur elemen aktif</td></tr>
+  <tr><td><code style="font-size:14pt; padding:4px 12px;">Shift + ?</code></td><td>Buka/tutup dialog keyboard shortcuts</td></tr>
+</table>
+<p>Tombol ⌨️ di pojok kanan bawah juga bisa diklik untuk membuka daftar shortcuts.</p>
+
+<hr>
+
+<h1>8. Troubleshooting</h1>
+
+<table>
+  <tr><th>Error</th><th>Penyebab</th><th>Solusi</th></tr>
+  <tr><td><code>ENOENT: prisma/dev.db</code></td><td>Database belum dibuat</td><td><code>npx prisma migrate dev</code></td></tr>
+  <tr><td><code>Validation failed</code></td><td>Input tidak valid</td><td>Pastikan semua field terisi</td></tr>
+  <tr><td><code>Port 3000 already in use</code></td><td>Server masih jalan</td><td>Kill: <code>Get-Process node | Stop-Process</code></td></tr>
+  <tr><td><code>Module not found</code></td><td>Dependencies belum install</td><td><code>npm install --legacy-peer-deps</code></td></tr>
+  <tr><td>Cards hilang saat filter</td><td>Tidak ada kartu yang cocok</td><td>Ubah priority via modal / reset filter</td></tr>
+</table>
+
+<h3>Reset Total</h3>
+<pre><code>$env:PATH = "C:\laragon\bin\nodejs\node-v22;$env:PATH"
+Remove-Item "prisma/dev.db" -ErrorAction SilentlyContinue
+npx prisma migrate dev --name reset
+npx prisma db seed
+npx next dev --port 3000</code></pre>
+
+<h3>Log & Debug</h3>
+<ul>
+  <li><strong>Server errors:</strong> Cek terminal tempat <code>next dev</code> berjalan</li>
+  <li><strong>Client errors:</strong> DevTools browser → Console tab</li>
+  <li><strong>Database:</strong> <code>npx prisma studio</code> → <code>http://localhost:5555</code></li>
+  <li><strong>Audit trail:</strong> Query tabel <code>activities</code></li>
+</ul>
+
+<hr>
+
+<div class="tip" style="margin-top:30px;">
+  <strong>📌 Quick Reference</strong>
+  <table style="margin-top:8px;">
+    <tr><td><strong>App URL</strong></td><td><code>http://localhost:3000</code></td></tr>
+    <tr><td><strong>Database</strong></td><td><code>prisma/dev.db</code> (SQLite)</td></tr>
+    <tr><td><strong>DB GUI</strong></td><td><code>npx prisma studio</code> → <code>http://localhost:5555</code></td></tr>
+    <tr><td><strong>Reset</strong></td><td><code>npx prisma migrate reset --force</code></td></tr>
+    <tr><td><strong>Build</strong></td><td><code>npx next build</code></td></tr>
+    <tr><td><strong>Dev</strong></td><td><code>npx next dev --port 3000</code></td></tr>
+  </table>
+</div>
+
+<div style="text-align:center; margin-top:50px; color:#94a3b8; font-size:9pt;">
+  <p>TaskFlow User Guide v1.0 — Generated 2 Oktober 2026</p>
+  <p>© 2026 TaskFlow. All rights reserved.</p>
+</div>
+
+</body>
+</html>

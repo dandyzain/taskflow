@@ -1,0 +1,186 @@
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import { useRouter, useParams, usePathname } from 'next/navigation';
+import { LayoutDashboard, Plus, Trash2, LogOut, User as UserIcon, Sparkles, BarChart3 } from 'lucide-react';
+import { toast } from 'sonner';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { CreateBoardDialog } from '@/components/layout/create-board-dialog';
+import { deleteBoard } from '@/actions/board-actions';
+import { logoutUser } from '@/actions/auth-actions';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
+interface SidebarProps {
+  workspaceId: string;
+  workspaceName: string;
+  boards: Array<{ id: string; title: string; description: string | null }>;
+  currentBoardId?: string;
+  currentUser?: { id: string; name: string; email: string; avatarUrl?: string | null } | null;
+}
+
+export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, currentUser }: SidebarProps) {
+  const router = useRouter();
+  const params = useParams();
+  const pathname = usePathname();
+  const activeBoardId = (params?.boardId as string) || currentBoardId;
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+
+  const handleDeleteBoard = async (boardId: string) => {
+    if (!confirm('Delete this board and all its data?')) return;
+
+    const isCurrentBoard = activeBoardId === boardId;
+    const remainingBoards = boards.filter((b) => b.id !== boardId);
+
+    const result = await deleteBoard({ boardId, workspaceId });
+    if (result.success) {
+      toast.success('Board deleted successfully');
+      if (isCurrentBoard) {
+        if (remainingBoards.length > 0) {
+          router.replace(`/workspace/${workspaceId}/board/${remainingBoards[0].id}`);
+        } else {
+          router.replace(`/workspace/${workspaceId}`);
+        }
+      }
+      router.refresh();
+    } else {
+      toast.error(result.error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const res = await logoutUser();
+      if (res.success) {
+        toast.success('Logged out successfully');
+        router.push('/login');
+        router.refresh();
+      } else {
+        toast.error(res.error);
+      }
+    } catch {
+      toast.error('Failed to log out');
+    }
+  };
+
+  return (
+    <div className="h-screen w-[260px] border-r border-border/70 bg-card/70 backdrop-blur-md flex flex-col justify-between shadow-xs">
+      <div className="flex flex-col flex-1 overflow-hidden">
+        {/* Workspace Brand Header */}
+        <div className="p-4 border-b border-border/50 flex items-center justify-between">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary/80 to-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-pastel shrink-0">
+              📋
+            </div>
+            <div className="min-w-0">
+              <h2 className="font-bold text-xs truncate leading-tight text-foreground">{workspaceName}</h2>
+              <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-pastel-mint shrink-0" />
+                Active Workspace
+              </span>
+            </div>
+          </div>
+          <ThemeToggle />
+        </div>
+
+        {/* Main Navigation (Dashboard & Reports) */}
+        <div className="p-3 pb-1 border-b border-border/40">
+          <Link
+            href={`/workspace/${workspaceId}/reports`}
+            className={cn(
+              'flex items-center space-x-2.5 rounded-xl px-3 py-2 text-xs font-medium transition-all duration-200',
+              pathname?.includes('/reports')
+                ? 'bg-primary/12 text-primary font-semibold shadow-xs border border-primary/20'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+            )}
+          >
+            <BarChart3 className={cn('h-3.5 w-3.5 shrink-0', pathname?.includes('/reports') ? 'text-primary' : 'text-muted-foreground')} />
+            <span>Dashboard & Laporan</span>
+          </Link>
+        </div>
+
+        {/* Boards List */}
+        <div className="flex-1 overflow-y-auto p-3 space-y-1.5">
+          <div className="px-2 py-1.5 text-[11px] font-bold text-muted-foreground/80 uppercase tracking-wider flex items-center justify-between">
+            <span>Boards</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/70 transition-all active:scale-95"
+              onClick={() => setCreateDialogOpen(true)}
+              title="Create new board"
+            >
+              <Plus className="h-3.5 w-3.5 text-primary" />
+            </Button>
+          </div>
+
+          <div className="space-y-1">
+            {boards.map((board) => {
+              const isActive = activeBoardId === board.id;
+              return (
+                <div key={board.id} className="group flex items-center">
+                  <Link
+                    href={`/workspace/${workspaceId}/board/${board.id}`}
+                    className={cn(
+                      'flex-1 flex items-center space-x-2.5 rounded-xl px-3 py-2 text-xs font-medium transition-all duration-200',
+                      isActive
+                        ? 'bg-primary/12 text-primary font-semibold shadow-xs border border-primary/20'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+                    )}
+                  >
+                    <LayoutDashboard className={cn('h-3.5 w-3.5 shrink-0', isActive ? 'text-primary' : 'text-muted-foreground')} />
+                    <span className="truncate">{board.title}</span>
+                  </Link>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 rounded-lg opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all shrink-0 ml-1"
+                    onClick={() => handleDeleteBoard(board.id)}
+                    title="Delete board"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* User profile & logout footer */}
+      <div className="p-3 border-t border-border/50 bg-secondary/30 backdrop-blur-sm">
+        <div className="flex items-center justify-between gap-2 p-1.5 rounded-xl bg-card/60 border border-border/40 shadow-xs">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-full bg-pastel-lavender text-pastel-lavender-text flex items-center justify-center font-bold text-xs shrink-0 shadow-xs ring-2 ring-primary/20">
+              {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : <UserIcon className="w-4 h-4" />}
+            </div>
+            <div className="min-w-0">
+              <div className="text-xs font-semibold truncate text-foreground leading-tight">
+                {currentUser?.name || 'Guest User'}
+              </div>
+              <div className="text-[10px] text-muted-foreground truncate">
+                {currentUser?.email || 'Not logged in'}
+              </div>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 rounded-lg text-muted-foreground hover:text-destructive hover:bg-pastel-rose/30 transition-all shrink-0"
+            onClick={handleLogout}
+            title="Log Out"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      </div>
+
+      <CreateBoardDialog
+        workspaceId={workspaceId}
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+      />
+    </div>
+  );
+}

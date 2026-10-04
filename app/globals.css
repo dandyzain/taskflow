@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Main Theme: Soft Pastel Lavender & Cool Grey */
+    --background: 240 33% 98%;          /* #F8F9FD */
+    --foreground: 232 28% 22%;          /* #292C44 */
+    --card: 0 0% 100%;                  /* #FFFFFF */
+    --card-foreground: 232 28% 22%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 232 28% 22%;
+    
+    /* Primary: Soft Lilac / Pastel Violet */
+    --primary: 258 78% 66%;             /* #8B68F6 */
+    --primary-foreground: 0 0% 100%;
+    
+    /* Secondary & Muted */
+    --secondary: 240 40% 95%;           /* #EDEFFB */
+    --secondary-foreground: 258 60% 40%;
+    --muted: 240 28% 95%;               /* #EEF0F9 */
+    --muted-foreground: 235 16% 52%;
+    --accent: 260 75% 95%;              /* #F2EEFE */
+    --accent-foreground: 258 78% 50%;
+    
+    /* Status: Soft Pastel Rose Red */
+    --destructive: 350 82% 70%;         /* #F2788A */
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 235 25% 91%;              /* #E4E7F4 */
+    --input: 235 25% 91%;
+    --ring: 258 78% 66%;
+    --radius: 0.85rem;
+
+    /* Pastel Accents */
+    --pastel-mint: 154 58% 86%;         /* #C4EED8 */
+    --pastel-mint-text: 158 65% 26%;
+    --pastel-sky: 204 88% 87%;          /* #C3E6FC */
+    --pastel-sky-text: 207 72% 30%;
+    --pastel-peach: 24 94% 87%;         /* #FDD5BD */
+    --pastel-peach-text: 24 85% 32%;
+    --pastel-lavender: 268 76% 89%;     /* #E2D3FC */
+    --pastel-lavender-text: 268 62% 35%;
+    --pastel-rose: 342 82% 87%;         /* #FCC6D3 */
+    --pastel-rose-text: 342 70% 32%;
+    --pastel-butter: 46 92% 85%;        /* #FCEDAC */
+    --pastel-butter-text: 42 85% 28%;
+  }
+
+  .dark {
+    /* Dark Theme: Midnight Pastel Slate */
+    --background: 234 26% 11%;          /* #141624 */
+    --foreground: 230 30% 95%;
+    --card: 233 24% 15%;                /* #1A1C2E */
+    --card-foreground: 230 30% 95%;
+    --popover: 233 24% 15%;
+    --popover-foreground: 230 30% 95%;
+    
+    /* Primary: Soft glowing pastel purple */
+    --primary: 258 78% 70%;             /* #A082F8 */
+    --primary-foreground: 234 26% 11%;
+    
+    --secondary: 233 20% 20%;
+    --secondary-foreground: 258 78% 85%;
+    --muted: 233 20% 18%;
+    --muted-foreground: 230 18% 65%;
+    --accent: 258 35% 22%;
+    --accent-foreground: 258 78% 85%;
+    
+    --destructive: 350 75% 65%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 233 20% 21%;
+    --input: 233 20% 21%;
+    --ring: 258 78% 70%;
+
+    /* Pastel Accents in Dark (Slightly deeper/richer backgrounds, bright readable text) */
+    --pastel-mint: 154 45% 24%;
+    --pastel-mint-text: 154 75% 82%;
+    --pastel-sky: 204 55% 26%;
+    --pastel-sky-text: 204 85% 85%;
+    --pastel-peach: 24 55% 25%;
+    --pastel-peach-text: 24 90% 84%;
+    --pastel-lavender: 268 45% 28%;
+    --pastel-lavender-text: 268 85% 88%;
+    --pastel-rose: 342 50% 26%;
+    --pastel-rose-text: 342 85% 86%;
+    --pastel-butter: 46 55% 24%;
+    --pastel-butter-text: 46 90% 84%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+/* Glassmorphism & Pastel Visual Enhancements */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.dark .glass-panel {
+  background: rgba(26, 28, 46, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.pastel-mesh-bg {
+  background-color: hsl(var(--background));
+  background-image: 
+    radial-gradient(at 10% 20%, hsla(258, 85%, 92%, 0.4) 0px, transparent 50%),
+    radial-gradient(at 90% 10%, hsla(204, 90%, 92%, 0.35) 0px, transparent 50%),
+    radial-gradient(at 80% 90%, hsla(342, 85%, 93%, 0.3) 0px, transparent 50%),
+    radial-gradient(at 10% 90%, hsla(154, 75%, 92%, 0.35) 0px, transparent 50%);
+}
+
+.dark .pastel-mesh-bg {
+  background-color: hsl(var(--background));
+  background-image: 
+    radial-gradient(at 10% 20%, hsla(258, 70%, 25%, 0.25) 0px, transparent 50%),
+    radial-gradient(at 90% 10%, hsla(204, 70%, 25%, 0.2) 0px, transparent 50%),
+    radial-gradient(at 80% 90%, hsla(342, 60%, 25%, 0.2) 0px, transparent 50%),
+    radial-gradient(at 10% 90%, hsla(154, 60%, 22%, 0.2) 0px, transparent 50%);
+}
+
+/* Smooth custom scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.25);
+  border-radius: 9999px;
+  transition: background 0.2s;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}
