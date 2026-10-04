@@ -8,7 +8,7 @@ WORKDIR /app
 FROM base AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci || npm install
 
 # Builder
 FROM base AS builder
