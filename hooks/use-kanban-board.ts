@@ -83,7 +83,20 @@ export function useKanbanBoard(initialData: BoardData) {
       const [movedCard] = activeCards.splice(activeIndex, 1);
       
       const overIndex = overCards.findIndex(c => c.id === over.id);
-      const insertIndex = overIndex >= 0 ? overIndex : overCards.length;
+      let insertIndex: number;
+      if (overIndex >= 0) {
+        // Place the card below the hovered card when the dragged card's top edge
+        // has passed the hovered card's vertical midpoint. This mirrors how
+        // closestCorners resolves collisions after insertion, so the preview
+        // stays stable and the user can drop a card at the very bottom.
+        const activeRect = active.rect.current.translated;
+        const isBelowOverItem =
+          !!activeRect && activeRect.top > over.rect.top + over.rect.height / 2;
+        insertIndex = overIndex + (isBelowOverItem ? 1 : 0);
+      } else {
+        // Hovering the column container itself (empty area) → append to the end
+        insertIndex = overCards.length;
+      }
       
       overCards.splice(insertIndex, 0, { ...movedCard, columnId: overColumn.id });
       
@@ -232,18 +245,38 @@ export function useKanbanBoard(initialData: BoardData) {
         toast.error(result.error);
       }
     } else {
-      // Cross-column move
-      // State is already updated from dragOver
-      const overIndex = currentColumn.cards.findIndex(c => c.id === over.id);
-      let targetIndex = overIndex >= 0 ? overIndex : Math.max(0, currentColumn.cards.length - 1);
-      // In case we dropped on empty column
-      if (overIndex === -1) {
-        const isColumnDrop = columns.some(c => c.id === over.id);
-        if (isColumnDrop) {
-          targetIndex = Math.max(0, currentColumn.cards.length - 1); 
-        }
+      // Cross-column move.
+      // handleDragOver already moved the card into the destination column at the
+      // position where it first entered. The user may have kept dragging inside
+      // the destination column afterwards (the sortable preview reorders the
+      // cards visually), so we must apply that final position here — otherwise
+      // the card snaps back to where it first entered (e.g. the middle).
+      const oldIndex = currentColumn.cards.findIndex(c => c.id === active.id);
+      if (oldIndex === -1) {
+        restoreSnapshot();
+        return;
       }
-      targetIndex = Math.max(0, targetIndex);
+
+      let targetIndex = oldIndex;
+      const overIndex = currentColumn.cards.findIndex(c => c.id === over.id);
+      if (overIndex >= 0) {
+        // Dropped over a card in the destination column → take its slot,
+        // matching verticalListSortingStrategy's preview.
+        targetIndex = overIndex;
+      }
+      // Dropped on the column container (or on the card itself) → keep the
+      // position computed by handleDragOver.
+
+      targetIndex = Math.max(0, Math.min(targetIndex, currentColumn.cards.length - 1));
+
+      if (targetIndex !== oldIndex) {
+        setColumns(prev => prev.map(col => {
+          if (col.id === currentColumn.id) {
+            return { ...col, cards: arrayMove(col.cards, oldIndex, targetIndex) };
+          }
+          return col;
+        }));
+      }
 
       const result = await moveCardToColumn({
         cardId: String(active.id),
