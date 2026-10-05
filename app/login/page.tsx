@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { LogIn, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
 import { loginUser } from '@/actions/auth-actions';
+import { LogoMark } from '@/components/brand/logo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -90,10 +91,12 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-6 relative z-10 animate-fade-in-up">
         {/* Brand header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary to-primary/80 text-primary-foreground shadow-pastel mb-1 transition-transform hover:scale-105 active:scale-95 duration-200">
-            <span className="text-3xl">📋</span>
+          <div className="inline-flex items-center justify-center mb-1 transition-transform hover:scale-105 active:scale-95 duration-200 drop-shadow-[0_10px_24px_rgba(139,104,246,0.35)]">
+            <LogoMark className="w-16 h-16" />
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">TaskFlow</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
+            Task<span className="bg-gradient-to-r from-[#A78BFA] via-[#7C9CF8] to-[#5CCFC0] bg-clip-text text-transparent">Flow</span>
+          </h1>
           <p className="text-xs text-muted-foreground font-medium">
             Modern Collaborative Task Management
           </p>

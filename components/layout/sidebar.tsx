@@ -6,6 +6,7 @@ import { useRouter, useParams, usePathname } from 'next/navigation';
 import { LayoutDashboard, Plus, Trash2, LogOut, User as UserIcon, Sparkles, BarChart3, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { LogoMark } from '@/components/brand/logo';
 import { CreateBoardDialog } from '@/components/layout/create-board-dialog';
 import { deleteBoard } from '@/actions/board-actions';
 import { logoutUser } from '@/actions/auth-actions';
@@ -73,9 +74,7 @@ export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, cu
         {/* Workspace Brand Header */}
         <div className="p-4 pt-[max(1rem,env(safe-area-inset-top))] border-b border-border/50 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary/80 to-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-pastel shrink-0">
-              📋
-            </div>
+            <LogoMark className="w-9 h-9 drop-shadow-[0_4px_10px_rgba(139,104,246,0.30)]" />
             <div className="min-w-0">
               <h2 className="font-bold text-xs truncate leading-tight text-foreground">{workspaceName}</h2>
               <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium">

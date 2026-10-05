@@ -8,6 +8,7 @@ import { Sidebar } from '@/components/layout/sidebar';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { LogoMark } from '@/components/brand/logo';
 
 interface WorkspaceShellProps {
   workspaceId: string;
@@ -45,9 +46,7 @@ export function WorkspaceShell({
             href={`/workspace/${workspaceId}`}
             className="flex items-center gap-2 min-w-0 group"
           >
-            <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-primary/80 to-primary text-primary-foreground flex items-center justify-center font-bold text-xs shadow-pastel shrink-0">
-              📋
-            </div>
+            <LogoMark className="w-8 h-8 drop-shadow-[0_4px_10px_rgba(139,104,246,0.30)]" />
             <div className="min-w-0">
               <h1 className="font-bold text-xs truncate leading-tight text-foreground group-hover:text-primary transition-colors">
                 {workspaceName}

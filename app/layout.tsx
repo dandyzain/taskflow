@@ -9,6 +9,8 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'TaskFlow - Collaborative Task Management',
   description: 'A modern Kanban board for team collaboration',
+  applicationName: 'TaskFlow',
+  appleWebApp: { title: 'TaskFlow', capable: true, statusBarStyle: 'default' },
 };
 
 export const viewport: Viewport = {
