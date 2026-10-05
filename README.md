@@ -1,118 +1,115 @@
-# TaskFlow 📋
+# 📋 TaskFlow — Modern Collaborative Kanban & Team Analytics
 
-TaskFlow adalah aplikasi manajemen proyek & Kanban Board modern dengan desain antarmuka pastel yang elegan, animasi interaktif, serta modul **Dashboard & Reporting Kinerja Karyawan**.
+<div align="center">
+  <img src="public/icon-512.png" alt="TaskFlow Logo" width="120" height="120" />
+  <h3>TaskFlow — Platform Manajemen Tugas Kolaboratif & Analisis Kinerja Tim</h3>
+  <p>Dibangun dengan Next.js 15 (App Router), Tailwind CSS (Pastel Palette), @dnd-kit Sortable, Prisma ORM, dan SQLite.</p>
 
-![TaskFlow Kanban Board](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
-![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)
-![TailwindCSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)
-![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?style=for-the-badge&logo=prisma)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript)
-
----
-
-## 🌟 Fitur Utama
-
-- **🎨 Modern Pastel UI & UX**:
-  - Palet warna lembut (*mint, sky, peach, lavender, rose, butter*).
-  - Animasi transisi halus dan micro-interactions modern.
-  - Dukungan Dark Mode dan Light Mode terintegrasi.
-- **📌 Interactive Kanban Board**:
-  - Drag-and-drop antar kolom dan reorder kartu menggunakan `@dnd-kit`.
-  - Collision detection khusus kolom & kartu untuk pergerakan mulus tanpa error.
-  - Algoritma **Fractional Indexing** untuk optimasi urutan kartu tanpa re-indexing massal.
-  - Multi-Board per Workspace (misal: *Sprint Board*, *Product Roadmap*).
-- **📊 Modul Dashboard & Reporting**:
-  - **Task KPI Metrics**: Total tugas, persentase penyelesaian, tugas aktif, dan tugas terlambat.
-  - **Visualisasi Distribusi**: Multi-segment progress bar untuk status tahapan dan urgensi prioritas.
-  - **Velocity & Activity Trend**: Diagram batang SVG tren volume tugas per hari (7 hari terakhir).
-  - **Employee Performance & Leaderboard**: Podium Top Performers, beban kerja (*Optimal, Light, Heavy, Overloaded*), on-time delivery rate, dan tabel evaluasi karyawan.
-  - **Ekspor Data (CSV)**: Unduh laporan detail tugas dan performa tim dalam 1 klik.
-- **🔐 Autentikasi & RBAC (Role-Based Access Control)**:
-  - Manajemen akun dengan registrasi & login aman (JWT Cookie & bcrypt password hashing).
-  - Hak akses hierarkis Workspace: `ADMIN`, `MEMBER`, `VIEWER`.
-- **⚡ Optimistic UI**: Respon antarmuka instan dengan mekanisme rollback otomatis jika terjadi kegagalan jaringan.
+  <p>
+    <a href="https://taskflow-production-41d9.up.railway.app"><strong>🌐 Buka Live Demo (Railway) »</strong></a>
+  </p>
+</div>
 
 ---
 
-## 👥 Akun Demo untuk Pengujian
+## 🚀 Sekilas Proyek
 
-Gunakan kredensial berikut untuk mencoba fitur aplikasi:
+TaskFlow adalah aplikasi manajemen tugas Kanban enterprise-grade yang menggabungkan estetika modern bertema pastel lembut, animasi interaktif, serta modul analitik mendalam untuk memantau produktivitas dan evaluasi kinerja karyawan secara real-time.
 
-| Akun | Email | Password | Role |
-| :--- | :--- | :--- | :--- |
-| **Demo User** | `demo@taskflow.dev` | `password123` | **ADMIN** |
-| **Sarah Chen** | `sarah@taskflow.dev` | `password123` | **MEMBER** |
-| **Alex Kim** | `alex@taskflow.dev` | `password123` | **MEMBER** |
+Aplikasi ini sudah sepenuhnya **responsif** di seluruh perangkat (Mobile 320px, Tablet, hingga Desktop 4K) dan mendukung **PWA (Progressive Web App)**.
+
+### 🔗 Live Deployment
+- **Production URL:** [https://taskflow-production-41d9.up.railway.app](https://taskflow-production-41d9.up.railway.app)
+- **Akun Demo Cepat:**
+  - **Admin / Workspace Owner:** `demo@taskflow.dev` (Password: `password123`)
+  - **Core Member (Sarah):** `sarah@taskflow.dev` (Password: `password123`)
+  - **Core Member (Alex):** `alex@taskflow.dev` (Password: `password123`)
+
+---
+
+## ✨ Fitur Utama
+
+### 1. 🗂️ Kanban Board Interaktif & Fluid
+- **Drag & Drop Halus (@dnd-kit):** Mendukung pemindahan kolom (*horizontal sortable*) dan kartu tugas (*vertical & cross-column sortable*) secara presisi dengan algoritma *fractional indexing*.
+- **Touch-Friendly & Snap Scroll:** Nyaman digeser di smartphone dengan *CSS scroll snap* dan affordance khusus layar sentuh (`hover-reveal`).
+- **Pencarian & Filter Cepat:** Filter kartu secara instan berdasarkan nama, tingkat prioritas (*Urgent, High, Medium, Low*), dan label warna kustom.
+- **Detail Tugas Komprehensif:** Modal interaktif untuk mengubah judul, deskripsi, tanggal jatuh tempo (*due date*), assignee anggota tim, dan checklist.
+
+### 2. 📊 Dashboard & Reporting Kinerja Karyawan
+- **KPI Summary Cards:** Menghitung total tugas, tingkat penyelesaian (*completion rate*), tugas tepat waktu (*on-time rate*), tugas *overdue*, dan rata-rata *lead time*.
+- **Velocity Chart:** Visualisasi jumlah tugas yang diselesaikan per minggu atau per sprint.
+- **Top Performers Podium:** Peringkat 3 besar kontributor terbaik dengan sistem medali dan rasio keberhasilan.
+- **Tabel Evaluasi Anggota Tim:** Rincian beban kerja (*optimal, heavy, overloaded*), total tugas yang diemban, tugas sedang berjalan, dan riwayat aktivitas.
+
+### 3. 🎨 Desain Modern Pastel & Dark Mode
+- **Tema Pastel Elegan:** Menggunakan palet pastel lembut (*Lavender, Sky Blue, Mint, Peach*) dengan background *mesh gradient* yang nyaman di mata.
+- **Dark Mode Support:** Transisi halus antara mode terang dan mode gelap dengan kontras warna yang terjaga.
+- **Brand Identity & Iconography:** Dilengkapi logo SVG kustom berbentuk monogram "T" dan blok Kanban serta icon multi-resolusi untuk iOS dan Android.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 15 (App Router, Server Actions, Server Components)
-- **Frontend**: React 19, Tailwind CSS, Lucide React, Radix UI
-- **Drag & Drop**: `@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities`
-- **Database & ORM**: SQLite, Prisma ORM
-- **Autentikasi**: Jose (JWT), bcryptjs
-- **Validasi**: Zod
+- **Framework:** [Next.js 15](https://nextjs.org/) (App Router, Server Actions, React Server Components)
+- **Bahasa:** TypeScript 5
+- **Styling:** Tailwind CSS, Radix UI Primitives, Lucide Icons, Sonner Toast
+- **Drag and Drop:** `@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities`
+- **Database & ORM:** SQLite, [Prisma ORM](https://www.prisma.io/)
+- **State & Optimistic UI:** React Optimistic Updates dengan rollback otomatis saat koneksi gagal
+- **Hosting / Deployment:** Docker, Railway
 
 ---
 
-## 🚀 Instalasi & Menjalankan Lokal
+## 💻 Panduan Instalasi Lokal
 
-1. **Clone Repository**:
-   ```bash
-   git clone git@github.com:dandyzain/taskflow.git
-   cd taskflow
-   ```
+### 1. Prasyarat
+- **Node.js:** v20.x atau v22.x (Rekomendasi: `v22.x`)
+- **npm:** v10.x+
+- **Git**
 
-2. **Install Dependencies**:
-   ```bash
-   npm install
-   ```
+### 2. Clone Repository & Setup
+```bash
+# Clone repository dari GitLab
+git clone git@gitlab.com:dandyzain.personal/taskflow.git
+cd taskflow
 
-3. **Konfigurasi Environment**:
-   Salin berkas `.env.example` ke `.env`:
-   ```bash
-   cp .env.example .env
-   ```
+# Install dependensi
+npm install --legacy-peer-deps
+```
 
-4. **Migrasi & Seed Data**:
-   ```bash
-   npx prisma migrate dev
-   npx tsx prisma/seed.ts
-   ```
+### 3. Konfigurasi Environment & Database
+Buat file `.env` di root project:
+```env
+DATABASE_URL="file:./dev.db"
+JWT_SECRET="taskflow-super-secure-secret-key-2026"
+```
 
-5. **Jalankan Development Server**:
-   ```bash
-   npm run dev
-   ```
-   Buka browser di `http://localhost:3000`.
+Inisialisasi database SQLite dan seed data demo:
+```bash
+# Generate Prisma Client
+npx prisma generate
 
----
+# Jalankan migrasi database
+npx prisma migrate dev --name init
 
-## 🚢 Panduan Deploy
+# Seed data contoh (pengguna demo, board, kolom, kartu, label)
+npx prisma db seed
+```
 
-### 🚄 Deploy ke Railway (Rekomendasi untuk SQLite)
-Railway mendukung deployment langsung dari repository GitLab atau GitHub:
-
-1. Buka dashboard [Railway](https://railway.com) lalu klik **New Project**.
-2. Pilih **Deploy from GitHub repo** atau **Deploy from GitLab repo**, lalu pilih repository `taskflow`.
-3. Tambahkan **Environment Variables** di tab *Variables*:
-   - `DATABASE_URL`: `file:./dev.db` (atau path volume `/app/prisma/dev.db`)
-   - `AUTH_SECRET`: Generate string acak minimal 32 karakter (misal: `openssl rand -base64 32`)
-4. *(Opsional - Persistent Storage)*: Di tab *Settings* -> *Volumes*, buat volume baru dengan mount path `/app/prisma` agar data database SQLite tetap tersimpan saat restart container.
-5. Railway akan mendeteksi [`railway.json`](./railway.json) atau [`Dockerfile`](./Dockerfile), menjalankan migrasi & seed otomatis, dan memberikan domain live publik gratis (`https://xxxx.up.railway.app`)!
+### 4. Menjalankan Server Pengembangan
+```bash
+npm run dev
+```
+Buka browser di **http://localhost:3000**.
 
 ---
 
-### ▲ Deploy ke Vercel
-1. Buka [Vercel](https://vercel.com/new) dan impor repository `taskflow`.
-2. Di bagian **Environment Variables**, tambahkan:
-   - `DATABASE_URL`: URL database hosted (PostgreSQL / Turso LibSQL / Supabase).
-   - `AUTH_SECRET`: Kunci rahasia JWT minimal 32 karakter.
-3. Build command: `npm run build` (otomatis menjalankan `prisma generate && next build`).
+## 📖 Panduan Lengkap Pengguna
+
+Dokumentasi lengkap panduan penggunaan, manual book pengujian, panduan peran (Role Guide), serta tips pemecahan masalah dapat dibaca di:
+👉 **[USER_GUIDE.md](./USER_GUIDE.md)**
 
 ---
 
-## 📄 Lisensi
-MIT License © 2026 Dandy Rahmat Zain
+## 👥 Kontributor
+- **Dandy Rahmat Zain** ([dandyzain.personal@gmail.com](mailto:dandyzain.personal@gmail.com))
