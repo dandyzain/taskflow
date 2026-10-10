@@ -30,7 +30,7 @@ export function WorkspaceShell({
   return (
     <div className="flex flex-col md:flex-row h-[100dvh] w-full pastel-mesh-bg overflow-hidden">
       {/* Mobile Top Navigation Bar (visible below md breakpoint) */}
-      <header className="md:hidden flex items-center justify-between px-3.5 py-2.5 bg-card/80 backdrop-blur-lg border-b border-border/70 z-30 shrink-0">
+      <header className="md:hidden flex items-center justify-between px-3.5 py-2.5 pt-[max(0.625rem,env(safe-area-inset-top))] bg-card/80 backdrop-blur-lg border-b border-border/70 z-30 shrink-0">
         <div className="flex items-center gap-2.5 min-w-0">
           <Button
             variant="ghost"

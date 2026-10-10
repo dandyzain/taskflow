@@ -61,11 +61,11 @@ export function TaskTable({ tasks }: TaskTableProps) {
           </div>
 
           {/* Status Filter Buttons */}
-          <div className="flex items-center gap-1 bg-secondary/50 p-0.5 rounded-xl border border-border/60 text-xs overflow-x-auto scrollbar-none w-full sm:w-auto">
+          <div className="grid grid-cols-4 sm:flex items-center gap-1 bg-secondary/50 p-0.5 rounded-xl border border-border/60 text-xs w-full sm:w-auto">
             <button
               onClick={() => setStatusFilter('all')}
               className={cn(
-                'px-2.5 py-1 rounded-lg font-semibold text-[11px] transition-all whitespace-nowrap',
+                'px-2 py-1 rounded-lg font-semibold text-[11px] transition-all text-center truncate',
                 statusFilter === 'all' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -74,16 +74,16 @@ export function TaskTable({ tasks }: TaskTableProps) {
             <button
               onClick={() => setStatusFilter('progress')}
               className={cn(
-                'px-2.5 py-1 rounded-lg font-semibold text-[11px] transition-all whitespace-nowrap',
+                'px-2 py-1 rounded-lg font-semibold text-[11px] transition-all text-center truncate',
                 statusFilter === 'progress' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
               )}
             >
-              In Progress
+              Progress
             </button>
             <button
               onClick={() => setStatusFilter('completed')}
               className={cn(
-                'px-2.5 py-1 rounded-lg font-semibold text-[11px] transition-all whitespace-nowrap',
+                'px-2 py-1 rounded-lg font-semibold text-[11px] transition-all text-center truncate',
                 statusFilter === 'completed' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -92,7 +92,7 @@ export function TaskTable({ tasks }: TaskTableProps) {
             <button
               onClick={() => setStatusFilter('overdue')}
               className={cn(
-                'px-2.5 py-1 rounded-lg font-semibold text-[11px] transition-all whitespace-nowrap',
+                'px-2 py-1 rounded-lg font-semibold text-[11px] transition-all text-center truncate',
                 statusFilter === 'overdue' ? 'bg-card text-rose-600 dark:text-rose-400 shadow-xs' : 'text-muted-foreground hover:text-foreground'
               )}
             >

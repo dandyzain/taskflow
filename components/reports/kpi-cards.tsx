@@ -24,7 +24,7 @@ export function KpiCards({ summary, boardsCount }: KpiCardsProps) {
     {
       title: 'Tugas Selesai',
       value: summary.completedTasks,
-      subtitle: `${summary.completionRate}% Tingkat penyelesaian`,
+      subtitle: `${summary.completionRate}% rasio selesai`,
       icon: CheckCircle2,
       iconBg: 'bg-pastel-mint/60 text-emerald-800 dark:text-emerald-200',
       badge: `${summary.completionRate}% Selesai`,
@@ -34,7 +34,7 @@ export function KpiCards({ summary, boardsCount }: KpiCardsProps) {
     {
       title: 'Sedang Dikerjakan',
       value: summary.inProgressTasks,
-      subtitle: `${summary.backlogTasks} task menunggu antrean`,
+      subtitle: `${summary.backlogTasks} task di antrean`,
       icon: Clock,
       iconBg: 'bg-pastel-peach/60 text-amber-800 dark:text-amber-200',
       badge: 'In Progress',
@@ -44,7 +44,7 @@ export function KpiCards({ summary, boardsCount }: KpiCardsProps) {
     {
       title: 'Tugas Terlambat',
       value: summary.overdueTasks,
-      subtitle: summary.dueSoonTasks > 0 ? `${summary.dueSoonTasks} mendekati deadline (< 48j)` : 'Tidak ada deadline mendesak',
+      subtitle: summary.dueSoonTasks > 0 ? `${summary.dueSoonTasks} mendekati batas` : 'Semua deadline aman',
       icon: AlertTriangle,
       iconBg: 'bg-pastel-rose/60 text-rose-800 dark:text-rose-200',
       badge: summary.overdueTasks > 0 ? 'Perlu Perhatian' : 'Aman',
@@ -70,39 +70,96 @@ export function KpiCards({ summary, boardsCount }: KpiCardsProps) {
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3.5">
       {cards.map((card, idx) => {
         const Icon = card.icon;
+        const isFifthCard = idx === 4;
+
         return (
           <div
             key={idx}
             className={cn(
               'group relative rounded-2xl bg-card/80 dark:bg-card/40 backdrop-blur-md p-3 sm:p-4 border border-border/80 shadow-xs hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5',
               card.borderGlow,
-              idx === 4 ? 'col-span-2 sm:col-span-1' : ''
+              isFifthCard ? 'col-span-2 sm:col-span-1' : ''
             )}
           >
-            <div className="flex items-center justify-between gap-1.5 mb-2 sm:mb-3">
-              <div
-                className={cn(
-                  'w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-xs shrink-0',
-                  card.iconBg
-                )}
-              >
-                <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
-              </div>
-              <span
-                className={cn(
-                  'text-[9px] sm:text-[10px] font-semibold px-2 py-0.5 rounded-full border truncate',
-                  card.badgeColor
-                )}
-              >
-                {card.badge}
-              </span>
-            </div>
+            {/* Optimized mobile horizontal presentation for the single full-width 5th card */}
+            {isFifthCard ? (
+              <>
+                <div className="flex sm:hidden items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div
+                      className={cn(
+                        'w-9 h-9 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-xs shrink-0',
+                        card.iconBg
+                      )}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-muted-foreground truncate">{card.title}</p>
+                      <p className="text-[11px] text-muted-foreground/80 truncate">{card.subtitle}</p>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className="flex items-center justify-end mb-0.5">
+                      <span className={cn('text-[9px] font-semibold px-2 py-0.5 rounded-full border', card.badgeColor)}>
+                        {card.badge}
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-bold tracking-tight text-foreground">{card.value}</h3>
+                  </div>
+                </div>
 
-            <div className="space-y-0.5">
-              <p className="text-[11px] sm:text-xs font-medium text-muted-foreground truncate">{card.title}</p>
-              <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{card.value}</h3>
-              <p className="text-[10px] sm:text-[11px] text-muted-foreground/80 truncate pt-0.5">{card.subtitle}</p>
-            </div>
+                {/* Standard vertical layout on tablet/desktop */}
+                <div className="hidden sm:block">
+                  <div className="flex items-center justify-between gap-1.5 mb-3">
+                    <div
+                      className={cn(
+                        'w-9 h-9 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-xs shrink-0',
+                        card.iconBg
+                      )}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <span className={cn('text-[10px] font-semibold px-2 py-0.5 rounded-full border truncate', card.badgeColor)}>
+                      {card.badge}
+                    </span>
+                  </div>
+                  <div className="space-y-0.5">
+                    <p className="text-xs font-medium text-muted-foreground truncate">{card.title}</p>
+                    <h3 className="text-2xl font-bold tracking-tight text-foreground">{card.value}</h3>
+                    <p className="text-[11px] text-muted-foreground/80 truncate pt-0.5">{card.subtitle}</p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              /* Standard layout for cards 1-4 */
+              <>
+                <div className="flex items-center justify-between gap-1.5 mb-2 sm:mb-3">
+                  <div
+                    className={cn(
+                      'w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-xs shrink-0',
+                      card.iconBg
+                    )}
+                  >
+                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </div>
+                  <span
+                    className={cn(
+                      'text-[9px] sm:text-[10px] font-semibold px-2 py-0.5 rounded-full border truncate',
+                      card.badgeColor
+                    )}
+                  >
+                    {card.badge}
+                  </span>
+                </div>
+
+                <div className="space-y-0.5">
+                  <p className="text-[11px] sm:text-xs font-medium text-muted-foreground truncate">{card.title}</p>
+                  <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{card.value}</h3>
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground/80 truncate pt-0.5">{card.subtitle}</p>
+                </div>
+              </>
+            )}
           </div>
         );
       })}

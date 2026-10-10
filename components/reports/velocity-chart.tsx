@@ -21,11 +21,11 @@ export function VelocityChart({ dailyTrends }: VelocityChartProps) {
   const totalCompleted = dailyTrends.reduce((acc, d) => acc + d.completedCount, 0);
 
   return (
-    <div className="rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-md p-5 shadow-xs flex flex-col justify-between space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+    <div className="rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-md p-3.5 sm:p-5 shadow-xs flex flex-col justify-between space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
         <div>
           <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-primary" />
+            <TrendingUp className="w-4 h-4 text-primary shrink-0" />
             Tren Aktivitas & Velocity (7 Hari Terakhir)
           </h3>
           <p className="text-xs text-muted-foreground mt-0.5">
@@ -34,7 +34,7 @@ export function VelocityChart({ dailyTrends }: VelocityChartProps) {
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-3 text-xs shrink-0 bg-secondary/50 px-3 py-1.5 rounded-xl border border-border/50">
+        <div className="flex items-center gap-3 text-[11px] sm:text-xs shrink-0 bg-secondary/50 px-2.5 sm:px-3 py-1.5 rounded-xl border border-border/50 self-start sm:self-auto">
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-pastel-sky ring-2 ring-sky-400/30" />
             <span className="text-muted-foreground font-medium">Dibuat ({totalCreated})</span>
