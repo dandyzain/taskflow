@@ -211,74 +211,80 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
   return (
     <div className="h-full flex flex-col overflow-y-auto p-3 sm:p-5 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto w-full">
       {/* Top Header & Reporting Action Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3.5 pb-2 border-b border-border/60 shrink-0">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-border/60 shrink-0">
         <div>
-          <div className="flex items-start sm:items-center gap-2.5">
-            <span className="p-2 sm:p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary border border-primary/20 shadow-xs shrink-0 mt-0.5 sm:mt-0">
-              <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-base sm:text-2xl font-bold tracking-tight text-foreground leading-snug">
-                  Dashboard & Laporan Kinerja
-                </h1>
-                <span className="text-[10px] sm:text-[11px] font-semibold bg-pastel-mint text-emerald-800 dark:text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-300/40 shadow-xs shrink-0">
-                  Live Analytics
-                </span>
-              </div>
-              <p className="text-xs text-muted-foreground mt-0.5 leading-normal">
-                Workspace: <span className="font-semibold text-foreground">{initialData.workspace.name}</span> • Analitik tugas & tim
-              </p>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary border border-primary/20 flex items-center justify-center shadow-xs shrink-0">
+                <BarChart3 className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+              </span>
+              <h1 className="text-base sm:text-2xl font-bold tracking-tight text-foreground truncate">
+                Dashboard & Laporan
+              </h1>
             </div>
+
+            {/* Live Indicator Pill */}
+            <span className="text-[10px] sm:text-[11px] font-semibold bg-pastel-mint/70 text-emerald-800 dark:text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-300/40 shadow-xs shrink-0 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              Live
+            </span>
           </div>
+
+          <p className="text-xs text-muted-foreground mt-1 pl-[42px] sm:pl-0 truncate sm:whitespace-normal">
+            Analitik tugas dan produktivitas tim
+          </p>
         </div>
 
         {/* Global Controls & Export */}
-        <div className="grid grid-cols-2 md:flex md:items-center gap-2 w-full md:w-auto">
-          {/* Board Selector */}
-          <div className="col-span-1 flex items-center gap-1.5 bg-card/70 border border-border/80 rounded-xl px-2.5 py-1.5 text-xs shadow-xs min-w-0">
-            <Layers className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-            <select
-              value={selectedBoardId}
-              onChange={(e) => setSelectedBoardId(e.target.value)}
-              className="bg-transparent text-xs font-semibold text-foreground focus:outline-none cursor-pointer w-full truncate"
-            >
-              <option value="all">Semua Board ({initialData.boards.length})</option>
-              {initialData.boards.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.title}
-                </option>
-              ))}
-            </select>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
+          {/* Row 1 on mobile: Board & Time Filter */}
+          <div className="grid grid-cols-2 gap-2 w-full sm:w-auto">
+            {/* Board Selector */}
+            <div className="col-span-1 flex items-center gap-1.5 bg-card/80 border border-border/80 rounded-xl px-2.5 h-9 text-xs shadow-xs min-w-0">
+              <Layers className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+              <select
+                value={selectedBoardId}
+                onChange={(e) => setSelectedBoardId(e.target.value)}
+                className="bg-transparent text-xs font-semibold text-foreground focus:outline-none cursor-pointer w-full truncate pr-1"
+              >
+                <option value="all">Semua Board ({initialData.boards.length})</option>
+                {initialData.boards.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Time Range Filter */}
+            <div className="col-span-1 flex items-center gap-1.5 bg-card/80 border border-border/80 rounded-xl px-2.5 h-9 text-xs shadow-xs min-w-0">
+              <Calendar className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+              <select
+                value={timeRange}
+                onChange={(e) => setTimeRange(e.target.value as 'all' | '30d' | '7d')}
+                className="bg-transparent text-xs font-semibold text-foreground focus:outline-none cursor-pointer w-full truncate pr-1"
+              >
+                <option value="all">Semua Waktu</option>
+                <option value="30d">30 Hari Terakhir</option>
+                <option value="7d">7 Hari Terakhir</option>
+              </select>
+            </div>
           </div>
 
-          {/* Time Range Filter */}
-          <div className="col-span-1 flex items-center gap-1.5 bg-card/70 border border-border/80 rounded-xl px-2.5 py-1.5 text-xs shadow-xs min-w-0">
-            <Calendar className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-            <select
-              value={timeRange}
-              onChange={(e) => setTimeRange(e.target.value as 'all' | '30d' | '7d')}
-              className="bg-transparent text-xs font-semibold text-foreground focus:outline-none cursor-pointer w-full truncate"
-            >
-              <option value="all">Semua Waktu</option>
-              <option value="30d">30 Hari Terakhir</option>
-              <option value="7d">7 Hari Terakhir</option>
-            </select>
-          </div>
-
-          {/* Action Buttons: Export & Print */}
-          <div className="col-span-2 md:col-span-1 flex items-center gap-2">
+          {/* Row 2 on mobile: Export & Print */}
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             {/* Export Dropdown Popover */}
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  size="sm"
-                  className="flex-1 md:flex-initial rounded-xl border-border/80 text-xs gap-1.5 shadow-xs bg-card/80 hover:bg-card h-8.5 md:h-8 justify-center"
+                  className="flex-1 sm:flex-initial rounded-xl border-border/80 text-xs gap-2 shadow-xs bg-card/80 hover:bg-card h-9 px-3 justify-between sm:justify-center font-semibold"
                 >
-                  <Download className="w-3.5 h-3.5 text-primary shrink-0" />
-                  <span>Ekspor Data</span>
-                  <ChevronDown className="w-3 h-3 text-muted-foreground ml-auto md:ml-0" />
+                  <span className="flex items-center gap-1.5 truncate">
+                    <Download className="w-3.5 h-3.5 text-primary shrink-0" />
+                    <span>Ekspor Data</span>
+                  </span>
+                  <ChevronDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent align="end" className="w-56 rounded-2xl p-2 border-border/80 shadow-pastel bg-card/95 backdrop-blur-xl">
@@ -304,12 +310,12 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
             {/* Print Button */}
             <Button
               onClick={handlePrint}
-              variant="ghost"
-              size="icon"
-              className="h-8.5 w-8.5 md:h-8 md:w-8 rounded-xl border border-border/70 hover:bg-secondary/80 text-muted-foreground hover:text-foreground shrink-0"
+              variant="outline"
+              className="h-9 px-3 rounded-xl border border-border/80 bg-card/80 hover:bg-card text-muted-foreground hover:text-foreground shrink-0 shadow-xs flex items-center gap-1.5 text-xs font-semibold"
               title="Cetak Laporan"
             >
               <Printer className="w-3.5 h-3.5" />
+              <span className="hidden xs:inline">Cetak</span>
             </Button>
           </div>
         </div>
