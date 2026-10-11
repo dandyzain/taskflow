@@ -88,7 +88,7 @@ export function WorkspaceShell({
         <SheetContent
           side="left"
           hideClose
-          className="p-0 w-[280px] max-w-[85vw] border-r border-border/80 bg-card/95 backdrop-blur-xl"
+          className="p-0 w-[290px] max-w-[88vw] border-r border-border/80 bg-card/95 backdrop-blur-xl"
         >
           <Sidebar
             workspaceId={workspaceId}

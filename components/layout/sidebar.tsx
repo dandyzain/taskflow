@@ -72,35 +72,33 @@ export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, cu
   };
 
   return (
-    <div className={cn("h-full w-[260px] border-r border-border/70 bg-card/70 backdrop-blur-md flex flex-col justify-between shadow-xs", className)}>
+    <div className={cn("h-full w-[272px] border-r border-border/70 bg-card/70 backdrop-blur-md flex flex-col justify-between shadow-xs", className)}>
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Workspace Brand Header */}
-        <div className="p-4 pt-[max(1rem,env(safe-area-inset-top))] border-b border-border/50 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <LogoMark className="w-9 h-9 drop-shadow-[0_4px_10px_rgba(139,104,246,0.30)]" />
-            <div className="min-w-0">
-              <h2 className="font-bold text-xs truncate leading-tight text-foreground">{workspaceName}</h2>
-              <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
+        <div className="p-4 pt-[max(1rem,env(safe-area-inset-top))] border-b border-border/50 flex items-center justify-between gap-2.5">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <LogoMark className="w-9 h-9 shrink-0 drop-shadow-[0_4px_10px_rgba(139,104,246,0.30)]" />
+            <div className="min-w-0 flex-1">
+              <h2 className="font-bold text-sm truncate leading-tight text-foreground" title={workspaceName}>
+                {workspaceName}
+              </h2>
+              <span className="text-[11px] text-muted-foreground flex items-center gap-1.5 font-medium mt-0.5 whitespace-nowrap">
                 <span className="w-1.5 h-1.5 rounded-full bg-pastel-mint shrink-0" />
                 {t('nav.activeWorkspace')}
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-1 shrink-0">
-            <LanguageToggle />
-            <ThemeToggle />
-            {onClose && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/70"
-                onClick={onClose}
-                aria-label="Close navigation"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
+          {onClose && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/70 shrink-0"
+              onClick={onClose}
+              aria-label="Close navigation"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
         </div>
 
         {/* Main Navigation (Dashboard & Reports) */}
@@ -169,31 +167,39 @@ export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, cu
         </div>
       </div>
 
-      {/* User profile & logout footer */}
-      <div className="p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] border-t border-border/50 bg-secondary/30 backdrop-blur-sm">
-        <div className="flex items-center justify-between gap-2 p-1.5 rounded-xl bg-card/60 border border-border/40 shadow-xs">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-full bg-pastel-lavender text-pastel-lavender-text flex items-center justify-center font-bold text-xs shrink-0 shadow-xs ring-2 ring-primary/20">
-              {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : <UserIcon className="w-4 h-4" />}
-            </div>
-            <div className="min-w-0">
-              <div className="text-xs font-semibold truncate text-foreground leading-tight">
-                {currentUser?.name || t('nav.guestUser')}
-              </div>
-              <div className="text-[10px] text-muted-foreground truncate">
-                {currentUser?.email || t('nav.notLoggedIn')}
-              </div>
-            </div>
+      {/* User profile & preferences footer */}
+      <div className="p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] border-t border-border/50 bg-secondary/30 backdrop-blur-sm space-y-2.5">
+        {/* Quick Settings: Language, Theme & Logout */}
+        <div className="flex items-center justify-between px-0.5">
+          <div className="flex items-center gap-1.5">
+            <LanguageToggle />
+            <ThemeToggle />
           </div>
           <Button
             variant="ghost"
-            size="icon"
-            className="h-7 w-7 rounded-lg text-muted-foreground hover:text-destructive hover:bg-pastel-rose/30 transition-all shrink-0"
+            size="sm"
+            className="h-8 px-2.5 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl gap-1.5 font-medium transition-all active:scale-95"
             onClick={handleLogout}
             title={t('nav.logout')}
           >
             <LogOut className="h-3.5 w-3.5" />
+            <span className="text-[11px] font-semibold">{t('nav.logout')}</span>
           </Button>
+        </div>
+
+        {/* User Profile Card */}
+        <div className="flex items-center gap-2.5 p-2 rounded-xl bg-card/70 border border-border/40 shadow-xs">
+          <div className="w-8 h-8 rounded-full bg-pastel-lavender text-pastel-lavender-text flex items-center justify-center font-bold text-xs shrink-0 shadow-xs ring-2 ring-primary/20">
+            {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : <UserIcon className="w-4 h-4" />}
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-xs font-semibold truncate text-foreground leading-tight">
+              {currentUser?.name || t('nav.guestUser')}
+            </div>
+            <div className="text-[10px] text-muted-foreground truncate mt-0.5">
+              {currentUser?.email || t('nav.notLoggedIn')}
+            </div>
+          </div>
         </div>
       </div>
 
