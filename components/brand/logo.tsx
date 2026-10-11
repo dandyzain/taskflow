@@ -20,7 +20,6 @@ interface LogoMarkProps {
 export function LogoMark({ className, title = 'TaskFlow' }: LogoMarkProps) {
   const uid = useId().replace(/:/g, '');
   const bgId = `tf-bg-${uid}`;
-  const shineId = `tf-shine-${uid}`;
   const decorative = title === '';
 
   return (
@@ -34,31 +33,19 @@ export function LogoMark({ className, title = 'TaskFlow' }: LogoMarkProps) {
       aria-label={decorative ? undefined : title}
     >
       <defs>
-        <linearGradient id={bgId} x1="6" y1="4" x2="58" y2="60" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#A78BFA" />
-          <stop offset="0.55" stopColor="#7C9CF8" />
-          <stop offset="1" stopColor="#5CCFC0" />
+        <linearGradient id={bgId} x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#8B5CF6" />
+          <stop offset="50%" stopColor="#6366F1" />
+          <stop offset="100%" stopColor="#38BDF8" />
         </linearGradient>
-        <radialGradient
-          id={shineId}
-          cx="0"
-          cy="0"
-          r="1"
-          gradientUnits="userSpaceOnUse"
-          gradientTransform="translate(14 8) rotate(50) scale(46 40)"
-        >
-          <stop offset="0" stopColor="#FFFFFF" stopOpacity="0.38" />
-          <stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />
-        </radialGradient>
       </defs>
-      <rect width="64" height="64" rx="18" fill={`url(#${bgId})`} />
-      <rect width="64" height="64" rx="18" fill={`url(#${shineId})`} />
-      {/* Board header — top bar of the T */}
-      <rect x="13" y="14" width="38" height="9" rx="4.5" fill="#FFFFFF" />
-      {/* Kanban columns — the center column forms the stem of the T */}
-      <rect x="13" y="27" width="10" height="15" rx="5" fill="#FFFFFF" fillOpacity="0.55" />
-      <rect x="27" y="27" width="10" height="24" rx="5" fill="#FFFFFF" />
-      <rect x="41" y="27" width="10" height="10" rx="5" fill="#FFFFFF" fillOpacity="0.55" />
+      {/* Sleek minimalist squircle */}
+      <rect width="64" height="64" rx="16" fill={`url(#${bgId})`} />
+      {/* Minimalist Kanban "T" Monogram — clean, slender, architectural */}
+      <rect x="15" y="16" width="34" height="5" rx="2.5" fill="#FFFFFF" />
+      <rect x="19" y="24" width="5" height="12" rx="2.5" fill="#FFFFFF" fillOpacity="0.55" />
+      <rect x="29.5" y="24" width="5" height="24" rx="2.5" fill="#FFFFFF" />
+      <rect x="40" y="24" width="5" height="16" rx="2.5" fill="#FFFFFF" fillOpacity="0.75" />
     </svg>
   );
 }

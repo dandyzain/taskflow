@@ -68,7 +68,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center pastel-mesh-bg p-4 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center pastel-mesh-bg p-4 relative overflow-hidden">
       {/* Decorative floating pastel blurs */}
       <div className="absolute top-1/4 right-1/4 w-80 h-80 rounded-full bg-pastel-lavender/40 blur-3xl -z-10 animate-float pointer-events-none" />
       <div className="absolute bottom-1/4 left-1/4 w-80 h-80 rounded-full bg-pastel-mint/35 blur-3xl -z-10 animate-float pointer-events-none" style={{ animationDelay: '2s' }} />
@@ -76,8 +76,8 @@ export default function RegisterPage() {
       <div className="w-full max-w-md space-y-6 relative z-10 animate-fade-in-up">
         {/* Brand header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center mb-1 transition-transform hover:scale-105 active:scale-95 duration-200 drop-shadow-[0_10px_24px_rgba(139,104,246,0.35)]">
-            <LogoMark className="w-16 h-16" />
+          <div className="inline-flex items-center justify-center mb-1 transition-transform hover:scale-105 active:scale-95 duration-200 drop-shadow-[0_6px_16px_rgba(124,58,237,0.22)]">
+            <LogoMark className="w-14 h-14" />
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
             Join Task<span className="bg-gradient-to-r from-[#A78BFA] via-[#7C9CF8] to-[#5CCFC0] bg-clip-text text-transparent">Flow</span>
@@ -182,6 +182,14 @@ export default function RegisterPage() {
             </CardFooter>
           </form>
         </Card>
+
+        {/* Website Footer Copyright Notice */}
+        <footer className="text-center text-xs text-muted-foreground/60 pt-2 pb-2">
+          <p>© {new Date().getFullYear()} TaskFlow. All rights reserved.</p>
+          <p className="text-[11px] text-muted-foreground/45 mt-0.5">
+            Modern Collaborative Task Management
+          </p>
+        </footer>
       </div>
     </div>
   );

@@ -1,21 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
   <defs>
-    <linearGradient id="tf-bg" x1="6" y1="4" x2="58" y2="60" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#A78BFA"/>
-      <stop offset="0.55" stop-color="#7C9CF8"/>
-      <stop offset="1" stop-color="#5CCFC0"/>
+    <linearGradient id="tf-bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#8B5CF6"/>
+      <stop offset="50%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
     </linearGradient>
-    <radialGradient id="tf-shine" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(14 8) rotate(50) scale(46 40)">
-      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.38"/>
-      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
-    </radialGradient>
   </defs>
-  <rect width="64" height="64" rx="18" fill="url(#tf-bg)"/>
-  <rect width="64" height="64" rx="18" fill="url(#tf-shine)"/>
-  <!-- Board header (top of the T) -->
-  <rect x="13" y="14" width="38" height="9" rx="4.5" fill="#FFFFFF"/>
-  <!-- Kanban columns: center column forms the stem of the T -->
-  <rect x="13" y="27" width="10" height="15" rx="5" fill="#FFFFFF" fill-opacity="0.55"/>
-  <rect x="27" y="27" width="10" height="24" rx="5" fill="#FFFFFF"/>
-  <rect x="41" y="27" width="10" height="10" rx="5" fill="#FFFFFF" fill-opacity="0.55"/>
+  <rect width="64" height="64" rx="16" fill="url(#tf-bg)"/>
+  <!-- Minimalist Kanban T Monogram -->
+  <rect x="15" y="16" width="34" height="5" rx="2.5" fill="#FFFFFF"/>
+  <rect x="19" y="24" width="5" height="12" rx="2.5" fill="#FFFFFF" fill-opacity="0.55"/>
+  <rect x="29.5" y="24" width="5" height="24" rx="2.5" fill="#FFFFFF"/>
+  <rect x="40" y="24" width="5" height="16" rx="2.5" fill="#FFFFFF" fill-opacity="0.75"/>
 </svg>
