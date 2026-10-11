@@ -22,7 +22,8 @@ import { BoardHeader } from '@/components/kanban/board-header';
 import { BoardToolbar } from '@/components/kanban/board-toolbar';
 import { BoardShortcuts } from '@/components/kanban/board-shortcuts';
 import { fetchBoardLabels } from '@/actions/fetch-labels-action';
-import type { BoardData, LabelItem } from '@/types/kanban';
+import { fetchWorkspaceMembers } from '@/actions/assignee-actions';
+import type { BoardData, LabelItem, AssigneeItem } from '@/types/kanban';
 
 interface KanbanBoardProps {
   initialData: BoardData;
@@ -31,10 +32,26 @@ interface KanbanBoardProps {
 export function KanbanBoard({ initialData }: KanbanBoardProps) {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [availableLabels, setAvailableLabels] = useState<LabelItem[]>([]);
+  const [availableMembers, setAvailableMembers] = useState<AssigneeItem[]>(() => {
+    const memberMap = new Map<string, AssigneeItem>();
+    initialData.columns.forEach((col) => {
+      col.cards.forEach((card) => {
+        card.assignees?.forEach((a) => {
+          if (!memberMap.has(a.id)) {
+            memberMap.set(a.id, a);
+          }
+        });
+      });
+    });
+    return Array.from(memberMap.values());
+  });
 
   useEffect(() => {
     fetchBoardLabels(initialData.id).then(setAvailableLabels);
-  }, [initialData.id]);
+    fetchWorkspaceMembers(initialData.workspaceId)
+      .then((data) => setAvailableMembers(data as AssigneeItem[]))
+      .catch(() => {});
+  }, [initialData.id, initialData.workspaceId]);
 
   const {
     columns,
@@ -58,6 +75,8 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
     setPriorityFilter,
     labelFilter,
     setLabelFilter,
+    employeeFilter,
+    setEmployeeFilter,
     filteredColumns,
     activeFilterCount,
     clearFilters,
@@ -106,6 +125,9 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
         labelFilter={labelFilter}
         onLabelFilterChange={setLabelFilter}
         availableLabels={availableLabels}
+        employeeFilter={employeeFilter}
+        onEmployeeFilterChange={setEmployeeFilter}
+        availableMembers={availableMembers}
         activeFilterCount={activeFilterCount}
         onClearFilters={clearFilters}
       />

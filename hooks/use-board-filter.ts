@@ -9,6 +9,7 @@ export function useBoardFilter(columns: BoardColumn[]) {
   const [searchQuery, setSearchQuery] = useState('');
   const [priorityFilter, setPriorityFilter] = useState<PriorityFilter>('all');
   const [labelFilter, setLabelFilter] = useState<string>('all');
+  const [employeeFilter, setEmployeeFilter] = useState<string>('all');
 
   const filteredColumns = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
@@ -25,24 +26,31 @@ export function useBoardFilter(columns: BoardColumn[]) {
         
         const matchesLabel = labelFilter === 'all' ||
           card.labels.some(l => l.id === labelFilter);
+
+        const matchesEmployee = employeeFilter === 'all' ||
+          (employeeFilter === 'unassigned'
+            ? (!card.assignees || card.assignees.length === 0)
+            : Boolean(card.assignees?.some(a => a.id === employeeFilter)));
         
-        return matchesSearch && matchesPriority && matchesLabel;
+        return matchesSearch && matchesPriority && matchesLabel && matchesEmployee;
       }),
     }));
-  }, [columns, searchQuery, priorityFilter, labelFilter]);
+  }, [columns, searchQuery, priorityFilter, labelFilter, employeeFilter]);
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (searchQuery.trim() !== '') count++;
     if (priorityFilter !== 'all') count++;
     if (labelFilter !== 'all') count++;
+    if (employeeFilter !== 'all') count++;
     return count;
-  }, [searchQuery, priorityFilter, labelFilter]);
+  }, [searchQuery, priorityFilter, labelFilter, employeeFilter]);
 
   const clearFilters = useCallback(() => {
     setSearchQuery('');
     setPriorityFilter('all');
     setLabelFilter('all');
+    setEmployeeFilter('all');
   }, []);
 
   return {
@@ -52,6 +60,8 @@ export function useBoardFilter(columns: BoardColumn[]) {
     setPriorityFilter,
     labelFilter,
     setLabelFilter,
+    employeeFilter,
+    setEmployeeFilter,
     filteredColumns,
     activeFilterCount,
     clearFilters,

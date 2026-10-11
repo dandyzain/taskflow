@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Search, X, Filter, Tag, RotateCcw, Circle, ArrowDown, ArrowRight, ArrowUp } from 'lucide-react';
+import { Search, X, Filter, Tag, RotateCcw, Circle, ArrowDown, ArrowRight, ArrowUp, Users, UserX } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +16,9 @@ interface BoardToolbarProps {
   labelFilter: string;
   onLabelFilterChange: (labelId: string) => void;
   availableLabels: Array<{ id: string; name: string; color: string }>;
+  employeeFilter: string;
+  onEmployeeFilterChange: (employeeId: string) => void;
+  availableMembers: Array<{ id: string; name: string; avatarUrl: string | null }>;
   activeFilterCount: number;
   onClearFilters: () => void;
 }
@@ -30,6 +33,9 @@ export const BoardToolbar = React.forwardRef<HTMLInputElement, BoardToolbarProps
       labelFilter,
       onLabelFilterChange,
       availableLabels,
+      employeeFilter,
+      onEmployeeFilterChange,
+      availableMembers,
       activeFilterCount,
       onClearFilters,
     },
@@ -38,7 +44,7 @@ export const BoardToolbar = React.forwardRef<HTMLInputElement, BoardToolbarProps
     return (
       <div className="flex items-center gap-2 mb-3 sm:mb-5 flex-wrap p-2 rounded-2xl bg-card/60 backdrop-blur-md border border-border/70 shadow-xs shrink-0">
         {/* Search Input with Shortcut Pill */}
-        <div className="relative w-full sm:w-auto sm:flex-1 sm:min-w-[200px] sm:max-w-[320px]">
+        <div className="relative w-full sm:w-auto sm:flex-1 sm:min-w-[180px] sm:max-w-[280px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/70" />
           <Input
             ref={ref}
@@ -53,7 +59,7 @@ export const BoardToolbar = React.forwardRef<HTMLInputElement, BoardToolbarProps
         </div>
 
         {/* Priority Filter */}
-        <div className="flex-1 min-w-[130px] sm:flex-initial sm:w-[145px]">
+        <div className="flex-1 min-w-[120px] sm:flex-initial sm:w-[140px]">
           <Select value={priorityFilter} onValueChange={onPriorityFilterChange as (value: string) => void}>
             <SelectTrigger className="w-full h-9 text-xs rounded-xl bg-background/80 border-border/70 focus:ring-primary/40 hover:bg-background transition-all">
               <div className="flex items-center gap-2 truncate">
@@ -92,7 +98,7 @@ export const BoardToolbar = React.forwardRef<HTMLInputElement, BoardToolbarProps
         </div>
 
         {/* Label Filter */}
-        <div className="flex-1 min-w-[130px] sm:flex-initial sm:w-[145px]">
+        <div className="flex-1 min-w-[120px] sm:flex-initial sm:w-[140px]">
           <Select value={labelFilter} onValueChange={onLabelFilterChange as (value: string) => void}>
             <SelectTrigger className="w-full h-9 text-xs rounded-xl bg-background/80 border-border/70 focus:ring-primary/40 hover:bg-background transition-all">
               <div className="flex items-center gap-2 truncate">
@@ -108,6 +114,37 @@ export const BoardToolbar = React.forwardRef<HTMLInputElement, BoardToolbarProps
                     <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: label.color }} />
                     <span className="truncate">{label.name}</span>
                   </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Employee Filter */}
+        <div className="flex-1 min-w-[125px] sm:flex-initial sm:w-[150px]">
+          <Select value={employeeFilter} onValueChange={onEmployeeFilterChange}>
+            <SelectTrigger className="w-full h-9 text-xs rounded-xl bg-background/80 border-border/70 focus:ring-primary/40 hover:bg-background transition-all">
+              <div className="flex items-center gap-2 truncate">
+                <Users className="h-3.5 w-3.5 text-primary shrink-0" />
+                <SelectValue placeholder="All Employees" />
+              </div>
+            </SelectTrigger>
+            <SelectContent className="rounded-xl border-border/70 shadow-pastel max-h-56">
+              <SelectItem value="all" className="text-xs">All Employees</SelectItem>
+              <SelectItem value="unassigned" className="text-xs">
+                <span className="flex items-center gap-1.5">
+                  <UserX className="h-3.5 w-3.5 text-muted-foreground/70 shrink-0" />
+                  <span>Unassigned</span>
+                </span>
+              </SelectItem>
+              {availableMembers.map(member => (
+                <SelectItem key={member.id} value={member.id} className="text-xs">
+                  <span className="flex items-center gap-2">
+                    <span className="w-4 h-4 rounded-full bg-pastel-lavender text-pastel-lavender-text text-[9px] flex items-center justify-center font-bold shrink-0">
+                      {member.name.charAt(0).toUpperCase()}
+                    </span>
+                    <span className="truncate">{member.name}</span>
+                  </span>
                 </SelectItem>
               ))}
             </SelectContent>
