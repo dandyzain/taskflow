@@ -22,6 +22,7 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { useLanguage } from '@/lib/i18n/language-context';
 
 interface TaskTableProps {
   tasks: TaskItemReport[];
@@ -29,6 +30,7 @@ interface TaskTableProps {
 }
 
 export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
+  const { t, lang } = useLanguage();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'progress' | 'completed' | 'overdue' | 'due_soon'>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
@@ -98,14 +100,16 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
         {/* Total Tasks */}
         <div className="rounded-2xl border border-border/80 bg-card/85 dark:bg-card/40 backdrop-blur-md p-3 sm:p-4 shadow-xs space-y-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] text-muted-foreground font-semibold">Tugas Terfilter</span>
+            <span className="text-[11px] text-muted-foreground font-semibold">{t('reports.inventoryFiltered')}</span>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-secondary border border-border/60">
-              {tasks.length > 0 ? Math.round((totalCount / tasks.length) * 100) : 0}% Total
+              {tasks.length > 0 ? Math.round((totalCount / tasks.length) * 100) : 0}% {t('common.all')}
             </span>
           </div>
           <div className="flex items-baseline justify-between">
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{totalCount}</h3>
-            <span className="text-[11px] text-muted-foreground">dari {tasks.length} tugas</span>
+            <span className="text-[11px] text-muted-foreground">
+              {t('reports.inventoryFilteredSub', { total: tasks.length.toString() })}
+            </span>
           </div>
         </div>
 
@@ -114,7 +118,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1">
               <Flame className="w-3.5 h-3.5" />
-              Prioritas Urgent
+              {t('reports.inventoryUrgent')}
             </span>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200/60">
               High
@@ -122,7 +126,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
           </div>
           <div className="flex items-baseline justify-between">
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-rose-600 dark:text-rose-400">{urgentCount}</h3>
-            <span className="text-[11px] text-muted-foreground">tugas prioritas tinggi</span>
+            <span className="text-[11px] text-muted-foreground">{t('reports.inventoryUrgentSub')}</span>
           </div>
         </div>
 
@@ -131,7 +135,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1">
               <AlertTriangle className="w-3.5 h-3.5" />
-              Tenggat Berisiko
+              {t('reports.inventoryRisk')}
             </span>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/60">
               SLA Risk
@@ -139,7 +143,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
           </div>
           <div className="flex items-baseline justify-between">
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400">{riskyCount}</h3>
-            <span className="text-[11px] text-muted-foreground">terlambat / due soon</span>
+            <span className="text-[11px] text-muted-foreground">{t('reports.inventoryRiskSub')}</span>
           </div>
         </div>
 
@@ -148,7 +152,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-muted-foreground font-semibold flex items-center gap-1">
               <UserX className="w-3.5 h-3.5 text-muted-foreground" />
-              Tanpa Assignee
+              {t('reports.inventoryUnassigned')}
             </span>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-secondary border border-border/60">
               Unassigned
@@ -156,7 +160,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
           </div>
           <div className="flex items-baseline justify-between">
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{unassignedCount}</h3>
-            <span className="text-[11px] text-muted-foreground">belum ada PIC</span>
+            <span className="text-[11px] text-muted-foreground">{t('reports.inventoryUnassignedSub')}</span>
           </div>
         </div>
       </div>
@@ -167,10 +171,10 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           <div>
             <h3 className="text-sm font-bold text-foreground">
-              Rincian Laporan Seluruh Task ({totalCount})
+              {t('reports.taskInventoryTitle', { count: totalCount.toString() })}
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Daftar tugas terstruktur dengan status, penanggung jawab, dan tenggat waktu
+              {t('reports.taskInventorySub')}
             </p>
           </div>
 
@@ -182,7 +186,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Cari judul task, assignee..."
+                placeholder={t('reports.modalSearchPlaceholder')}
                 className="pl-8 h-8 text-xs rounded-xl bg-background/60 border-border/80 w-full"
               />
             </div>
@@ -195,10 +199,10 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                 onChange={(e) => setSortBy(e.target.value as any)}
                 className="bg-transparent text-[11px] font-semibold text-foreground focus:outline-none cursor-pointer"
               >
-                <option value="dueDate">Urutkan: Tenggat Waktu</option>
-                <option value="priority">Urutkan: Prioritas Tertinggi</option>
-                <option value="newest">Urutkan: Terbaru Dibuat</option>
-                <option value="title">Urutkan: Nama A-Z</option>
+                <option value="dueDate">{t('reports.sortDueDate')}</option>
+                <option value="priority">{t('reports.sortPriority')}</option>
+                <option value="newest">{t('reports.sortNewest')}</option>
+                <option value="title">{t('reports.sortTitle')}</option>
               </select>
             </div>
 
@@ -210,7 +214,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                   'p-1.5 rounded-lg text-xs transition-all',
                   viewMode === 'table' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
                 )}
-                title="Tampilan Tabel"
+                title={t('reports.viewTableMode')}
               >
                 <LayoutList className="w-3.5 h-3.5" />
               </button>
@@ -220,7 +224,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                   'p-1.5 rounded-lg text-xs transition-all',
                   viewMode === 'grid' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
                 )}
-                title="Tampilan Grid Kartu"
+                title={t('reports.viewGridMode')}
               >
                 <LayoutGrid className="w-3.5 h-3.5" />
               </button>
@@ -239,7 +243,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                 statusFilter === 'all' ? 'bg-secondary text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
               )}
             >
-              Semua Status
+              {t('reports.filterAllStatus')}
             </button>
             <button
               onClick={() => setStatusFilter('progress')}
@@ -248,7 +252,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                 statusFilter === 'progress' ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 font-bold' : 'text-muted-foreground hover:text-foreground'
               )}
             >
-              In Progress
+              {t('common.inProgress')}
             </button>
             <button
               onClick={() => setStatusFilter('completed')}
@@ -257,7 +261,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                 statusFilter === 'completed' ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-bold' : 'text-muted-foreground hover:text-foreground'
               )}
             >
-              Selesai
+              {t('common.completed')}
             </button>
             <button
               onClick={() => setStatusFilter('overdue')}
@@ -266,7 +270,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                 statusFilter === 'overdue' ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300 font-bold' : 'text-muted-foreground hover:text-foreground'
               )}
             >
-              Terlambat
+              {t('common.overdue')}
             </button>
             <button
               onClick={() => setStatusFilter('due_soon')}
@@ -275,7 +279,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                 statusFilter === 'due_soon' ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 font-bold' : 'text-muted-foreground hover:text-foreground'
               )}
             >
-              &lt; 48 Jam
+              {t('common.dueSoon')}
             </button>
           </div>
 
@@ -286,11 +290,11 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
               onChange={(e) => setPriorityFilter(e.target.value)}
               className="bg-secondary/40 border border-border/60 rounded-lg px-2 h-7 text-[11px] font-semibold text-foreground focus:outline-none cursor-pointer"
             >
-              <option value="all">Semua Prioritas</option>
-              <option value="3">Prioritas High (Urgent)</option>
-              <option value="2">Prioritas Medium</option>
-              <option value="1">Prioritas Low</option>
-              <option value="0">Normal (None)</option>
+              <option value="all">{t('reports.filterAllPriorities')}</option>
+              <option value="3">{t('kanban.priorityUrgent')}</option>
+              <option value="2">{t('kanban.priorityMedium')}</option>
+              <option value="1">{t('kanban.priorityLow')}</option>
+              <option value="0">{t('kanban.priorityNone')}</option>
             </select>
 
             <select
@@ -298,9 +302,9 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
               onChange={(e) => setPicFilter(e.target.value as any)}
               className="bg-secondary/40 border border-border/60 rounded-lg px-2 h-7 text-[11px] font-semibold text-foreground focus:outline-none cursor-pointer"
             >
-              <option value="all">Semua Penugasan</option>
-              <option value="assigned">Ada PIC</option>
-              <option value="unassigned">Tanpa PIC</option>
+              <option value="all">{t('reports.filterAllAssignments')}</option>
+              <option value="assigned">{t('reports.filterHasPic')}</option>
+              <option value="unassigned">{t('reports.filterNoPic')}</option>
             </select>
           </div>
         </div>
@@ -311,20 +315,20 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
             <table className="w-full text-left text-xs min-w-[640px]">
               <thead className="bg-secondary/40 border-b border-border/70 text-muted-foreground uppercase text-[10px] font-bold tracking-wider">
                 <tr>
-                  <th className="px-4 py-3">Judul Task</th>
+                  <th className="px-4 py-3">{t('common.title')}</th>
                   <th className="px-3 py-3">Board</th>
-                  <th className="px-3 py-3">Status / Kolom</th>
-                  <th className="px-3 py-3">Prioritas</th>
-                  <th className="px-3 py-3">Tenggat Waktu</th>
-                  <th className="px-4 py-3">Assignee</th>
-                  <th className="px-3 py-3 text-right">Aksi</th>
+                  <th className="px-3 py-3">{t('common.status')}</th>
+                  <th className="px-3 py-3">{t('common.priority')}</th>
+                  <th className="px-3 py-3">{t('common.dueDate')}</th>
+                  <th className="px-4 py-3">{t('common.assignee')}</th>
+                  <th className="px-3 py-3 text-right">{t('common.actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/50">
                 {sortedTasks.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground text-xs">
-                      Tidak ada task yang cocok dengan kriteria filter saat ini.
+                      {t('reports.emptyFilterNotice')}
                     </td>
                   </tr>
                 ) : (
@@ -400,7 +404,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                                     : 'text-muted-foreground'
                                 )}
                               >
-                                {new Date(task.dueDate).toLocaleDateString('id-ID', {
+                                {new Date(task.dueDate).toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', {
                                   day: 'numeric',
                                   month: 'short',
                                   year: 'numeric',
@@ -408,7 +412,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                               </span>
                               {task.isOverdue && (
                                 <span className="text-[9px] bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 px-1 py-0.2 rounded font-bold border border-rose-200">
-                                  Telat
+                                  {t('common.overdue')}
                                 </span>
                               )}
                             </div>
@@ -436,7 +440,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                               )}
                             </div>
                           ) : (
-                            <span className="text-muted-foreground/50 text-[11px]">Unassigned</span>
+                            <span className="text-muted-foreground/50 text-[11px]">{t('common.unassigned')}</span>
                           )}
                         </td>
 
@@ -447,7 +451,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                               href={`/workspace/${workspaceId}/board/${task.boardId}`}
                               className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline"
                             >
-                              <span>Board</span>
+                              <span>{t('common.openBoard')}</span>
                               <ArrowUpRight className="w-3 h-3" />
                             </Link>
                           ) : (
@@ -466,7 +470,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {sortedTasks.length === 0 ? (
               <div className="col-span-full py-8 text-center text-muted-foreground text-xs">
-                Tidak ada task yang cocok dengan kriteria filter saat ini.
+                {t('reports.emptyFilterNotice')}
               </div>
             ) : (
               sortedTasks.map((task) => {
@@ -545,14 +549,14 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                           )}>
                             <Calendar className="w-3 h-3 shrink-0" />
                             <span>
-                              {new Date(task.dueDate).toLocaleDateString('id-ID', {
+                              {new Date(task.dueDate).toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', {
                                 day: 'numeric',
                                 month: 'short',
                               })}
                             </span>
                           </div>
                         ) : (
-                          <span className="text-[10px] text-muted-foreground/60">Tanpa deadline</span>
+                          <span className="text-[10px] text-muted-foreground/60">{t('common.noDeadline')}</span>
                         )}
                       </div>
 
@@ -569,7 +573,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                               </Avatar>
                             ))
                           ) : (
-                            <span className="text-[10px] text-muted-foreground/60 italic">Unassigned</span>
+                            <span className="text-[10px] text-muted-foreground/60 italic">{t('common.unassigned')}</span>
                           )}
                         </div>
 
@@ -579,7 +583,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                             href={`/workspace/${workspaceId}/board/${task.boardId}`}
                             className="inline-flex items-center gap-1 text-[11px] font-bold text-primary hover:underline"
                           >
-                            <span>Buka Board</span>
+                            <span>{t('common.openBoard')}</span>
                             <ArrowUpRight className="w-3 h-3" />
                           </Link>
                         )}

@@ -2,20 +2,21 @@
 
 import type { TaskItemReport } from '@/lib/queries/report-queries';
 import { cn } from '@/lib/utils';
-import { ShieldAlert, CheckCircle2, Clock, Calendar, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
+import { useLanguage } from '@/lib/i18n/language-context';
 
 interface DeadlineHealthChartProps {
   tasks: TaskItemReport[];
 }
 
 export function DeadlineHealthChart({ tasks }: DeadlineHealthChartProps) {
+  const { t } = useLanguage();
   const total = tasks.length;
 
   if (total === 0) {
     return null;
   }
 
-  const tasksWithDueDate = tasks.filter((t) => t.dueDate !== null);
   const withoutDueDate = tasks.filter((t) => t.dueDate === null).length;
   const overdue = tasks.filter((t) => t.isOverdue).length;
   const dueSoon = tasks.filter((t) => t.isDueSoon).length;
@@ -36,20 +37,20 @@ export function DeadlineHealthChart({ tasks }: DeadlineHealthChartProps) {
         <div>
           <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
-            Kesehatan Tenggat Waktu & Kepatuhan SLA
+            {t('reports.deadlineHealthTitle')}
           </h3>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Monitoring risiko keterlambatan dan kepatuhan timeline kerja proyek
+            {t('reports.deadlineHealthSub')}
           </p>
         </div>
 
         <div className="self-start sm:self-auto flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary/80 border border-border/60 text-xs font-semibold text-foreground">
-          <span>Skor SLA:</span>
+          <span>{t('reports.slaScore')}</span>
           <span className={cn(
             'font-bold',
             slaCompliance >= 90 ? 'text-emerald-600 dark:text-emerald-400' : slaCompliance >= 75 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'
           )}>
-            {slaCompliance}% Kepatuhan
+            {t('reports.slaCompliance', { score: slaCompliance })}
           </span>
         </div>
       </div>
@@ -61,34 +62,34 @@ export function DeadlineHealthChart({ tasks }: DeadlineHealthChartProps) {
             <div
               style={{ width: `${Math.max(onTrackPercent, 3)}%` }}
               className="h-full rounded-full bg-pastel-mint transition-all"
-              title={`Aman / On Track: ${onTrack} tugas (${onTrackPercent}%)`}
+              title={`${t('common.onTrack')}: ${onTrack} (${onTrackPercent}%)`}
             />
           )}
           {dueSoon > 0 && (
             <div
               style={{ width: `${Math.max(dueSoonPercent, 3)}%` }}
               className="h-full rounded-full bg-pastel-peach transition-all"
-              title={`Mendekati Batas: ${dueSoon} tugas (${dueSoonPercent}%)`}
+              title={`${t('common.dueSoon')}: ${dueSoon} (${dueSoonPercent}%)`}
             />
           )}
           {overdue > 0 && (
             <div
               style={{ width: `${Math.max(overduePercent, 3)}%` }}
               className="h-full rounded-full bg-pastel-rose transition-all"
-              title={`Terlambat: ${overdue} tugas (${overduePercent}%)`}
+              title={`${t('common.overdue')}: ${overdue} (${overduePercent}%)`}
             />
           )}
           {withoutDueDate > 0 && (
             <div
               style={{ width: `${Math.max(withoutDueDatePercent, 3)}%` }}
               className="h-full rounded-full bg-muted transition-all"
-              title={`Tanpa Deadline: ${withoutDueDate} tugas (${withoutDueDatePercent}%)`}
+              title={`${t('common.noDeadline')}: ${withoutDueDate} (${withoutDueDatePercent}%)`}
             />
           )}
         </div>
         <div className="flex justify-between text-[10px] text-muted-foreground px-0.5">
           <span>0%</span>
-          <span>Timeline Status Distribusi</span>
+          <span>{t('reports.timelineDistribution')}</span>
           <span>100%</span>
         </div>
       </div>
@@ -100,14 +101,14 @@ export function DeadlineHealthChart({ tasks }: DeadlineHealthChartProps) {
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold text-foreground flex items-center gap-1.5 text-[11px]">
               <span className="w-2 h-2 rounded-full bg-pastel-mint ring-2 ring-emerald-400/30" />
-              Tepat Waktu
+              {t('common.onTrack')}
             </span>
           </div>
           <div className="flex items-baseline justify-between pt-1">
             <span className="text-lg sm:text-xl font-bold text-emerald-600 dark:text-emerald-400">{onTrack}</span>
             <span className="text-[10px] font-semibold text-muted-foreground">{onTrackPercent}%</span>
           </div>
-          <p className="text-[10px] text-muted-foreground/80">Jadwal berjalan aman</p>
+          <p className="text-[10px] text-muted-foreground/80">{t('reports.onTrackDesc')}</p>
         </div>
 
         {/* Due Soon */}
@@ -115,14 +116,14 @@ export function DeadlineHealthChart({ tasks }: DeadlineHealthChartProps) {
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold text-foreground flex items-center gap-1.5 text-[11px]">
               <span className="w-2 h-2 rounded-full bg-pastel-peach ring-2 ring-amber-400/30" />
-              Kritis (&lt;48 Jam)
+              {t('common.dueSoon')}
             </span>
           </div>
           <div className="flex items-baseline justify-between pt-1">
             <span className="text-lg sm:text-xl font-bold text-amber-600 dark:text-amber-400">{dueSoon}</span>
             <span className="text-[10px] font-semibold text-muted-foreground">{dueSoonPercent}%</span>
           </div>
-          <p className="text-[10px] text-muted-foreground/80">Segera mendekati batas</p>
+          <p className="text-[10px] text-muted-foreground/80">{t('reports.dueSoonDesc')}</p>
         </div>
 
         {/* Overdue */}
@@ -130,14 +131,14 @@ export function DeadlineHealthChart({ tasks }: DeadlineHealthChartProps) {
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold text-foreground flex items-center gap-1.5 text-[11px]">
               <span className="w-2 h-2 rounded-full bg-pastel-rose ring-2 ring-rose-400/30" />
-              Terlambat
+              {t('common.overdue')}
             </span>
           </div>
           <div className="flex items-baseline justify-between pt-1">
             <span className="text-lg sm:text-xl font-bold text-rose-600 dark:text-rose-400">{overdue}</span>
             <span className="text-[10px] font-semibold text-muted-foreground">{overduePercent}%</span>
           </div>
-          <p className="text-[10px] text-muted-foreground/80">Perlu tindak lanjut cepat</p>
+          <p className="text-[10px] text-muted-foreground/80">{t('reports.overdueDesc')}</p>
         </div>
 
         {/* No Deadline */}
@@ -145,14 +146,14 @@ export function DeadlineHealthChart({ tasks }: DeadlineHealthChartProps) {
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold text-foreground flex items-center gap-1.5 text-[11px]">
               <span className="w-2 h-2 rounded-full bg-muted ring-2 ring-border" />
-              Tanpa Batas
+              {t('common.noDeadline')}
             </span>
           </div>
           <div className="flex items-baseline justify-between pt-1">
             <span className="text-lg sm:text-xl font-bold text-foreground">{withoutDueDate}</span>
             <span className="text-[10px] font-semibold text-muted-foreground">{withoutDueDatePercent}%</span>
           </div>
-          <p className="text-[10px] text-muted-foreground/80">Tugas fleksibel / backlog</p>
+          <p className="text-[10px] text-muted-foreground/80">{t('reports.noDeadlineDesc')}</p>
         </div>
       </div>
     </div>

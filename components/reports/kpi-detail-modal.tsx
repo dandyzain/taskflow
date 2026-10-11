@@ -35,6 +35,7 @@ import {
   Layers,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n/language-context';
 
 export type KpiMetricType =
   | 'total'
@@ -65,6 +66,7 @@ export function KpiDetailModal({
   summary,
   workspaceId,
 }: KpiDetailModalProps) {
+  const { t, lang } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [subFilter, setSubFilter] = useState<'all' | 'high_priority' | 'unassigned'>('all');
 
@@ -82,26 +84,32 @@ export function KpiDetailModal({
     switch (metricType) {
       case 'total':
         return {
-          title: 'Semua Tugas (Total Tasks)',
-          description: 'Seluruh daftar tugas yang terdaftar pada papan proyek di workspace ini.',
+          title: lang === 'id' ? 'Semua Tugas (Total Tasks)' : 'All Tasks (Total)',
+          description: lang === 'id' 
+            ? 'Seluruh daftar tugas yang terdaftar pada papan proyek di workspace ini.' 
+            : 'Complete list of tasks registered across project boards in this workspace.',
           icon: ListTodo,
           iconBg: 'bg-pastel-sky/60 text-sky-800 dark:text-sky-200',
-          badgeText: `${summary.totalTasks} Total Tugas`,
+          badgeText: `${summary.totalTasks} ${lang === 'id' ? 'Total Tugas' : 'Total Tasks'}`,
           badgeColor: 'bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300 border-sky-200/60',
         };
       case 'completed':
         return {
-          title: 'Tugas Selesai (Completed Tasks)',
-          description: 'Daftar tugas yang telah berhasil diselesaikan oleh tim dengan rasio keberhasilan tinggi.',
+          title: lang === 'id' ? 'Tugas Selesai (Completed Tasks)' : 'Completed Tasks',
+          description: lang === 'id'
+            ? 'Daftar tugas yang telah berhasil diselesaikan oleh tim dengan rasio keberhasilan tinggi.'
+            : 'List of tasks successfully finished by team members with high delivery rate.',
           icon: CheckCircle2,
           iconBg: 'bg-pastel-mint/60 text-emerald-800 dark:text-emerald-200',
-          badgeText: `${summary.completedTasks} Selesai (${summary.completionRate}%)`,
+          badgeText: `${summary.completedTasks} ${lang === 'id' ? 'Selesai' : 'Completed'} (${summary.completionRate}%)`,
           badgeColor: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200/60',
         };
       case 'in_progress':
         return {
-          title: 'Sedang Dikerjakan (In Progress)',
-          description: 'Tugas yang saat ini sedang aktif dikembangkan atau direview oleh anggota tim.',
+          title: lang === 'id' ? 'Sedang Dikerjakan (In Progress)' : 'In Progress Tasks',
+          description: lang === 'id'
+            ? 'Tugas yang saat ini sedang aktif dikembangkan atau direview oleh anggota tim.'
+            : 'Tasks actively being developed or reviewed by teammates.',
           icon: Clock,
           iconBg: 'bg-pastel-peach/60 text-amber-800 dark:text-amber-200',
           badgeText: `${summary.inProgressTasks} In Progress`,
@@ -109,35 +117,43 @@ export function KpiDetailModal({
         };
       case 'backlog':
         return {
-          title: 'Antrean Tugas (Backlog / To-Do)',
-          description: 'Daftar tugas yang telah direncanakan dan siap dikerjakan pada tahap berikutnya.',
+          title: lang === 'id' ? 'Antrean Tugas (Backlog / To-Do)' : 'Task Backlog / To-Do',
+          description: lang === 'id'
+            ? 'Daftar tugas yang telah direncanakan dan siap dikerjakan pada tahap berikutnya.'
+            : 'Planned tasks in the pipeline ready for subsequent iterations.',
           icon: Inbox,
           iconBg: 'bg-pastel-lavender/60 text-purple-800 dark:text-purple-200',
-          badgeText: `${summary.backlogTasks} di Antrean`,
+          badgeText: `${summary.backlogTasks} ${lang === 'id' ? 'di Antrean' : 'In Backlog'}`,
           badgeColor: 'bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border-purple-200/60',
         };
       case 'overdue':
         return {
-          title: 'Tugas Terlambat (Overdue Tasks)',
-          description: 'Tugas yang telah melewati tanggal batas waktu (deadline) dan membutuhkan tindakan segera.',
+          title: lang === 'id' ? 'Tugas Terlambat (Overdue Tasks)' : 'Overdue Tasks',
+          description: lang === 'id'
+            ? 'Tugas yang telah melewati tanggal batas waktu (deadline) dan membutuhkan tindakan segera.'
+            : 'Tasks that passed their target deadline requiring immediate attention.',
           icon: AlertTriangle,
           iconBg: 'bg-pastel-rose/60 text-rose-800 dark:text-rose-200',
-          badgeText: `${summary.overdueTasks} Terlambat`,
+          badgeText: `${summary.overdueTasks} ${lang === 'id' ? 'Terlambat' : 'Overdue'}`,
           badgeColor: 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border-rose-200/60',
         };
       case 'due_soon':
         return {
-          title: 'Mendekati Batas Waktu (Due Soon)',
-          description: 'Tugas dengan batas waktu dalam waktu kurang dari atau sama dengan 48 jam ke depan.',
+          title: lang === 'id' ? 'Mendekati Batas Waktu (Due Soon)' : 'Due Soon Tasks',
+          description: lang === 'id'
+            ? 'Tugas dengan batas waktu dalam waktu kurang dari atau sama dengan 48 jam ke depan.'
+            : 'Tasks due within 48 hours requiring prioritization.',
           icon: Timer,
           iconBg: 'bg-pastel-peach/70 text-amber-800 dark:text-amber-200',
-          badgeText: `${summary.dueSoonTasks} Mendekati Batas`,
+          badgeText: `${summary.dueSoonTasks} ${lang === 'id' ? 'Mendekati Batas' : 'Due Soon'}`,
           badgeColor: 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border-amber-200/60',
         };
       case 'urgent':
         return {
-          title: 'Prioritas Tinggi (High Priority Tasks)',
-          description: 'Tugas penting dengan tingkat urgensi level High yang memerlukan fokus utama tim.',
+          title: lang === 'id' ? 'Prioritas Tinggi (High Priority Tasks)' : 'High Priority Tasks',
+          description: lang === 'id'
+            ? 'Tugas penting dengan tingkat urgensi level High yang memerlukan fokus utama tim.'
+            : 'Critical items with high urgency requiring primary focus.',
           icon: ArrowUp,
           iconBg: 'bg-pastel-rose/70 text-rose-800 dark:text-rose-200',
           badgeText: `${tasks.filter((t) => t.priority === 3).length} Urgent`,
@@ -145,17 +161,19 @@ export function KpiDetailModal({
         };
       case 'members':
         return {
-          title: 'Kapasitas & Beban Kerja Tim',
-          description: 'Rincian produktivitas, tugas yang ditugaskan, dan status beban kerja tiap anggota workspace.',
+          title: lang === 'id' ? 'Kapasitas & Beban Kerja Tim' : 'Team Capacity & Workload',
+          description: lang === 'id'
+            ? 'Rincian produktivitas, tugas yang ditugaskan, dan status beban kerja tiap anggota workspace.'
+            : 'Member productivity breakdown, task assignments, and workload health.',
           icon: Users,
           iconBg: 'bg-pastel-lavender/60 text-purple-800 dark:text-purple-200',
-          badgeText: `${members.length} Anggota Kolaborator`,
+          badgeText: `${members.length} ${lang === 'id' ? 'Anggota Kolaborator' : 'Team Members'}`,
           badgeColor: 'bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border-purple-200/60',
         };
       default:
         return null;
     }
-  }, [metricType, summary, tasks, members]);
+  }, [metricType, summary, tasks, members, lang]);
 
   // 2. Filter tasks based on metric type + sub-filter + search query
   const relevantTasks = useMemo(() => {
@@ -302,17 +320,23 @@ export function KpiDetailModal({
           {metricType !== 'members' ? (
             <div className="grid grid-cols-3 gap-2 pt-1 text-xs">
               <div className="bg-secondary/40 border border-border/50 rounded-xl p-2 text-center">
-                <span className="text-[10px] text-muted-foreground block font-medium">Total Terpilih</span>
+                <span className="text-[10px] text-muted-foreground block font-medium">
+                  {lang === 'id' ? 'Total Terpilih' : 'Total Items'}
+                </span>
                 <span className="text-sm font-bold text-foreground">{relevantTasks.length}</span>
               </div>
               <div className="bg-secondary/40 border border-border/50 rounded-xl p-2 text-center">
-                <span className="text-[10px] text-muted-foreground block font-medium">Prioritas Tinggi</span>
+                <span className="text-[10px] text-muted-foreground block font-medium">
+                  {t('kanban.priorityUrgent')}
+                </span>
                 <span className="text-sm font-bold text-rose-600 dark:text-rose-400">
                   {relevantTasks.filter((t) => t.priority === 3).length}
                 </span>
               </div>
               <div className="bg-secondary/40 border border-border/50 rounded-xl p-2 text-center">
-                <span className="text-[10px] text-muted-foreground block font-medium">Tanpa PIC</span>
+                <span className="text-[10px] text-muted-foreground block font-medium">
+                  {t('reports.inventoryUnassigned')}
+                </span>
                 <span className="text-sm font-bold text-amber-600 dark:text-amber-400">
                   {relevantTasks.filter((t) => !t.assignees || t.assignees.length === 0).length}
                 </span>
@@ -321,15 +345,23 @@ export function KpiDetailModal({
           ) : (
             <div className="grid grid-cols-3 gap-2 pt-1 text-xs">
               <div className="bg-secondary/40 border border-border/50 rounded-xl p-2 text-center">
-                <span className="text-[10px] text-muted-foreground block font-medium">Total Anggota</span>
+                <span className="text-[10px] text-muted-foreground block font-medium">
+                  {lang === 'id' ? 'Total Anggota' : 'Total Members'}
+                </span>
                 <span className="text-sm font-bold text-foreground">{members.length}</span>
               </div>
               <div className="bg-secondary/40 border border-border/50 rounded-xl p-2 text-center">
-                <span className="text-[10px] text-muted-foreground block font-medium">Rata-rata Tugas</span>
-                <span className="text-sm font-bold text-primary">{summary.averageTasksPerMember} / org</span>
+                <span className="text-[10px] text-muted-foreground block font-medium">
+                  {lang === 'id' ? 'Rata-rata Tugas' : 'Avg Workload'}
+                </span>
+                <span className="text-sm font-bold text-primary">
+                  {summary.averageTasksPerMember} {lang === 'id' ? '/ org' : '/ member'}
+                </span>
               </div>
               <div className="bg-secondary/40 border border-border/50 rounded-xl p-2 text-center">
-                <span className="text-[10px] text-muted-foreground block font-medium">Rasio Selesai</span>
+                <span className="text-[10px] text-muted-foreground block font-medium">
+                  {lang === 'id' ? 'Rasio Selesai' : 'Completion Rate'}
+                </span>
                 <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
                   {summary.completionRate}%
                 </span>
@@ -342,7 +374,7 @@ export function KpiDetailModal({
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/70" />
               <Input
-                placeholder={metricType === 'members' ? 'Cari nama, email, peran...' : 'Cari judul task, board, atau PIC...'}
+                placeholder={metricType === 'members' ? (lang === 'id' ? 'Cari nama, email, peran...' : 'Search name, email, role...') : t('reports.modalSearchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-8 h-8 text-xs rounded-xl bg-background/70 border-border/70 focus-visible:ring-primary/40"
@@ -370,7 +402,7 @@ export function KpiDetailModal({
                       : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
-                  Semua
+                  {t('common.all')}
                 </button>
                 <button
                   type="button"
@@ -395,7 +427,7 @@ export function KpiDetailModal({
                       : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
-                  Tanpa PIC
+                  {t('reports.inventoryUnassigned')}
                 </button>
               </div>
             )}
@@ -408,7 +440,9 @@ export function KpiDetailModal({
             /* Members List */
             relevantMembers.length === 0 ? (
               <div className="p-8 text-center text-muted-foreground text-xs italic">
-                Tidak ada anggota yang cocok dengan pencarian &quot;{searchQuery}&quot;.
+                {lang === 'id' 
+                  ? `Tidak ada anggota yang cocok dengan pencarian "${searchQuery}".` 
+                  : `No members match search query "${searchQuery}".`}
               </div>
             ) : (
               relevantMembers.map((member) => (
@@ -434,7 +468,9 @@ export function KpiDetailModal({
                   {/* Member Stats */}
                   <div className="flex items-center gap-3 sm:gap-4 flex-wrap sm:flex-nowrap justify-between sm:justify-end shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/40">
                     <div className="text-left sm:text-right">
-                      <span className="text-[10px] text-muted-foreground block font-medium">Beban Kerja</span>
+                      <span className="text-[10px] text-muted-foreground block font-medium">
+                        {t('reports.colWorkload')}
+                      </span>
                       <span
                         className={cn(
                           'text-[10px] font-bold px-2 py-0.5 rounded-full border inline-block mt-0.5',
@@ -452,14 +488,18 @@ export function KpiDetailModal({
                     </div>
 
                     <div className="text-left sm:text-right">
-                      <span className="text-[10px] text-muted-foreground block font-medium">Tugas Ditugaskan</span>
+                      <span className="text-[10px] text-muted-foreground block font-medium">
+                        {lang === 'id' ? 'Tugas Ditugaskan' : 'Assigned Tasks'}
+                      </span>
                       <span className="text-xs font-bold text-foreground">
-                        {member.completedTasks} / {member.totalAssigned} Selesai
+                        {member.completedTasks} / {member.totalAssigned} {t('common.completed')}
                       </span>
                     </div>
 
                     <div className="w-20 text-right">
-                      <span className="text-[10px] text-muted-foreground block font-medium">Selesai</span>
+                      <span className="text-[10px] text-muted-foreground block font-medium">
+                        {t('common.completed')}
+                      </span>
                       <span className="text-xs font-bold text-primary">{member.completionRate}%</span>
                       <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden mt-1">
                         <div
@@ -477,8 +517,8 @@ export function KpiDetailModal({
             relevantTasks.length === 0 ? (
               <div className="p-8 text-center text-muted-foreground text-xs italic">
                 {searchQuery || subFilter !== 'all'
-                  ? 'Tidak ada tugas yang cocok dengan filter atau pencarian Anda.'
-                  : 'Tidak ada tugas dalam kategori ini saat ini.'}
+                  ? t('reports.emptyFilterNotice')
+                  : (lang === 'id' ? 'Tidak ada tugas dalam kategori ini saat ini.' : 'No tasks in this category at the moment.')}
               </div>
             ) : (
               relevantTasks.map((task) => (
@@ -522,14 +562,14 @@ export function KpiDetailModal({
                         >
                           <Calendar className="w-3 h-3 shrink-0" />
                           <span>
-                            {new Date(task.dueDate).toLocaleDateString('id-ID', {
+                            {new Date(task.dueDate).toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', {
                               day: 'numeric',
                               month: 'short',
                               year: 'numeric',
                             })}
                           </span>
-                          {task.isOverdue && ' (Terlambat)'}
-                          {task.isDueSoon && !task.isOverdue && ' (Segera)'}
+                          {task.isOverdue && ` (${t('common.overdue')})`}
+                          {task.isDueSoon && !task.isOverdue && ` (${t('common.dueSoon')})`}
                         </span>
                       )}
                     </div>
@@ -556,7 +596,7 @@ export function KpiDetailModal({
                       </div>
                     ) : (
                       <span className="text-[10px] text-muted-foreground/70 italic px-2 py-0.5 rounded-md bg-muted/40">
-                        Tanpa PIC
+                        {t('common.unassigned')}
                       </span>
                     )}
 
@@ -566,7 +606,7 @@ export function KpiDetailModal({
                       onClick={() => onOpenChange(false)}
                       className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 border border-primary/20 transition-all active:scale-95 shrink-0"
                     >
-                      <span>Buka Board</span>
+                      <span>{t('common.openBoard')}</span>
                       <ExternalLink className="w-3 h-3 shrink-0" />
                     </Link>
                   </div>
@@ -579,11 +619,13 @@ export function KpiDetailModal({
         {/* Footer */}
         <DialogFooter className="shrink-0 flex flex-row items-center justify-between gap-2 pt-3 border-t border-border/60">
           <p className="text-[11px] text-muted-foreground">
-            Menampilkan{' '}
+            {lang === 'id' ? 'Menampilkan' : 'Showing'}{' '}
             <span className="font-bold text-foreground">
               {metricType === 'members' ? relevantMembers.length : relevantTasks.length}
             </span>{' '}
-            {metricType === 'members' ? 'anggota' : 'tugas'}
+            {metricType === 'members' 
+              ? (lang === 'id' ? 'anggota' : 'members') 
+              : (lang === 'id' ? 'tugas' : 'tasks')}
           </p>
           <Button
             type="button"
@@ -592,7 +634,7 @@ export function KpiDetailModal({
             onClick={() => handleModalClose(false)}
             className="rounded-xl h-8 px-4 text-xs font-semibold"
           >
-            Tutup
+            {t('common.close')}
           </Button>
         </DialogFooter>
       </DialogContent>

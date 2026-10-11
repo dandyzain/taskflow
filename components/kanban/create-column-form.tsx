@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { BoardColumn } from "@/types/kanban"
 import { createColumn } from "@/actions/column-actions"
+import { useLanguage } from "@/lib/i18n/language-context"
 
 interface CreateColumnFormProps {
   boardId: string
@@ -20,6 +21,7 @@ export function CreateColumnForm({
   workspaceId,
   onColumnCreated,
 }: CreateColumnFormProps) {
+  const { t, lang } = useLanguage()
   const [isOpen, setIsOpen] = React.useState(false)
   const [title, setTitle] = React.useState("")
   const [isSubmitting, setIsSubmitting] = React.useState(false)
@@ -49,7 +51,7 @@ export function CreateColumnForm({
       setTitle("")
       setIsOpen(false)
     } catch {
-      toast.error("Failed to create column")
+      toast.error(lang === 'id' ? 'Gagal membuat kolom' : 'Failed to create column')
     } finally {
       setIsSubmitting(false)
     }
@@ -73,7 +75,7 @@ export function CreateColumnForm({
           onClick={() => setIsOpen(true)}
         >
           <Plus className="mr-2 h-4 w-4 text-primary" />
-          Add Column
+          {t('kanban.addColumn')}
         </Button>
       </div>
     )
@@ -83,7 +85,7 @@ export function CreateColumnForm({
     <div className="w-[280px] sm:w-[300px] min-w-[280px] sm:min-w-[300px] h-fit bg-card/90 backdrop-blur-md border border-primary/30 rounded-2xl p-3.5 shadow-pastel flex flex-col gap-2.5 animate-scale-in snap-center sm:snap-align-none shrink-0">
       <Input
         autoFocus
-        placeholder="Column title (e.g. In Review)..."
+        placeholder={t('kanban.enterColumnTitle')}
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         onKeyDown={handleKeyDown}
@@ -99,7 +101,7 @@ export function CreateColumnForm({
           className="flex-1 h-8 text-xs font-semibold rounded-xl shadow-xs hover:shadow-pastel transition-all active:scale-95"
         >
           <Check className="mr-1.5 h-3.5 w-3.5" />
-          Create Column
+          {t('kanban.addColumn')}
         </Button>
         <Button
           variant="ghost"

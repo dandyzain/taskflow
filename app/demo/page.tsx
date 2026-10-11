@@ -7,6 +7,9 @@ import { toast } from 'sonner';
 import { ArrowLeft, Sparkles, User, Loader2, ArrowRight } from 'lucide-react';
 import { loginUser } from '@/actions/auth-actions';
 import { LogoMark } from '@/components/brand/logo';
+import { LanguageToggle } from '@/components/language-toggle';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { useLanguage } from '@/lib/i18n/language-context';
 import {
   Card,
   CardContent,
@@ -46,6 +49,34 @@ const DEMO_ACCOUNTS = [
 export default function DemoLoginPage() {
   const router = useRouter();
   const [loadingEmail, setLoadingEmail] = useState<string | null>(null);
+  const { t } = useLanguage();
+
+  const demoAccounts = [
+    {
+      name: 'Demo User',
+      email: 'demo@taskflow.dev',
+      role: 'ADMIN',
+      desc: t('auth.demoAdminRole'),
+      color: 'bg-pastel-lavender text-pastel-lavender-text',
+      badgeColor: 'bg-pastel-lavender/50 text-pastel-lavender-text border-purple-300/40',
+    },
+    {
+      name: 'Sarah Chen',
+      email: 'sarah@taskflow.dev',
+      role: 'MEMBER',
+      desc: t('auth.demoMember1Role'),
+      color: 'bg-pastel-mint text-pastel-mint-text',
+      badgeColor: 'bg-pastel-mint/50 text-pastel-mint-text border-emerald-300/40',
+    },
+    {
+      name: 'Alex Kim',
+      email: 'alex@taskflow.dev',
+      role: 'MEMBER',
+      desc: t('auth.demoMember2Role'),
+      color: 'bg-pastel-sky text-pastel-sky-text',
+      badgeColor: 'bg-pastel-sky/50 text-pastel-sky-text border-sky-300/40',
+    },
+  ];
 
   const handleDemoLogin = async (demoEmail: string, name: string) => {
     if (loadingEmail) return;
@@ -69,6 +100,12 @@ export default function DemoLoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center pastel-mesh-bg p-4 relative overflow-hidden">
+      {/* Language & Theme Controls Top Right */}
+      <div className="absolute top-3 right-3 sm:top-5 sm:right-5 z-20 flex items-center gap-1.5">
+        <LanguageToggle />
+        <ThemeToggle />
+      </div>
+
       {/* Decorative floating pastel blurs */}
       <div className="absolute top-1/4 left-1/4 w-80 h-80 rounded-full bg-pastel-lavender/40 blur-3xl -z-10 animate-float pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-pastel-sky/35 blur-3xl -z-10 animate-float pointer-events-none" style={{ animationDelay: '2s' }} />
@@ -92,15 +129,15 @@ export default function DemoLoginPage() {
           <CardHeader className="space-y-1 pb-3 text-center sm:text-left">
             <CardTitle className="text-xl font-bold flex items-center justify-center sm:justify-start gap-2">
               <User className="w-5 h-5 text-primary" />
-              1-Click Demo Login
+              {t('auth.demoTitle')}
             </CardTitle>
             <CardDescription className="text-xs leading-relaxed">
-              Select any role profile below to instantly explore TaskFlow with preloaded boards, tasks, and analytics. No password entry required!
+              {t('auth.demoDescription')}
             </CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-3 pt-2">
-            {DEMO_ACCOUNTS.map((acc) => {
+            {demoAccounts.map((acc) => {
               const isLoadingThis = loadingEmail === acc.email;
               const isAnyLoading = loadingEmail !== null;
 
@@ -152,22 +189,22 @@ export default function DemoLoginPage() {
 
           <CardFooter className="flex flex-col space-y-2.5 text-center text-xs border-t border-border/50 pt-4">
             <div className="text-muted-foreground">
-              Already have your own account?{' '}
+              {t('auth.hasAccount')}{' '}
               <Link
                 href="/login"
                 className="text-primary font-semibold hover:underline inline-flex items-center gap-1 ml-1"
               >
                 <ArrowLeft className="w-3 h-3" />
-                Back to Sign In
+                {t('auth.backToLogin')}
               </Link>
             </div>
             <div className="text-muted-foreground/80 text-[11px]">
-              Want a fresh workspace?{' '}
+              {t('auth.noAccount')}{' '}
               <Link
                 href="/register"
                 className="text-primary font-semibold hover:underline ml-1"
               >
-                Create an account
+                {t('auth.createAccount')}
               </Link>
             </div>
           </CardFooter>
@@ -176,10 +213,10 @@ export default function DemoLoginPage() {
         {/* Website Footer Copyright Notice & Creator Credit */}
         <footer className="text-center text-xs text-muted-foreground/60 pt-3 pb-2 space-y-1">
           <p className="text-[11px] font-medium text-muted-foreground/85">
-            Designed & Engineered by <span className="font-semibold text-foreground/95">Dandy Rahmat Zain</span>
+            {t('auth.creatorCredit')} <span className="font-semibold text-foreground/95">Dandy Rahmat Zain</span>
           </p>
           <p className="text-[11px] text-muted-foreground/60">
-            © {new Date().getFullYear()} TaskFlow. All rights reserved.
+            © {new Date().getFullYear()} {t('auth.copyright')}
           </p>
         </footer>
       </div>

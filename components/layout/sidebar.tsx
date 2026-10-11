@@ -6,6 +6,8 @@ import { useRouter, useParams, usePathname } from 'next/navigation';
 import { LayoutDashboard, Plus, Trash2, LogOut, User as UserIcon, Sparkles, BarChart3, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { LanguageToggle } from '@/components/language-toggle';
+import { useLanguage } from '@/lib/i18n/language-context';
 import { LogoMark } from '@/components/brand/logo';
 import { CreateBoardDialog } from '@/components/layout/create-board-dialog';
 import { deleteBoard } from '@/actions/board-actions';
@@ -30,6 +32,7 @@ export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, cu
   const pathname = usePathname();
   const activeBoardId = (params?.boardId as string) || currentBoardId;
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const { t } = useLanguage();
 
   const handleDeleteBoard = async (boardId: string) => {
     if (!confirm('Delete this board and all its data?')) return;
@@ -79,11 +82,12 @@ export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, cu
               <h2 className="font-bold text-xs truncate leading-tight text-foreground">{workspaceName}</h2>
               <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
                 <span className="w-1.5 h-1.5 rounded-full bg-pastel-mint shrink-0" />
-                Active Workspace
+                {t('nav.activeWorkspace')}
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-0.5 shrink-0">
+          <div className="flex items-center gap-1 shrink-0">
+            <LanguageToggle />
             <ThemeToggle />
             {onClose && (
               <Button
@@ -112,20 +116,20 @@ export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, cu
             )}
           >
             <BarChart3 className={cn('h-3.5 w-3.5 shrink-0', pathname?.includes('/reports') ? 'text-primary' : 'text-muted-foreground')} />
-            <span>Dashboard & Laporan</span>
+            <span>{t('nav.dashboardReports')}</span>
           </Link>
         </div>
 
         {/* Boards List */}
         <div className="flex-1 overflow-y-auto p-3 space-y-1.5">
           <div className="px-2 py-1.5 text-[11px] font-bold text-muted-foreground/80 uppercase tracking-wider flex items-center justify-between">
-            <span>Boards</span>
+            <span>{t('nav.boards')}</span>
             <Button
               variant="ghost"
               size="icon"
               className="h-6 w-6 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/70 transition-all active:scale-95"
               onClick={() => setCreateDialogOpen(true)}
-              title="Create new board"
+              title={t('nav.createNewBoard')}
             >
               <Plus className="h-3.5 w-3.5 text-primary" />
             </Button>
@@ -174,10 +178,10 @@ export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, cu
             </div>
             <div className="min-w-0">
               <div className="text-xs font-semibold truncate text-foreground leading-tight">
-                {currentUser?.name || 'Guest User'}
+                {currentUser?.name || t('nav.guestUser')}
               </div>
               <div className="text-[10px] text-muted-foreground truncate">
-                {currentUser?.email || 'Not logged in'}
+                {currentUser?.email || t('nav.notLoggedIn')}
               </div>
             </div>
           </div>
@@ -186,7 +190,7 @@ export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, cu
             size="icon"
             className="h-7 w-7 rounded-lg text-muted-foreground hover:text-destructive hover:bg-pastel-rose/30 transition-all shrink-0"
             onClick={handleLogout}
-            title="Log Out"
+            title={t('nav.logout')}
           >
             <LogOut className="h-3.5 w-3.5" />
           </Button>

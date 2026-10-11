@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from '@/components/theme-provider';
+import { LanguageProvider } from '@/lib/i18n/language-context';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -28,10 +29,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <main className="min-h-screen bg-background">
-            {children}
-          </main>
-          <Toaster position="bottom-right" richColors closeButton />
+          <LanguageProvider>
+            <main className="min-h-screen bg-background">
+              {children}
+            </main>
+            <Toaster position="bottom-right" richColors closeButton />
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

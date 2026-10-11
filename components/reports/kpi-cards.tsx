@@ -15,6 +15,7 @@ import {
 import type { TaskItemReport, EmployeeMetric, WorkspaceReportData } from '@/lib/queries/report-queries';
 import { KpiDetailModal, type KpiMetricType } from '@/components/reports/kpi-detail-modal';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n/language-context';
 
 interface KpiCardsProps {
   summary: WorkspaceReportData['summary'];
@@ -26,66 +27,67 @@ interface KpiCardsProps {
 
 export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: KpiCardsProps) {
   const [selectedMetric, setSelectedMetric] = useState<KpiMetricType | null>(null);
+  const { t } = useLanguage();
 
   const urgentTasksCount = tasks.filter((t) => t.priority === 3).length;
 
   const cards = [
     {
       metricType: 'total' as KpiMetricType,
-      title: 'Total Tugas',
+      title: t('reports.kpiTotalTasks'),
       value: summary.totalTasks,
-      subtitle: `${boardsCount} Board aktif`,
+      subtitle: `${boardsCount} ${t('reports.kpiTotalTasksSub')}`,
       icon: ListTodo,
       iconBg: 'bg-pastel-sky/60 text-sky-800 dark:text-sky-200',
-      badge: 'Semua Board',
+      badge: t('reports.allBoards'),
       badgeColor: 'bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300 border-sky-200/60',
       borderGlow: 'hover:border-sky-300/80 dark:hover:border-sky-700',
       tag: 'Overview',
     },
     {
       metricType: 'completed' as KpiMetricType,
-      title: 'Tugas Selesai',
+      title: t('reports.kpiCompleted'),
       value: summary.completedTasks,
-      subtitle: `${summary.completionRate}% rasio selesai`,
+      subtitle: `${summary.completionRate}% ${t('reports.kpiCompletedSub')}`,
       icon: CheckCircle2,
       iconBg: 'bg-pastel-mint/60 text-emerald-800 dark:text-emerald-200',
-      badge: `${summary.completionRate}% Selesai`,
+      badge: `${summary.completionRate}%`,
       badgeColor: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200/60',
       borderGlow: 'hover:border-emerald-300/80 dark:hover:border-emerald-700',
       tag: 'Success',
     },
     {
       metricType: 'in_progress' as KpiMetricType,
-      title: 'Sedang Dikerjakan',
+      title: t('reports.kpiInProgress'),
       value: summary.inProgressTasks,
-      subtitle: 'Dalam pengerjaan aktif',
+      subtitle: t('reports.kpiInProgressSub'),
       icon: Clock,
       iconBg: 'bg-pastel-peach/60 text-amber-800 dark:text-amber-200',
-      badge: 'In Progress',
+      badge: t('common.inProgress'),
       badgeColor: 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border-amber-200/60',
       borderGlow: 'hover:border-amber-300/80 dark:hover:border-amber-700',
       tag: 'Active',
     },
     {
       metricType: 'backlog' as KpiMetricType,
-      title: 'Antrean Tugas',
+      title: t('reports.kpiBacklog'),
       value: summary.backlogTasks,
-      subtitle: 'Siap untuk dikerjakan',
+      subtitle: t('reports.kpiBacklogSub'),
       icon: Inbox,
       iconBg: 'bg-pastel-lavender/60 text-purple-800 dark:text-purple-200',
-      badge: 'Backlog / To-Do',
+      badge: 'Backlog',
       badgeColor: 'bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border-purple-200/60',
       borderGlow: 'hover:border-purple-300/80 dark:hover:border-purple-700',
       tag: 'Pipeline',
     },
     {
       metricType: 'overdue' as KpiMetricType,
-      title: 'Tugas Terlambat',
+      title: t('reports.kpiOverdue'),
       value: summary.overdueTasks,
-      subtitle: summary.overdueTasks > 0 ? 'Melebihi batas deadline' : 'Semua deadline tepat waktu',
+      subtitle: t('reports.kpiOverdueSub'),
       icon: AlertTriangle,
       iconBg: 'bg-pastel-rose/60 text-rose-800 dark:text-rose-200',
-      badge: summary.overdueTasks > 0 ? 'Perlu Perhatian' : 'Aman',
+      badge: summary.overdueTasks > 0 ? t('common.overdue') : t('common.onTrack'),
       badgeColor:
         summary.overdueTasks > 0
           ? 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border-rose-200/60'
@@ -98,12 +100,12 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: 
     },
     {
       metricType: 'due_soon' as KpiMetricType,
-      title: 'Mendekati Batas',
+      title: t('reports.kpiDueSoon'),
       value: summary.dueSoonTasks,
-      subtitle: 'Deadline ≤ 48 jam ke depan',
+      subtitle: t('reports.kpiDueSoonSub'),
       icon: Timer,
       iconBg: 'bg-pastel-peach/70 text-amber-800 dark:text-amber-200',
-      badge: summary.dueSoonTasks > 0 ? 'Segera Berakhir' : 'Tidak Ada',
+      badge: t('common.dueSoon'),
       badgeColor:
         summary.dueSoonTasks > 0
           ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border-amber-200/60'
@@ -113,24 +115,24 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: 
     },
     {
       metricType: 'urgent' as KpiMetricType,
-      title: 'Prioritas Tinggi',
+      title: t('reports.kpiUrgent'),
       value: urgentTasksCount,
-      subtitle: 'Tingkat urgensi High',
+      subtitle: t('reports.kpiUrgentSub'),
       icon: ArrowUp,
       iconBg: 'bg-pastel-rose/70 text-rose-800 dark:text-rose-200',
-      badge: 'High Priority',
+      badge: t('kanban.priorityUrgent'),
       badgeColor: 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border-rose-200/60',
       borderGlow: 'hover:border-rose-300/80 dark:hover:border-rose-700',
       tag: 'Critical',
     },
     {
       metricType: 'members' as KpiMetricType,
-      title: 'Anggota Tim',
+      title: t('reports.kpiMembers'),
       value: summary.totalMembers,
-      subtitle: `Rata-rata ${summary.averageTasksPerMember} task / orang`,
+      subtitle: t('reports.kpiMembersSub', { avg: summary.averageTasksPerMember }),
       icon: Users,
       iconBg: 'bg-pastel-lavender/60 text-purple-800 dark:text-purple-200',
-      badge: 'Kolaborasi',
+      badge: t('reports.tabTeam'),
       badgeColor: 'bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border-purple-200/60',
       borderGlow: 'hover:border-purple-300/80 dark:hover:border-purple-700',
       tag: 'Capacity',
@@ -141,9 +143,9 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: 
     <>
       <div className="space-y-2">
         <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
-          <span className="font-semibold text-foreground/80">Ringkasan Statistik Utama</span>
+          <span className="font-semibold text-foreground/80">{t('reports.kpiSummaryTitle')}</span>
           <span className="text-[11px] text-muted-foreground/70 hidden sm:inline">
-            Klik kartu statistik untuk melihat rincian detail data ↗
+            {t('reports.clickCardHint')}
           </span>
         </div>
 
@@ -202,7 +204,7 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: 
 
                 {/* Subtle Click Hint on Hover */}
                 <div className="pt-2 mt-2 border-t border-border/40 flex items-center justify-between text-[10px] text-muted-foreground/70 group-hover:text-primary transition-colors font-medium">
-                  <span>Lihat Detail</span>
+                  <span>{t('common.viewDetails')}</span>
                   <span>↗</span>
                 </div>
               </div>

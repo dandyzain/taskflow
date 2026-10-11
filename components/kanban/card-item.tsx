@@ -9,6 +9,7 @@ import type { CardItem } from "@/types/kanban"
 import { cn } from "@/lib/utils"
 import { CardDetailModal } from "@/components/kanban/card-detail-modal"
 import { LabelBadge } from "@/components/kanban/label-badge"
+import { useLanguage } from "@/lib/i18n/language-context"
 
 function isOverdue(dateStr: string): boolean {
   return new Date(dateStr) < new Date(new Date().toDateString());
@@ -21,16 +22,16 @@ function isDueSoon(dateStr: string): boolean {
   return diffDays >= 0 && diffDays <= 2;
 }
 
-function formatDueDate(dateStr: string): string {
+function formatDueDate(dateStr: string, isIndonesian: boolean): string {
   const date = new Date(dateStr);
   const now = new Date();
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
 
-  if (date.toDateString() === now.toDateString()) return 'Today';
-  if (date.toDateString() === tomorrow.toDateString()) return 'Tomorrow';
+  if (date.toDateString() === now.toDateString()) return isIndonesian ? 'Hari ini' : 'Today';
+  if (date.toDateString() === tomorrow.toDateString()) return isIndonesian ? 'Besok' : 'Tomorrow';
 
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return date.toLocaleDateString(isIndonesian ? 'id-ID' : 'en-US', { month: 'short', day: 'numeric' });
 }
 
 interface CardItemProps {
@@ -43,6 +44,7 @@ interface CardItemProps {
 }
 
 export function CardItemComponent({ card, boardId, workspaceId, isDragOverlay, onCardUpdated, onCardDeleted }: CardItemProps) {
+  const { t, lang } = useLanguage()
   const [modalOpen, setModalOpen] = React.useState(false)
   const {
     setNodeRef,
@@ -70,21 +72,21 @@ export function CardItemComponent({ card, boardId, workspaceId, isDragOverlay, o
     priorityBadge = (
       <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium bg-pastel-sky text-pastel-sky-text border border-sky-300/30">
         <ArrowDown className="w-2.5 h-2.5 shrink-0" />
-        Low
+        {t('kanban.priorityLow')}
       </span>
     )
   } else if (card.priority === 2) {
     priorityBadge = (
       <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium bg-pastel-peach text-pastel-peach-text border border-amber-300/30">
         <ArrowRight className="w-2.5 h-2.5 shrink-0" />
-        Medium
+        {t('kanban.priorityMedium')}
       </span>
     )
   } else if (card.priority === 3) {
     priorityBadge = (
       <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium bg-pastel-rose text-pastel-rose-text border border-rose-300/30">
         <ArrowUp className="w-2.5 h-2.5 shrink-0" />
-        High
+        {t('kanban.priorityUrgent')}
       </span>
     )
   }
@@ -151,7 +153,7 @@ export function CardItemComponent({ card, boardId, workspaceId, isDragOverlay, o
                 'bg-muted/70 text-muted-foreground border-border/40'
               )}>
                 <Clock className="h-3 w-3" />
-                <span>{formatDueDate(card.dueDate)}</span>
+                <span>{formatDueDate(card.dueDate, lang === 'id')}</span>
               </span>
             )}
           </div>

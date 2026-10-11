@@ -8,6 +8,7 @@ import { Sidebar } from '@/components/layout/sidebar';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { LanguageToggle } from '@/components/language-toggle';
 import { LogoMark } from '@/components/brand/logo';
 
 interface WorkspaceShellProps {
@@ -67,6 +68,7 @@ export function WorkspaceShell({
           >
             <BarChart3 className="h-4 w-4" />
           </Link>
+          <LanguageToggle />
           <ThemeToggle />
         </div>
       </header>

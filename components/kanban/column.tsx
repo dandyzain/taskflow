@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { GripVertical, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { updateColumn, deleteColumn } from '@/actions/column-actions';
+import { useLanguage } from '@/lib/i18n/language-context';
 
 interface ColumnProps {
   column: BoardColumn;
@@ -45,6 +46,7 @@ export function KanbanColumn({
   onColumnUpdated,
   onColumnDeleted
 }: ColumnProps) {
+  const { t, lang } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(column.title);
 
@@ -84,7 +86,7 @@ export function KanbanColumn({
 
     if (result.success) {
       onColumnUpdated(column.id, editTitle);
-      toast.success('Column updated');
+      toast.success(lang === 'id' ? 'Kolom berhasil diperbarui' : 'Column updated');
     } else {
       toast.error(result.error);
       setEditTitle(column.title);
@@ -93,7 +95,7 @@ export function KanbanColumn({
   };
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this column and all its cards?')) {
+    if (!confirm(t('kanban.deleteColumnConfirm'))) {
       return;
     }
 
@@ -105,7 +107,7 @@ export function KanbanColumn({
 
     if (result.success) {
       onColumnDeleted(column.id);
-      toast.success('Column deleted');
+      toast.success(lang === 'id' ? 'Kolom berhasil dihapus' : 'Column deleted');
     } else {
       toast.error(result.error);
     }
@@ -129,7 +131,7 @@ export function KanbanColumn({
             {...attributes} 
             {...listeners}
             className="cursor-grab active:cursor-grabbing text-muted-foreground/60 hover:text-foreground transition-colors p-1 sm:p-0.5 rounded touch-none"
-            title="Drag column"
+            title={lang === 'id' ? 'Geser kolom' : 'Drag column'}
           >
             <GripVertical size={15} />
           </div>
@@ -156,7 +158,7 @@ export function KanbanColumn({
             <h3 
               className="font-semibold text-sm truncate cursor-pointer text-foreground select-none"
               onDoubleClick={() => setIsEditing(true)}
-              title="Double click to edit title"
+              title={lang === 'id' ? 'Klik dua kali untuk mengedit nama kolom' : 'Double click to edit title'}
             >
               {column.title}
             </h3>
@@ -173,7 +175,7 @@ export function KanbanColumn({
             size="icon"
             className="h-6 w-6 text-muted-foreground/60 hover-reveal hover:text-destructive hover:bg-destructive/10 rounded-lg"
             onClick={handleDelete}
-            title="Delete column"
+            title={t('kanban.deleteColumn')}
           >
             <Trash2 size={13} />
           </Button>

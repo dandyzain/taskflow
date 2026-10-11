@@ -11,6 +11,8 @@ import { TaskTable } from '@/components/reports/task-table';
 import { BoardComparisonChart } from '@/components/reports/board-comparison-chart';
 import { DeadlineHealthChart } from '@/components/reports/deadline-health-chart';
 import { exportTasksToCSV, exportEmployeesToCSV } from '@/components/reports/export-utils';
+import { LanguageToggle } from '@/components/language-toggle';
+import { useLanguage } from '@/lib/i18n/language-context';
 import { 
   BarChart3, 
   Users, 
@@ -39,6 +41,7 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
   const [activeTab, setActiveTab] = useState<'tasks' | 'employees' | 'table'>('tasks');
   const [selectedBoardId, setSelectedBoardId] = useState<string>('all');
   const [timeRange, setTimeRange] = useState<'all' | '30d' | '7d'>('all');
+  const { t } = useLanguage();
 
   // Filter tasks based on client selection if changed
   const filteredTasks = initialData.tasks.filter((t) => {
@@ -221,19 +224,19 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
                 <BarChart3 className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
               </span>
               <h1 className="text-base sm:text-2xl font-bold tracking-tight text-foreground truncate">
-                Dashboard & Laporan
+                {t('reports.title')}
               </h1>
             </div>
 
             {/* Live Indicator Pill */}
             <span className="text-[10px] sm:text-[11px] font-semibold bg-pastel-mint/70 text-emerald-800 dark:text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-300/40 shadow-xs shrink-0 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Live
+              {t('common.live')}
             </span>
           </div>
 
           <p className="text-xs text-muted-foreground mt-1 pl-[42px] sm:pl-0 truncate sm:whitespace-normal">
-            Analitik tugas dan produktivitas tim
+            {t('reports.subtitle')}
           </p>
         </div>
 
@@ -249,7 +252,7 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
                 onChange={(e) => setSelectedBoardId(e.target.value)}
                 className="bg-transparent text-xs font-semibold text-foreground focus:outline-none cursor-pointer w-full truncate pr-1"
               >
-                <option value="all">Semua Board ({initialData.boards.length})</option>
+                <option value="all">{t('reports.allBoards')} ({initialData.boards.length})</option>
                 {initialData.boards.map((b) => (
                   <option key={b.id} value={b.id}>
                     {b.title}
@@ -266,14 +269,14 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
                 onChange={(e) => setTimeRange(e.target.value as 'all' | '30d' | '7d')}
                 className="bg-transparent text-xs font-semibold text-foreground focus:outline-none cursor-pointer w-full truncate pr-1"
               >
-                <option value="all">Semua Waktu</option>
-                <option value="30d">30 Hari Terakhir</option>
-                <option value="7d">7 Hari Terakhir</option>
+                <option value="all">{t('reports.allTime')}</option>
+                <option value="30d">{t('reports.last30Days')}</option>
+                <option value="7d">{t('reports.last7Days')}</option>
               </select>
             </div>
           </div>
 
-          {/* Row 2 on mobile: Export & Print */}
+          {/* Row 2 on mobile: Export, Print, & Language */}
           <div className="flex items-center gap-2 w-full sm:w-auto">
             {/* Export Dropdown Popover */}
             <Popover>
@@ -284,7 +287,7 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
                 >
                   <span className="flex items-center gap-1.5 truncate">
                     <Download className="w-3.5 h-3.5 text-primary shrink-0" />
-                    <span>Ekspor Data</span>
+                    <span>{t('common.export')}</span>
                   </span>
                   <ChevronDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                 </Button>
@@ -296,14 +299,14 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
                     className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-foreground hover:bg-secondary/70 transition-colors flex items-center gap-2"
                   >
                     <ListFilter className="w-4 h-4 text-sky-500" />
-                    Ekspor Data Tugas (CSV)
+                    {t('common.exportTasksCsv')}
                   </button>
                   <button
                     onClick={() => exportEmployeesToCSV(employeeMetrics, initialData.workspace.name)}
                     className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-foreground hover:bg-secondary/70 transition-colors flex items-center gap-2"
                   >
                     <Users className="w-4 h-4 text-purple-500" />
-                    Ekspor Kinerja Tim (CSV)
+                    {t('common.exportTeamCsv')}
                   </button>
                 </div>
               </PopoverContent>
@@ -314,11 +317,14 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
               onClick={handlePrint}
               variant="outline"
               className="h-9 px-3 rounded-xl border border-border/80 bg-card/80 hover:bg-card text-muted-foreground hover:text-foreground shrink-0 shadow-xs flex items-center gap-1.5 text-xs font-semibold"
-              title="Cetak Laporan"
+              title={t('common.print')}
             >
               <Printer className="w-3.5 h-3.5" />
-              <span className="hidden xs:inline">Cetak</span>
+              <span className="hidden xs:inline">{t('common.print')}</span>
             </Button>
+
+            {/* Language Switcher */}
+            <LanguageToggle />
           </div>
         </div>
       </div>
@@ -335,7 +341,7 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
           )}
         >
           <BarChart3 className="w-3.5 h-3.5 text-primary shrink-0" />
-          <span className="truncate">Analitik</span>
+          <span className="truncate">{t('reports.tabAnalytics')}</span>
         </button>
 
         <button
@@ -348,7 +354,7 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
           )}
         >
           <Users className="w-3.5 h-3.5 text-purple-500 shrink-0" />
-          <span className="truncate">Kinerja Tim</span>
+          <span className="truncate">{t('reports.tabTeam')}</span>
         </button>
 
         <button
@@ -361,7 +367,7 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
           )}
         >
           <ListFilter className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-          <span className="truncate">Daftar Task</span>
+          <span className="truncate">{t('reports.tabTasks')}</span>
         </button>
       </div>
 

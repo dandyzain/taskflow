@@ -7,20 +7,19 @@ import {
   Users, 
   CheckCircle2, 
   Clock, 
-  AlertTriangle, 
-  Activity, 
-  Target, 
   BarChart2, 
   Scale, 
   Zap,
-  TrendingUp
 } from 'lucide-react';
+import { useLanguage } from '@/lib/i18n/language-context';
 
 interface TeamAnalyticsChartsProps {
   employeeMetrics: EmployeeMetric[];
 }
 
 export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProps) {
+  const { t } = useLanguage();
+
   if (employeeMetrics.length === 0) return null;
 
   // 1. Calculate overall team aggregate KPIs
@@ -46,8 +45,6 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
     light: employeeMetrics.filter((m) => m.workloadStatus === 'light').length,
   };
 
-  const maxTasksSingleMember = Math.max(1, ...employeeMetrics.map((m) => m.totalAssigned));
-
   return (
     <div className="space-y-6">
       {/* 4 Team Aggregate KPI Summary Cards */}
@@ -59,13 +56,13 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
               <CheckCircle2 className="w-4 h-4 text-emerald-700 dark:text-emerald-300" />
             </div>
             <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200/60">
-              Rata-rata Tim
+              {t('reports.tabTeam')}
             </span>
           </div>
           <div className="space-y-0.5">
-            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">Tingkat Penyelesaian</p>
+            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">{t('reports.teamSummaryAvgCompletion')}</p>
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{avgCompletionRate}%</h3>
-            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80">{totalCompletedAll} dari {totalAssignedAll} tugas tuntas</p>
+            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80">{t('reports.teamSummaryAvgCompletionSub', { completed: totalCompletedAll, total: totalAssignedAll })}</p>
           </div>
         </div>
 
@@ -80,10 +77,10 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
             </span>
           </div>
           <div className="space-y-0.5">
-            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">Ketepatan Waktu</p>
+            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">{t('reports.teamSummaryOnTime')}</p>
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{avgOnTimeRate}%</h3>
             <p className="text-[10px] sm:text-[11px] text-muted-foreground/80">
-              {totalOverdueAll > 0 ? `${totalOverdueAll} tugas terlambat` : 'Semua tepat waktu'}
+              {totalOverdueAll > 0 ? t('reports.teamSummaryOnTimeSub', { overdue: totalOverdueAll }) : t('reports.teamSummaryOnTimeClean')}
             </p>
           </div>
         </div>
@@ -95,15 +92,15 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
               <Scale className="w-4 h-4 text-amber-700 dark:text-amber-300" />
             </div>
             <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/60">
-              Kapasitas
+              Capacity
             </span>
           </div>
           <div className="space-y-0.5">
-            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">Beban Kerja Tim</p>
+            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">{t('reports.teamSummaryWorkload')}</p>
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
               {capacityCounts.optimal + capacityCounts.light}/{employeeMetrics.length}
             </h3>
-            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80">Anggota dalam beban aman</p>
+            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80">{t('reports.teamSummaryWorkloadSub')}</p>
           </div>
         </div>
 
@@ -114,13 +111,13 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
               <Zap className="w-4 h-4 text-purple-700 dark:text-purple-300" />
             </div>
             <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border border-purple-200/60">
-              Interaksi
+              Activities
             </span>
           </div>
           <div className="space-y-0.5">
-            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">Total Aktivitas Kerja</p>
+            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">{t('reports.teamSummaryActivity')}</p>
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{totalActivitiesAll}</h3>
-            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80">Aksi audit & update tercatat</p>
+            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80">{t('reports.teamSummaryActivitySub')}</p>
           </div>
         </div>
       </div>
@@ -133,23 +130,23 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
             <div>
               <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
                 <BarChart2 className="w-4 h-4 text-primary shrink-0" />
-                Grafik Komparasi Beban & Produktivitas Anggota
+                {t('reports.teamWorkloadChartTitle')}
               </h3>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Perbandingan tugas selesai, dalam pengerjaan, dan keterlambatan per staf
+                {t('reports.teamWorkloadChartSub')}
               </p>
             </div>
 
             {/* Legend */}
             <div className="flex items-center gap-2 text-[10px] sm:text-[11px] bg-secondary/50 px-2.5 py-1 rounded-xl border border-border/50 shrink-0 self-start sm:self-auto">
               <span className="flex items-center gap-1 text-muted-foreground">
-                <span className="w-2 h-2 rounded-full bg-pastel-mint" /> Selesai
+                <span className="w-2 h-2 rounded-full bg-pastel-mint" /> {t('common.completed')}
               </span>
               <span className="flex items-center gap-1 text-muted-foreground">
-                <span className="w-2 h-2 rounded-full bg-pastel-peach" /> In Progress
+                <span className="w-2 h-2 rounded-full bg-pastel-peach" /> {t('common.inProgress')}
               </span>
               <span className="flex items-center gap-1 text-muted-foreground">
-                <span className="w-2 h-2 rounded-full bg-pastel-rose" /> Overdue
+                <span className="w-2 h-2 rounded-full bg-pastel-rose" /> {t('common.overdue')}
               </span>
             </div>
           </div>
@@ -186,7 +183,7 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
                     <div className="flex items-center gap-2 shrink-0 text-right">
                       <div className="text-[11px]">
                         <span className="font-bold text-emerald-600 dark:text-emerald-400">{member.completedTasks}</span>
-                        <span className="text-muted-foreground">/{member.totalAssigned} tugas</span>
+                        <span className="text-muted-foreground">/{member.totalAssigned}</span>
                       </div>
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-secondary border border-border/60">
                         {member.completionRate}%
@@ -201,17 +198,17 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
                         <div
                           style={{ width: `${completedPct}%` }}
                           className="h-full rounded-full bg-pastel-mint transition-all"
-                          title={`${member.completedTasks} Selesai`}
+                          title={`${member.completedTasks} ${t('common.completed')}`}
                         />
                         <div
                           style={{ width: `${inProgressPct}%` }}
                           className="h-full rounded-full bg-pastel-peach transition-all"
-                          title={`${member.inProgressTasks} In Progress`}
+                          title={`${member.inProgressTasks} ${t('common.inProgress')}`}
                         />
                         <div
                           style={{ width: `${overduePct}%` }}
                           className="h-full rounded-full bg-pastel-rose transition-all"
-                          title={`${member.overdueTasks} Overdue`}
+                          title={`${member.overdueTasks} ${t('common.overdue')}`}
                         />
                       </>
                     ) : (
@@ -229,10 +226,10 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
           <div>
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
               <Scale className="w-4 h-4 text-amber-500 shrink-0" />
-              Distribusi Status Kapasitas Tim
+              {t('reports.teamCapacityChartTitle')}
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Evaluasi ketersediaan dan beban kerja operasional staf
+              {t('reports.teamCapacityChartSub')}
             </p>
           </div>
 
@@ -243,9 +240,9 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
               <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-foreground flex items-center gap-1.5 text-[11px]">
                   <span className="w-2.5 h-2.5 rounded-full bg-pastel-mint ring-2 ring-emerald-400/30" />
-                  Optimal (1 - 3 Tugas Aktif)
+                  {t('reports.capacityOptimal')}
                 </span>
-                <span className="font-bold text-emerald-600 dark:text-emerald-400">{capacityCounts.optimal} orang</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400">{capacityCounts.optimal}</span>
               </div>
               <div className="h-1.5 w-full bg-secondary/80 rounded-full overflow-hidden">
                 <div 
@@ -260,9 +257,9 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
               <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-foreground flex items-center gap-1.5 text-[11px]">
                   <span className="w-2.5 h-2.5 rounded-full bg-pastel-peach ring-2 ring-amber-400/30" />
-                  Beban Tinggi (4 - 6 Tugas Aktif)
+                  {t('reports.capacityHeavy')}
                 </span>
-                <span className="font-bold text-amber-600 dark:text-amber-400">{capacityCounts.heavy} orang</span>
+                <span className="font-bold text-amber-600 dark:text-amber-400">{capacityCounts.heavy}</span>
               </div>
               <div className="h-1.5 w-full bg-secondary/80 rounded-full overflow-hidden">
                 <div 
@@ -277,9 +274,9 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
               <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-foreground flex items-center gap-1.5 text-[11px]">
                   <span className="w-2.5 h-2.5 rounded-full bg-pastel-rose ring-2 ring-rose-400/30" />
-                  Overload (&gt; 6 Tugas Aktif)
+                  {t('reports.capacityOverloaded')}
                 </span>
-                <span className="font-bold text-rose-600 dark:text-rose-400">{capacityCounts.overloaded} orang</span>
+                <span className="font-bold text-rose-600 dark:text-rose-400">{capacityCounts.overloaded}</span>
               </div>
               <div className="h-1.5 w-full bg-secondary/80 rounded-full overflow-hidden">
                 <div 
@@ -294,9 +291,9 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
               <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-foreground flex items-center gap-1.5 text-[11px]">
                   <span className="w-2.5 h-2.5 rounded-full bg-pastel-sky ring-2 ring-sky-400/30" />
-                  Tersedia / Standby (0 Tugas Aktif)
+                  {t('reports.capacityLight')}
                 </span>
-                <span className="font-bold text-sky-600 dark:text-sky-400">{capacityCounts.light} orang</span>
+                <span className="font-bold text-sky-600 dark:text-sky-400">{capacityCounts.light}</span>
               </div>
               <div className="h-1.5 w-full bg-secondary/80 rounded-full overflow-hidden">
                 <div 

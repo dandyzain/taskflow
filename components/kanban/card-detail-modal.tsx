@@ -28,6 +28,7 @@ import {
 import { LabelBadge } from '@/components/kanban/label-badge';
 import { LabelPicker } from '@/components/kanban/label-picker';
 import { AssigneePicker } from './assignee-picker';
+import { useLanguage } from '@/lib/i18n/language-context';
 
 interface CardDetailModalProps {
   card: CardItem;
@@ -48,6 +49,7 @@ export function CardDetailModal({
   onCardUpdated,
   onCardDeleted,
 }: CardDetailModalProps) {
+  const { t, lang } = useLanguage();
   const [title, setTitle] = useState(card.title);
   const [description, setDescription] = useState(card.description || '');
   const [priority, setPriority] = useState<number>(card.priority);
@@ -201,7 +203,7 @@ export function CardDetailModal({
   };
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this card?')) return;
+    if (!confirm(t('cardModal.deleteCardPrompt'))) return;
 
     setIsDeleting(true);
     try {
@@ -213,6 +215,7 @@ export function CardDetailModal({
       });
 
       if (result.success) {
+        toast.success(t('cardModal.cardDeleted'));
         onCardDeleted(card.id);
         onOpenChange(false);
       } else {
@@ -234,7 +237,7 @@ export function CardDetailModal({
         className="sm:max-w-[540px] rounded-3xl border border-border/80 shadow-pastel bg-card/95 backdrop-blur-xl p-4 sm:p-6"
       >
         <DialogHeader>
-          <DialogTitle className="sr-only">Card Details</DialogTitle>
+          <DialogTitle className="sr-only">{t('cardModal.taskDetails')}</DialogTitle>
           <div className="pr-6 pt-1">
             <Input
               value={title}
@@ -250,7 +253,7 @@ export function CardDetailModal({
                 }
               }}
               className="text-base sm:text-lg font-bold border-none px-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none text-foreground placeholder:text-muted-foreground/60"
-              placeholder="Card Title"
+              placeholder={t('common.title')}
             />
           </div>
         </DialogHeader>
@@ -259,33 +262,38 @@ export function CardDetailModal({
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5 font-medium">
               <Calendar className="w-3.5 h-3.5 text-primary" />
-              <span>Created {new Date(card.createdAt).toLocaleDateString()}</span>
+              <span>
+                {lang === 'id' ? 'Dibuat ' : 'Created '}
+                {new Date(card.createdAt).toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US')}
+              </span>
             </div>
-            {isSaving && <span className="text-primary text-[11px] font-semibold animate-pulse">Saving changes...</span>}
+            {isSaving && <span className="text-primary text-[11px] font-semibold animate-pulse">{t('common.saving')}</span>}
           </div>
 
           <div className="grid gap-1.5">
-            <Label htmlFor="description" className="text-xs font-semibold">Description</Label>
+            <Label htmlFor="description" className="text-xs font-semibold">{t('common.description')}</Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               onBlur={handleBlurDescription}
-              placeholder="Add more details or notes about this task..."
+              placeholder={t('cardModal.editDescPrompt')}
               className="min-h-[85px] sm:min-h-[100px] resize-none rounded-xl text-xs border-border/80 focus-visible:ring-primary/40 leading-relaxed bg-background/50"
             />
           </div>
 
           <div className="grid gap-2">
             <Label className="flex items-center gap-1.5 text-xs font-semibold">
-              <Tag className="w-3.5 h-3.5 text-primary" /> Labels
+              <Tag className="w-3.5 h-3.5 text-primary" /> {t('common.labels')}
             </Label>
             <div className="flex flex-wrap gap-1.5 mb-1 min-h-[24px] items-center">
               {labels.map(l => (
                 <LabelBadge key={l.id} label={l} size="sm" />
               ))}
               {labels.length === 0 && (
-                <span className="text-xs text-muted-foreground/70 italic">No labels selected</span>
+                <span className="text-xs text-muted-foreground/70 italic">
+                  {lang === 'id' ? 'Belum ada label' : 'No labels selected'}
+                </span>
               )}
             </div>
             <LabelPicker
@@ -301,7 +309,7 @@ export function CardDetailModal({
 
           <div className="grid gap-2">
             <Label className="flex items-center gap-1.5 text-xs font-semibold">
-              <Users className="w-3.5 h-3.5 text-primary" /> Assigned Members
+              <Users className="w-3.5 h-3.5 text-primary" /> {t('common.assignees')}
             </Label>
             <div className="flex flex-wrap gap-1.5 mb-1 min-h-[24px] items-center">
               {assignees.map(a => (
@@ -313,7 +321,9 @@ export function CardDetailModal({
                 </div>
               ))}
               {assignees.length === 0 && (
-                <span className="text-xs text-muted-foreground/70 italic">No members assigned</span>
+                <span className="text-xs text-muted-foreground/70 italic">
+                  {lang === 'id' ? 'Belum ada anggota ditugaskan' : 'No members assigned'}
+                </span>
               )}
             </div>
             <AssigneePicker
@@ -331,7 +341,7 @@ export function CardDetailModal({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-1">
             <div className="grid gap-1.5">
               <Label htmlFor="dueDate" className="flex items-center gap-1.5 text-xs font-semibold">
-                <CalendarDays className="w-3.5 h-3.5 text-primary" /> Due Date
+                <CalendarDays className="w-3.5 h-3.5 text-primary" /> {t('common.dueDate')}
               </Label>
               <div className="flex items-center gap-1.5">
                 <Input
@@ -348,7 +358,7 @@ export function CardDetailModal({
                     onClick={handleClearDueDate}
                     className="h-9 px-2 text-xs text-muted-foreground hover:text-destructive rounded-xl shrink-0"
                   >
-                    Clear
+                    {lang === 'id' ? 'Hapus' : 'Clear'}
                   </Button>
                 )}
               </div>
@@ -356,35 +366,35 @@ export function CardDetailModal({
 
             <div className="grid gap-1.5">
               <Label htmlFor="priority" className="flex items-center gap-1.5 text-xs font-semibold">
-                <Flag className="w-3.5 h-3.5 text-primary" /> Priority
+                <Flag className="w-3.5 h-3.5 text-primary" /> {t('common.priority')}
               </Label>
               <Select value={priority.toString()} onValueChange={handlePriorityChange}>
                 <SelectTrigger id="priority" className="h-9 text-xs rounded-xl border-border/80 bg-background/50 focus:ring-primary/40">
-                  <SelectValue placeholder="Select priority" />
+                  <SelectValue placeholder={lang === 'id' ? 'Pilih prioritas' : 'Select priority'} />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-border/80 shadow-pastel">
                   <SelectItem value="0" className="text-xs">
                     <span className="flex items-center gap-1.5">
                       <Circle className="h-2.5 w-2.5 text-muted-foreground/60 shrink-0" />
-                      <span>None</span>
+                      <span>{t('kanban.priorityNone')}</span>
                     </span>
                   </SelectItem>
                   <SelectItem value="1" className="text-xs">
                     <span className="flex items-center gap-1.5">
                       <ArrowDown className="h-3 w-3 text-sky-500 shrink-0" />
-                      <span>Low Priority</span>
+                      <span>{t('kanban.priorityLow')}</span>
                     </span>
                   </SelectItem>
                   <SelectItem value="2" className="text-xs">
                     <span className="flex items-center gap-1.5">
                       <ArrowRight className="h-3 w-3 text-amber-500 shrink-0" />
-                      <span>Medium Priority</span>
+                      <span>{t('kanban.priorityMedium')}</span>
                     </span>
                   </SelectItem>
                   <SelectItem value="3" className="text-xs">
                     <span className="flex items-center gap-1.5">
                       <ArrowUp className="h-3 w-3 text-rose-500 shrink-0" />
-                      <span>High Priority</span>
+                      <span>{t('kanban.priorityUrgent')}</span>
                     </span>
                   </SelectItem>
                 </SelectContent>
@@ -403,11 +413,11 @@ export function CardDetailModal({
             className="flex items-center gap-1.5 rounded-xl h-9 text-xs font-semibold hover:shadow-xs active:scale-95 transition-all"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            Delete Card
+            {lang === 'id' ? 'Hapus Tugas' : 'Delete Card'}
           </Button>
           <DialogClose asChild>
             <Button type="button" variant="secondary" size="sm" className="rounded-xl h-9 text-xs font-semibold active:scale-95 transition-all">
-              Close
+              {t('common.close')}
             </Button>
           </DialogClose>
         </DialogFooter>

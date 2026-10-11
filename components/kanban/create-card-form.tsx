@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { CardItem } from "@/types/kanban"
 import { createCard } from "@/actions/card-crud-actions"
+import { useLanguage } from "@/lib/i18n/language-context"
 
 interface CreateCardFormProps {
   columnId: string
@@ -22,6 +23,7 @@ export function CreateCardForm({
   workspaceId,
   onCardCreated,
 }: CreateCardFormProps) {
+  const { t, lang } = useLanguage()
   const [isOpen, setIsOpen] = React.useState(false)
   const [title, setTitle] = React.useState("")
   const [isSubmitting, setIsSubmitting] = React.useState(false)
@@ -58,7 +60,7 @@ export function CreateCardForm({
       setTitle("")
       setIsOpen(false)
     } catch (error) {
-      toast.error("Failed to create card")
+      toast.error(lang === 'id' ? 'Gagal menambahkan tugas' : 'Failed to create card')
     } finally {
       setIsSubmitting(false)
     }
@@ -81,7 +83,7 @@ export function CreateCardForm({
         onClick={() => setIsOpen(true)}
       >
         <Plus className="mr-2 h-3.5 w-3.5 text-primary" />
-        Add card
+        {t('kanban.addTask')}
       </Button>
     )
   }
@@ -90,7 +92,7 @@ export function CreateCardForm({
     <div className="flex flex-col gap-2 p-1.5 bg-card/80 backdrop-blur-sm rounded-xl border border-border shadow-xs animate-scale-in">
       <Input
         autoFocus
-        placeholder="Enter task title..."
+        placeholder={t('kanban.enterTaskTitle')}
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         onKeyDown={handleKeyDown}
@@ -106,7 +108,7 @@ export function CreateCardForm({
           className="flex-1 h-7 text-xs rounded-lg shadow-xs hover:shadow-md transition-all active:scale-95"
         >
           <Check className="mr-1 h-3.5 w-3.5" />
-          Add Card
+          {t('kanban.addTask')}
         </Button>
         <Button
           variant="ghost"

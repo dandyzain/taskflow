@@ -10,6 +10,7 @@ import type { ActivityItem } from "@/lib/queries/activity-queries"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { ActivityFeed } from "./activity-feed"
+import { useLanguage } from "@/lib/i18n/language-context"
 
 interface BoardHeaderProps {
   title: string
@@ -19,6 +20,7 @@ interface BoardHeaderProps {
 }
 
 export function BoardHeader({ title: initialTitle, description: initialDescription, boardId, workspaceId }: BoardHeaderProps) {
+  const { t, lang } = useLanguage()
   const [title, setTitle] = useState(initialTitle)
   const [description, setDescription] = useState(initialDescription || "")
   
@@ -55,7 +57,7 @@ export function BoardHeader({ title: initialTitle, description: initialDescripti
 
     if (result.success) {
       setTitle(editTitle)
-      toast.success("Board title updated")
+      toast.success(t('kanban.boardTitleUpdated'))
     } else {
       setEditTitle(title)
       toast.error(result.error)
@@ -88,7 +90,7 @@ export function BoardHeader({ title: initialTitle, description: initialDescripti
 
     if (result.success) {
       setDescription(editDescription)
-      toast.success("Board description updated")
+      toast.success(t('kanban.boardDescUpdated'))
     } else {
       setEditDescription(description)
       toast.error(result.error)
@@ -121,7 +123,7 @@ export function BoardHeader({ title: initialTitle, description: initialDescripti
             <h1 
               className="text-xl sm:text-2xl font-bold tracking-tight cursor-pointer hover:opacity-85 transition-all flex items-center gap-2 group text-foreground truncate"
               onClick={() => setIsEditingTitle(true)}
-              title="Click to rename board"
+              title={lang === 'id' ? 'Klik untuk mengganti nama board' : 'Click to rename board'}
             >
               <span className="truncate">{title}</span>
               <Pencil className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground/60 hover-reveal shrink-0" />
@@ -150,7 +152,7 @@ export function BoardHeader({ title: initialTitle, description: initialDescripti
               </p>
             ) : (
               <p className="text-muted-foreground/60 text-xs italic group-hover:text-muted-foreground transition-colors">
-                Add a description for this board...
+                {lang === 'id' ? 'Tambahkan deskripsi untuk board ini...' : 'Add a description for this board...'}
               </p>
             )}
             <Pencil className="h-3 w-3 ml-1.5 hover-reveal text-muted-foreground shrink-0 mt-0.5" />
@@ -165,7 +167,7 @@ export function BoardHeader({ title: initialTitle, description: initialDescripti
         onClick={() => setActivityOpen(true)}
       >
         <ActivityIcon className="h-3.5 w-3.5 text-primary" />
-        <span>Activity Feed</span>
+        <span>{t('kanban.activityFeed')}</span>
       </Button>
 
       <ActivityFeed 
