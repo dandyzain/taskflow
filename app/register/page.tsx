@@ -184,10 +184,12 @@ export default function RegisterPage() {
         </Card>
 
         {/* Website Footer Copyright Notice & Creator Credit */}
-        <footer className="text-center text-xs text-muted-foreground/60 pt-2 pb-2 space-y-1">
-          <p>© {new Date().getFullYear()} TaskFlow. All rights reserved.</p>
-          <p className="text-[11px] text-muted-foreground/75 font-medium">
-            Dibuat oleh <span className="font-semibold text-foreground/90">Dandy Rahmat Zain</span>
+        <footer className="text-center text-xs text-muted-foreground/60 pt-3 pb-2 space-y-1">
+          <p className="text-[11px] font-medium text-muted-foreground/85">
+            Designed & Engineered by <span className="font-semibold text-foreground/95">Dandy Rahmat Zain</span>
+          </p>
+          <p className="text-[11px] text-muted-foreground/60">
+            © {new Date().getFullYear()} TaskFlow. All rights reserved.
           </p>
         </footer>
       </div>
