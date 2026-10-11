@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Search, X, Filter, Tag, RotateCcw } from 'lucide-react';
+import { Search, X, Filter, Tag, RotateCcw, Circle, ArrowDown, ArrowRight, ArrowUp } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -63,10 +63,30 @@ export const BoardToolbar = React.forwardRef<HTMLInputElement, BoardToolbarProps
             </SelectTrigger>
             <SelectContent className="rounded-xl border-border/70 shadow-pastel">
               <SelectItem value="all" className="text-xs">All Priorities</SelectItem>
-              <SelectItem value="0" className="text-xs">⚪ None</SelectItem>
-              <SelectItem value="1" className="text-xs">🌱 Low Priority</SelectItem>
-              <SelectItem value="2" className="text-xs">⚡ Medium Priority</SelectItem>
-              <SelectItem value="3" className="text-xs">🔥 High Priority</SelectItem>
+              <SelectItem value="0" className="text-xs">
+                <span className="flex items-center gap-1.5">
+                  <Circle className="h-2.5 w-2.5 text-muted-foreground/60 shrink-0" />
+                  <span>None</span>
+                </span>
+              </SelectItem>
+              <SelectItem value="1" className="text-xs">
+                <span className="flex items-center gap-1.5">
+                  <ArrowDown className="h-3 w-3 text-sky-500 shrink-0" />
+                  <span>Low Priority</span>
+                </span>
+              </SelectItem>
+              <SelectItem value="2" className="text-xs">
+                <span className="flex items-center gap-1.5">
+                  <ArrowRight className="h-3 w-3 text-amber-500 shrink-0" />
+                  <span>Medium Priority</span>
+                </span>
+              </SelectItem>
+              <SelectItem value="3" className="text-xs">
+                <span className="flex items-center gap-1.5">
+                  <ArrowUp className="h-3 w-3 text-rose-500 shrink-0" />
+                  <span>High Priority</span>
+                </span>
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>

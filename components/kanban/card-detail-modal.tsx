@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Trash2, Calendar, Flag, CalendarDays, Tag, Users, Check } from 'lucide-react';
+import { Trash2, Calendar, Flag, CalendarDays, Tag, Users, Check, Circle, ArrowDown, ArrowRight, ArrowUp } from 'lucide-react';
 import { updateCard, deleteCard } from '@/actions/card-crud-actions';
 import { fetchBoardLabels } from '@/actions/fetch-labels-action';
 import type { CardItem, LabelItem, AssigneeItem } from '@/types/kanban';
@@ -356,10 +356,30 @@ export function CardDetailModal({
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-border/80 shadow-pastel">
-                  <SelectItem value="0" className="text-xs">⚪ None</SelectItem>
-                  <SelectItem value="1" className="text-xs">🌱 Low Priority</SelectItem>
-                  <SelectItem value="2" className="text-xs">⚡ Medium Priority</SelectItem>
-                  <SelectItem value="3" className="text-xs">🔥 High Priority</SelectItem>
+                  <SelectItem value="0" className="text-xs">
+                    <span className="flex items-center gap-1.5">
+                      <Circle className="h-2.5 w-2.5 text-muted-foreground/60 shrink-0" />
+                      <span>None</span>
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="1" className="text-xs">
+                    <span className="flex items-center gap-1.5">
+                      <ArrowDown className="h-3 w-3 text-sky-500 shrink-0" />
+                      <span>Low Priority</span>
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="2" className="text-xs">
+                    <span className="flex items-center gap-1.5">
+                      <ArrowRight className="h-3 w-3 text-amber-500 shrink-0" />
+                      <span>Medium Priority</span>
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="3" className="text-xs">
+                    <span className="flex items-center gap-1.5">
+                      <ArrowUp className="h-3 w-3 text-rose-500 shrink-0" />
+                      <span>High Priority</span>
+                    </span>
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>

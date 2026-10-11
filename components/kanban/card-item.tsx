@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { GripVertical, Clock, Sparkles } from "lucide-react"
+import { GripVertical, Clock, Sparkles, ArrowDown, ArrowRight, ArrowUp } from "lucide-react"
 
 import type { CardItem } from "@/types/kanban"
 import { cn } from "@/lib/utils"
@@ -69,19 +69,22 @@ export function CardItemComponent({ card, boardId, workspaceId, isDragOverlay, o
   if (card.priority === 1) {
     priorityBadge = (
       <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium bg-pastel-sky text-pastel-sky-text border border-sky-300/30">
-        🌱 Low
+        <ArrowDown className="w-2.5 h-2.5 shrink-0" />
+        Low
       </span>
     )
   } else if (card.priority === 2) {
     priorityBadge = (
       <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium bg-pastel-peach text-pastel-peach-text border border-amber-300/30">
-        ⚡ Medium
+        <ArrowRight className="w-2.5 h-2.5 shrink-0" />
+        Medium
       </span>
     )
   } else if (card.priority === 3) {
     priorityBadge = (
       <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium bg-pastel-rose text-pastel-rose-text border border-rose-300/30">
-        🔥 High
+        <ArrowUp className="w-2.5 h-2.5 shrink-0" />
+        High
       </span>
     )
   }
