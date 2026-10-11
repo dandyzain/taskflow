@@ -3,6 +3,7 @@
 import type { StatusDistributionItem } from '@/lib/queries/report-queries';
 import { cn } from '@/lib/utils';
 import { Layers } from 'lucide-react';
+import { useLanguage } from '@/lib/i18n/language-context';
 
 interface StatusChartProps {
   statusDistribution: StatusDistributionItem[];
@@ -10,12 +11,14 @@ interface StatusChartProps {
 }
 
 export function StatusChart({ statusDistribution, totalTasks }: StatusChartProps) {
+  const { t } = useLanguage();
+
   if (totalTasks === 0 || statusDistribution.length === 0) {
     return (
       <div className="rounded-2xl border border-border/80 bg-card/70 backdrop-blur-md p-5 flex flex-col justify-center items-center h-[260px] text-center shadow-xs">
         <Layers className="w-8 h-8 text-muted-foreground/40 mb-2" />
-        <p className="text-sm font-semibold text-foreground">Belum ada data status tugas</p>
-        <p className="text-xs text-muted-foreground mt-0.5">Buat kolom dan tugas di board untuk melihat analitik.</p>
+        <p className="text-sm font-semibold text-foreground">{t('reports.statusChartEmpty')}</p>
+        <p className="text-xs text-muted-foreground mt-0.5">{t('reports.statusChartEmptySub')}</p>
       </div>
     );
   }
@@ -26,10 +29,10 @@ export function StatusChart({ statusDistribution, totalTasks }: StatusChartProps
         <div>
           <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-pastel-mint ring-2 ring-emerald-400/30 shrink-0" />
-            Distribusi Status Tugas
+            {t('reports.statusChartTitle')}
           </h3>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Persentase dan jumlah tugas per tahapan kolom
+            {t('reports.statusChartSub')}
           </p>
         </div>
         <span className="self-start sm:self-auto text-xs font-semibold text-muted-foreground bg-secondary/80 px-2.5 py-1 rounded-full border border-border/60 shrink-0">

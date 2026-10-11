@@ -56,7 +56,7 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
               <CheckCircle2 className="w-4 h-4 text-emerald-700 dark:text-emerald-300" />
             </div>
             <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200/60">
-              {t('reports.tabTeam')}
+              {t('reports.tabTeamShort')}
             </span>
           </div>
           <div className="space-y-0.5">

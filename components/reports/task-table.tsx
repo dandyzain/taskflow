@@ -121,7 +121,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
               {t('reports.inventoryUrgent')}
             </span>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200/60">
-              High
+              {t('reports.badgeHigh')}
             </span>
           </div>
           <div className="flex items-baseline justify-between">
@@ -138,7 +138,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
               {t('reports.inventoryRisk')}
             </span>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/60">
-              SLA Risk
+              {t('reports.badgeSlaRisk')}
             </span>
           </div>
           <div className="flex items-baseline justify-between">
@@ -155,7 +155,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
               {t('reports.inventoryUnassigned')}
             </span>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-secondary border border-border/60">
-              Unassigned
+              {t('reports.badgeUnassigned')}
             </span>
           </div>
           <div className="flex items-baseline justify-between">

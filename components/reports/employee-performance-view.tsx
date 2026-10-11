@@ -7,45 +7,47 @@ import { Trophy, Award, CheckCircle2, AlertTriangle, Clock, Activity, Search, Sh
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { TeamAnalyticsCharts } from '@/components/reports/team-analytics-charts';
+import { useLanguage } from '@/lib/i18n/language-context';
 
 interface EmployeePerformanceViewProps {
   employeeMetrics: EmployeeMetric[];
   leaderboard: EmployeeMetric[];
 }
 
-function getWorkloadBadge(status: EmployeeMetric['workloadStatus']) {
+function getWorkloadBadge(status: EmployeeMetric['workloadStatus'], t: (key: any) => string) {
   switch (status) {
     case 'optimal':
       return {
-        label: 'Optimal',
+        label: t('reports.workloadOptimal'),
         class: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200/60',
       };
     case 'heavy':
       return {
-        label: 'Beban Tinggi',
+        label: t('reports.workloadHeavy'),
         class: 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border-amber-200/60',
       };
     case 'overloaded':
       return {
-        label: 'Overload',
+        label: t('reports.workloadOverloaded'),
         class: 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border-rose-200/60',
       };
     default:
       return {
-        label: 'Tersedia',
+        label: t('reports.workloadLight'),
         class: 'bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300 border-sky-200/60',
       };
   }
 }
 
 export function EmployeePerformanceView({ employeeMetrics, leaderboard }: EmployeePerformanceViewProps) {
-  const [search, setSearch] = useState('');
+  const { t } = useLanguage();
+  const [searchTerm, setSearchTerm] = useState('');
 
   const filteredMembers = employeeMetrics.filter(
     (m) =>
-      m.name.toLowerCase().includes(search.toLowerCase()) ||
-      m.email.toLowerCase().includes(search.toLowerCase()) ||
-      m.role.toLowerCase().includes(search.toLowerCase())
+      m.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.role.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const topThree = leaderboard.slice(0, 3);
@@ -62,15 +64,15 @@ export function EmployeePerformanceView({ employeeMetrics, leaderboard }: Employ
             <div>
               <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
                 <Trophy className="w-4 h-4 text-amber-500 shrink-0" />
-                Leaderboard Kinerja Tim
+                {t('reports.leaderboardTitle')}
               </h3>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Karyawan dengan tingkat penyelesaian tugas dan kontribusi tertinggi
+                {t('reports.leaderboardSub')}
               </p>
             </div>
             <span className="self-start sm:self-auto text-xs font-semibold text-muted-foreground bg-secondary/80 px-2.5 py-1 rounded-full border border-border/60 flex items-center gap-1.5 shrink-0">
               <Award className="w-3.5 h-3.5 text-amber-500" />
-              Top Performers
+              {t('reports.topPerformers')}
             </span>
           </div>
 
@@ -125,7 +127,7 @@ export function EmployeePerformanceView({ employeeMetrics, leaderboard }: Employ
 
                   <div className="space-y-2 pt-2 border-t border-border/60">
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Tugas Selesai</span>
+                      <span className="text-muted-foreground">{t('reports.tasksCompleted')}</span>
                       <span className="font-bold text-foreground">{member.completedTasks} / {member.totalAssigned}</span>
                     </div>
                     {/* Completion bar */}
@@ -136,8 +138,8 @@ export function EmployeePerformanceView({ employeeMetrics, leaderboard }: Employ
                       />
                     </div>
                     <div className="flex justify-between items-center text-[11px] pt-0.5">
-                      <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{member.completionRate}% Selesai</span>
-                      <span className="text-muted-foreground">{member.activityCount} aksi aktivitas</span>
+                      <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{member.completionRate}% {t('common.completed')}</span>
+                      <span className="text-muted-foreground">{member.activityCount} {t('reports.activityActions')}</span>
                     </div>
                   </div>
                 </div>
@@ -153,10 +155,10 @@ export function EmployeePerformanceView({ employeeMetrics, leaderboard }: Employ
           <div>
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
-              Daftar Evaluasi Kinerja Karyawan ({filteredMembers.length})
+              {t('reports.tableEvaluationTitle', { count: filteredMembers.length.toString() })}
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Rincian tugas, ketepatan waktu, dan status beban kerja per anggota tim
+              {t('reports.tableEvaluationSub')}
             </p>
           </div>
 
@@ -164,9 +166,9 @@ export function EmployeePerformanceView({ employeeMetrics, leaderboard }: Employ
           <div className="relative w-full sm:w-64">
             <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Cari karyawan atau role..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder={t('reports.searchEmployeePlaceholder')}
               className="pl-8 h-8 text-xs rounded-xl bg-background/60 border-border/80"
             />
           </div>
@@ -177,21 +179,21 @@ export function EmployeePerformanceView({ employeeMetrics, leaderboard }: Employ
           <table className="w-full text-left text-xs min-w-[720px]">
             <thead className="bg-secondary/40 border-b border-border/70 text-muted-foreground uppercase text-[10px] font-bold tracking-wider">
               <tr>
-                <th className="px-4 py-3">Karyawan</th>
-                <th className="px-3 py-3">Role</th>
-                <th className="px-3 py-3 text-center">Beban Kerja</th>
-                <th className="px-3 py-3 text-center">Total Task</th>
-                <th className="px-3 py-3 text-center">Selesai</th>
-                <th className="px-3 py-3 text-center">In Progress</th>
-                <th className="px-3 py-3 text-center">Terlambat</th>
-                <th className="px-4 py-3">Penyelesaian (%)</th>
-                <th className="px-4 py-3">Tepat Waktu</th>
-                <th className="px-3 py-3 text-center">Aktivitas</th>
+                <th className="px-4 py-3">{t('reports.colEmployee')}</th>
+                <th className="px-3 py-3">{t('reports.colRole')}</th>
+                <th className="px-3 py-3 text-center">{t('reports.colWorkload')}</th>
+                <th className="px-3 py-3 text-center">{t('reports.colTotalTask')}</th>
+                <th className="px-3 py-3 text-center">{t('reports.colCompleted')}</th>
+                <th className="px-3 py-3 text-center">{t('reports.colInProgress')}</th>
+                <th className="px-3 py-3 text-center">{t('reports.colOverdue')}</th>
+                <th className="px-4 py-3">{t('reports.colCompletionPct')}</th>
+                <th className="px-4 py-3">{t('reports.colOnTime')}</th>
+                <th className="px-3 py-3 text-center">{t('reports.colActivities')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
               {filteredMembers.map((member) => {
-                const badge = getWorkloadBadge(member.workloadStatus);
+                const badge = getWorkloadBadge(member.workloadStatus, t);
                 return (
                   <tr key={member.id} className="hover:bg-secondary/30 transition-colors">
                     {/* Employee Info */}

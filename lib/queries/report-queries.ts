@@ -325,7 +325,7 @@ export async function getWorkspaceReportData(
   const priorityDistribution: PriorityDistributionItem[] = [
     {
       priority: 3,
-      label: 'Urgent / Tinggi',
+      label: 'High (Urgent)',
       count: priorityCounts[3],
       percentage: totalTasks > 0 ? Math.round((priorityCounts[3] / totalTasks) * 100) : 0,
       colorClass: 'text-rose-600 dark:text-rose-400',
@@ -334,7 +334,7 @@ export async function getWorkspaceReportData(
     },
     {
       priority: 2,
-      label: 'Medium / Sedang',
+      label: 'Medium',
       count: priorityCounts[2],
       percentage: totalTasks > 0 ? Math.round((priorityCounts[2] / totalTasks) * 100) : 0,
       colorClass: 'text-amber-600 dark:text-amber-400',
@@ -343,7 +343,7 @@ export async function getWorkspaceReportData(
     },
     {
       priority: 1,
-      label: 'Low / Rendah',
+      label: 'Low',
       count: priorityCounts[1],
       percentage: totalTasks > 0 ? Math.round((priorityCounts[1] / totalTasks) * 100) : 0,
       colorClass: 'text-sky-600 dark:text-sky-400',
@@ -352,7 +352,7 @@ export async function getWorkspaceReportData(
     },
     {
       priority: 0,
-      label: 'Normal / Tanpa Prioritas',
+      label: 'Normal',
       count: priorityCounts[0],
       percentage: totalTasks > 0 ? Math.round((priorityCounts[0] / totalTasks) * 100) : 0,
       colorClass: 'text-slate-600 dark:text-slate-400',
