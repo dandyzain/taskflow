@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Trophy, Award, CheckCircle2, AlertTriangle, Clock, Activity, Search, ShieldCheck } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { TeamAnalyticsCharts } from '@/components/reports/team-analytics-charts';
 
 interface EmployeePerformanceViewProps {
   employeeMetrics: EmployeeMetric[];
@@ -51,6 +52,9 @@ export function EmployeePerformanceView({ employeeMetrics, leaderboard }: Employ
 
   return (
     <div className="space-y-6">
+      {/* Aggregate Team Performance KPIs & Workload Distribution Charts */}
+      <TeamAnalyticsCharts employeeMetrics={employeeMetrics} />
+
       {/* Top Performers Podium / Highlights */}
       {topThree.length > 0 && (
         <div className="rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-md p-4 sm:p-5 shadow-xs">

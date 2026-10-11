@@ -8,6 +8,8 @@ import { PriorityChart } from '@/components/reports/priority-chart';
 import { VelocityChart } from '@/components/reports/velocity-chart';
 import { EmployeePerformanceView } from '@/components/reports/employee-performance-view';
 import { TaskTable } from '@/components/reports/task-table';
+import { BoardComparisonChart } from '@/components/reports/board-comparison-chart';
+import { DeadlineHealthChart } from '@/components/reports/deadline-health-chart';
 import { exportTasksToCSV, exportEmployeesToCSV } from '@/components/reports/export-utils';
 import { 
   BarChart3, 
@@ -381,6 +383,16 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
             <PriorityChart priorityDistribution={priorityDistribution} totalTasks={totalTasks} />
           </div>
 
+          {/* SLA & Deadline Health Distribution Chart */}
+          <DeadlineHealthChart tasks={filteredTasks} />
+
+          {/* Board Performance & Workload Comparison */}
+          <BoardComparisonChart
+            boards={initialData.boards}
+            tasks={filteredTasks}
+            workspaceId={workspaceId}
+          />
+
           {/* Velocity Trend Line/Bar Chart */}
           <VelocityChart dailyTrends={initialData.dailyTrends} />
         </div>
@@ -393,10 +405,10 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
         </div>
       )}
 
-      {/* Tab 3: Detailed Task Report Table */}
+      {/* Tab 3: Detailed Task Report Table & Inventory Analytics */}
       {activeTab === 'table' && (
         <div className="animate-in fade-in duration-300">
-          <TaskTable tasks={filteredTasks} />
+          <TaskTable tasks={filteredTasks} workspaceId={workspaceId} />
         </div>
       )}
     </div>
