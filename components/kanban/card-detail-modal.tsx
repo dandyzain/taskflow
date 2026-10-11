@@ -229,13 +229,20 @@ export function CardDetailModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[540px] rounded-3xl border border-border/80 shadow-pastel bg-card/95 backdrop-blur-xl p-4 sm:p-6">
+      <DialogContent
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        className="sm:max-w-[540px] rounded-3xl border border-border/80 shadow-pastel bg-card/95 backdrop-blur-xl p-4 sm:p-6"
+      >
         <DialogHeader>
           <DialogTitle className="sr-only">Card Details</DialogTitle>
           <div className="pr-6 pt-1">
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              onFocus={(e) => {
+                const len = e.currentTarget.value.length;
+                e.currentTarget.setSelectionRange?.(len, len);
+              }}
               onBlur={handleBlurTitle}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {

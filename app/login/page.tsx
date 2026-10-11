@@ -149,11 +149,11 @@ export default function LoginPage() {
           </form>
         </Card>
 
-        {/* Website Footer Copyright Notice */}
-        <footer className="text-center text-xs text-muted-foreground/60 pt-2 pb-2">
+        {/* Website Footer Copyright Notice & Creator Credit */}
+        <footer className="text-center text-xs text-muted-foreground/60 pt-2 pb-2 space-y-1">
           <p>© {new Date().getFullYear()} TaskFlow. All rights reserved.</p>
-          <p className="text-[11px] text-muted-foreground/45 mt-0.5">
-            Modern Collaborative Task Management
+          <p className="text-[11px] text-muted-foreground/75 font-medium">
+            Dibuat oleh <span className="font-semibold text-foreground/90">Dandy Rahmat Zain</span>
           </p>
         </footer>
       </div>
