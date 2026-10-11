@@ -1,17 +1,37 @@
 'use client';
 
-import { CheckCircle2, Clock, AlertTriangle, ListTodo, Users, TrendingUp } from 'lucide-react';
-import type { WorkspaceReportData } from '@/lib/queries/report-queries';
+import { useState } from 'react';
+import {
+  CheckCircle2,
+  Clock,
+  AlertTriangle,
+  ListTodo,
+  Users,
+  Timer,
+  Inbox,
+  ArrowUp,
+  ChevronRight,
+} from 'lucide-react';
+import type { TaskItemReport, EmployeeMetric, WorkspaceReportData } from '@/lib/queries/report-queries';
+import { KpiDetailModal, type KpiMetricType } from '@/components/reports/kpi-detail-modal';
 import { cn } from '@/lib/utils';
 
 interface KpiCardsProps {
   summary: WorkspaceReportData['summary'];
   boardsCount: number;
+  tasks: TaskItemReport[];
+  members: EmployeeMetric[];
+  workspaceId: string;
 }
 
-export function KpiCards({ summary, boardsCount }: KpiCardsProps) {
+export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: KpiCardsProps) {
+  const [selectedMetric, setSelectedMetric] = useState<KpiMetricType | null>(null);
+
+  const urgentTasksCount = tasks.filter((t) => t.priority === 3).length;
+
   const cards = [
     {
+      metricType: 'total' as KpiMetricType,
       title: 'Total Tugas',
       value: summary.totalTasks,
       subtitle: `${boardsCount} Board aktif`,
@@ -19,9 +39,11 @@ export function KpiCards({ summary, boardsCount }: KpiCardsProps) {
       iconBg: 'bg-pastel-sky/60 text-sky-800 dark:text-sky-200',
       badge: 'Semua Board',
       badgeColor: 'bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300 border-sky-200/60',
-      borderGlow: 'hover:border-sky-300/60 dark:hover:border-sky-800/60',
+      borderGlow: 'hover:border-sky-300/80 dark:hover:border-sky-700',
+      tag: 'Overview',
     },
     {
+      metricType: 'completed' as KpiMetricType,
       title: 'Tugas Selesai',
       value: summary.completedTasks,
       subtitle: `${summary.completionRate}% rasio selesai`,
@@ -29,22 +51,38 @@ export function KpiCards({ summary, boardsCount }: KpiCardsProps) {
       iconBg: 'bg-pastel-mint/60 text-emerald-800 dark:text-emerald-200',
       badge: `${summary.completionRate}% Selesai`,
       badgeColor: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200/60',
-      borderGlow: 'hover:border-emerald-300/60 dark:hover:border-emerald-800/60',
+      borderGlow: 'hover:border-emerald-300/80 dark:hover:border-emerald-700',
+      tag: 'Success',
     },
     {
+      metricType: 'in_progress' as KpiMetricType,
       title: 'Sedang Dikerjakan',
       value: summary.inProgressTasks,
-      subtitle: `${summary.backlogTasks} task di antrean`,
+      subtitle: 'Dalam pengerjaan aktif',
       icon: Clock,
       iconBg: 'bg-pastel-peach/60 text-amber-800 dark:text-amber-200',
       badge: 'In Progress',
       badgeColor: 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border-amber-200/60',
-      borderGlow: 'hover:border-amber-300/60 dark:hover:border-amber-800/60',
+      borderGlow: 'hover:border-amber-300/80 dark:hover:border-amber-700',
+      tag: 'Active',
     },
     {
+      metricType: 'backlog' as KpiMetricType,
+      title: 'Antrean Tugas',
+      value: summary.backlogTasks,
+      subtitle: 'Siap untuk dikerjakan',
+      icon: Inbox,
+      iconBg: 'bg-pastel-lavender/60 text-purple-800 dark:text-purple-200',
+      badge: 'Backlog / To-Do',
+      badgeColor: 'bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border-purple-200/60',
+      borderGlow: 'hover:border-purple-300/80 dark:hover:border-purple-700',
+      tag: 'Pipeline',
+    },
+    {
+      metricType: 'overdue' as KpiMetricType,
       title: 'Tugas Terlambat',
       value: summary.overdueTasks,
-      subtitle: summary.dueSoonTasks > 0 ? `${summary.dueSoonTasks} mendekati batas` : 'Semua deadline aman',
+      subtitle: summary.overdueTasks > 0 ? 'Melebihi batas deadline' : 'Semua deadline tepat waktu',
       icon: AlertTriangle,
       iconBg: 'bg-pastel-rose/60 text-rose-800 dark:text-rose-200',
       badge: summary.overdueTasks > 0 ? 'Perlu Perhatian' : 'Aman',
@@ -52,9 +90,41 @@ export function KpiCards({ summary, boardsCount }: KpiCardsProps) {
         summary.overdueTasks > 0
           ? 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border-rose-200/60'
           : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200/60',
-      borderGlow: summary.overdueTasks > 0 ? 'border-rose-200/70 hover:border-rose-400' : 'hover:border-primary/40',
+      borderGlow:
+        summary.overdueTasks > 0
+          ? 'border-rose-300/70 hover:border-rose-500'
+          : 'hover:border-emerald-300/80 dark:hover:border-emerald-700',
+      tag: 'Risk',
     },
     {
+      metricType: 'due_soon' as KpiMetricType,
+      title: 'Mendekati Batas',
+      value: summary.dueSoonTasks,
+      subtitle: 'Deadline ≤ 48 jam ke depan',
+      icon: Timer,
+      iconBg: 'bg-pastel-peach/70 text-amber-800 dark:text-amber-200',
+      badge: summary.dueSoonTasks > 0 ? 'Segera Berakhir' : 'Tidak Ada',
+      badgeColor:
+        summary.dueSoonTasks > 0
+          ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border-amber-200/60'
+          : 'bg-muted text-muted-foreground border-border/50',
+      borderGlow: 'hover:border-amber-300/80 dark:hover:border-amber-700',
+      tag: 'Urgent',
+    },
+    {
+      metricType: 'urgent' as KpiMetricType,
+      title: 'Prioritas Tinggi',
+      value: urgentTasksCount,
+      subtitle: 'Tingkat urgensi High',
+      icon: ArrowUp,
+      iconBg: 'bg-pastel-rose/70 text-rose-800 dark:text-rose-200',
+      badge: 'High Priority',
+      badgeColor: 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border-rose-200/60',
+      borderGlow: 'hover:border-rose-300/80 dark:hover:border-rose-700',
+      tag: 'Critical',
+    },
+    {
+      metricType: 'members' as KpiMetricType,
       title: 'Anggota Tim',
       value: summary.totalMembers,
       subtitle: `Rata-rata ${summary.averageTasksPerMember} task / orang`,
@@ -62,79 +132,44 @@ export function KpiCards({ summary, boardsCount }: KpiCardsProps) {
       iconBg: 'bg-pastel-lavender/60 text-purple-800 dark:text-purple-200',
       badge: 'Kolaborasi',
       badgeColor: 'bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border-purple-200/60',
-      borderGlow: 'hover:border-purple-300/60 dark:hover:border-purple-800/60',
+      borderGlow: 'hover:border-purple-300/80 dark:hover:border-purple-700',
+      tag: 'Capacity',
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3.5">
-      {cards.map((card, idx) => {
-        const Icon = card.icon;
-        const isFifthCard = idx === 4;
+    <>
+      <div className="space-y-2">
+        <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+          <span className="font-semibold text-foreground/80">Ringkasan Statistik Utama</span>
+          <span className="text-[11px] text-muted-foreground/70 hidden sm:inline">
+            Klik kartu statistik untuk melihat rincian detail data ↗
+          </span>
+        </div>
 
-        return (
-          <div
-            key={idx}
-            className={cn(
-              'group relative rounded-2xl bg-card/80 dark:bg-card/40 backdrop-blur-md p-3 sm:p-4 border border-border/80 shadow-xs hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5',
-              card.borderGlow,
-              isFifthCard ? 'col-span-2 sm:col-span-1' : ''
-            )}
-          >
-            {/* Optimized mobile horizontal presentation for the single full-width 5th card */}
-            {isFifthCard ? (
-              <>
-                <div className="flex sm:hidden items-center justify-between gap-3">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div
-                      className={cn(
-                        'w-9 h-9 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-xs shrink-0',
-                        card.iconBg
-                      )}
-                    >
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs font-semibold text-muted-foreground truncate">{card.title}</p>
-                      <p className="text-[11px] text-muted-foreground/80 truncate">{card.subtitle}</p>
-                    </div>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <div className="flex items-center justify-end mb-0.5">
-                      <span className={cn('text-[9px] font-semibold px-2 py-0.5 rounded-full border', card.badgeColor)}>
-                        {card.badge}
-                      </span>
-                    </div>
-                    <h3 className="text-xl font-bold tracking-tight text-foreground">{card.value}</h3>
-                  </div>
-                </div>
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5">
+          {cards.map((card) => {
+            const Icon = card.icon;
 
-                {/* Standard vertical layout on tablet/desktop */}
-                <div className="hidden sm:block">
-                  <div className="flex items-center justify-between gap-1.5 mb-3">
-                    <div
-                      className={cn(
-                        'w-9 h-9 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-xs shrink-0',
-                        card.iconBg
-                      )}
-                    >
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <span className={cn('text-[10px] font-semibold px-2 py-0.5 rounded-full border truncate', card.badgeColor)}>
-                      {card.badge}
-                    </span>
-                  </div>
-                  <div className="space-y-0.5">
-                    <p className="text-xs font-medium text-muted-foreground truncate">{card.title}</p>
-                    <h3 className="text-2xl font-bold tracking-tight text-foreground">{card.value}</h3>
-                    <p className="text-[11px] text-muted-foreground/80 truncate pt-0.5">{card.subtitle}</p>
-                  </div>
-                </div>
-              </>
-            ) : (
-              /* Standard layout for cards 1-4 */
-              <>
-                <div className="flex items-center justify-between gap-1.5 mb-2 sm:mb-3">
+            return (
+              <div
+                key={card.metricType}
+                role="button"
+                tabIndex={0}
+                onClick={() => setSelectedMetric(card.metricType)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedMetric(card.metricType);
+                  }
+                }}
+                className={cn(
+                  'group relative rounded-2xl bg-card/85 dark:bg-card/40 backdrop-blur-md p-3 sm:p-4 border border-border/80 shadow-xs hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-primary/40',
+                  card.borderGlow
+                )}
+              >
+                {/* Header Icon & Badge */}
+                <div className="flex items-center justify-between gap-1.5 mb-2.5">
                   <div
                     className={cn(
                       'w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-xs shrink-0',
@@ -153,16 +188,41 @@ export function KpiCards({ summary, boardsCount }: KpiCardsProps) {
                   </span>
                 </div>
 
+                {/* Number & Labels */}
                 <div className="space-y-0.5">
                   <p className="text-[11px] sm:text-xs font-medium text-muted-foreground truncate">{card.title}</p>
-                  <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{card.value}</h3>
+                  <div className="flex items-baseline justify-between gap-1">
+                    <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                      {card.value}
+                    </h3>
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
+                  </div>
                   <p className="text-[10px] sm:text-[11px] text-muted-foreground/80 truncate pt-0.5">{card.subtitle}</p>
                 </div>
-              </>
-            )}
-          </div>
-        );
-      })}
-    </div>
+
+                {/* Subtle Click Hint on Hover */}
+                <div className="pt-2 mt-2 border-t border-border/40 flex items-center justify-between text-[10px] text-muted-foreground/70 group-hover:text-primary transition-colors font-medium">
+                  <span>Lihat Detail</span>
+                  <span>↗</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Pop-up Detail Modal */}
+      <KpiDetailModal
+        open={selectedMetric !== null}
+        onOpenChange={(open) => {
+          if (!open) setSelectedMetric(null);
+        }}
+        metricType={selectedMetric}
+        tasks={tasks}
+        members={members}
+        summary={summary}
+        workspaceId={workspaceId}
+      />
+    </>
   );
 }

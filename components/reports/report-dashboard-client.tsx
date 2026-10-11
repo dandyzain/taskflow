@@ -366,8 +366,14 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
       {/* Tab 1: Task Analytics & Overview */}
       {activeTab === 'tasks' && (
         <div className="space-y-6 animate-in fade-in duration-300">
-          {/* KPI Cards */}
-          <KpiCards summary={summary} boardsCount={initialData.boards.length} />
+          {/* KPI Cards with 8 Expanded Metrics & Clickable Detail Modals */}
+          <KpiCards
+            summary={summary}
+            boardsCount={initialData.boards.length}
+            tasks={filteredTasks}
+            members={employeeMetrics}
+            workspaceId={workspaceId}
+          />
 
           {/* 2-Column Visual Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
