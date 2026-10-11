@@ -182,7 +182,7 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: 
                   </div>
                   <span
                     className={cn(
-                      'text-[9px] sm:text-[10px] font-semibold px-2 py-0.5 rounded-full border truncate',
+                      'text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-full border truncate max-w-[80px] sm:max-w-none shrink-0',
                       card.badgeColor
                     )}
                   >

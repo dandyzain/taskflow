@@ -99,15 +99,15 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5">
         {/* Total Tasks */}
         <div className="rounded-2xl border border-border/80 bg-card/85 dark:bg-card/40 backdrop-blur-md p-3 sm:p-4 shadow-xs space-y-1.5">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] text-muted-foreground font-semibold">{t('reports.inventoryFiltered')}</span>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-secondary border border-border/60">
+          <div className="flex items-center justify-between gap-1.5">
+            <span className="text-[11px] text-muted-foreground font-semibold truncate">{t('reports.inventoryFiltered')}</span>
+            <span className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-secondary border border-border/60 shrink-0">
               {tasks.length > 0 ? Math.round((totalCount / tasks.length) * 100) : 0}% {t('common.all')}
             </span>
           </div>
-          <div className="flex items-baseline justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-0.5 sm:gap-1">
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{totalCount}</h3>
-            <span className="text-[11px] text-muted-foreground">
+            <span className="text-[10px] sm:text-[11px] text-muted-foreground truncate">
               {t('reports.inventoryFilteredSub', { total: tasks.length.toString() })}
             </span>
           </div>
@@ -115,52 +115,52 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
 
         {/* Urgent Tasks */}
         <div className="rounded-2xl border border-rose-300/40 dark:border-rose-700/40 bg-card/85 dark:bg-card/40 backdrop-blur-md p-3 sm:p-4 shadow-xs space-y-1.5">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1">
-              <Flame className="w-3.5 h-3.5" />
-              {t('reports.inventoryUrgent')}
+          <div className="flex items-center justify-between gap-1.5">
+            <span className="text-[11px] text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1 min-w-0">
+              <Flame className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">{t('reports.inventoryUrgent')}</span>
             </span>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200/60">
+            <span className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200/60 shrink-0">
               {t('reports.badgeHigh')}
             </span>
           </div>
-          <div className="flex items-baseline justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-0.5 sm:gap-1">
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-rose-600 dark:text-rose-400">{urgentCount}</h3>
-            <span className="text-[11px] text-muted-foreground">{t('reports.inventoryUrgentSub')}</span>
+            <span className="text-[10px] sm:text-[11px] text-muted-foreground truncate">{t('reports.inventoryUrgentSub')}</span>
           </div>
         </div>
 
         {/* Risky / Overdue Tasks */}
         <div className="rounded-2xl border border-amber-300/40 dark:border-amber-700/40 bg-card/85 dark:bg-card/40 backdrop-blur-md p-3 sm:p-4 shadow-xs space-y-1.5">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1">
-              <AlertTriangle className="w-3.5 h-3.5" />
-              {t('reports.inventoryRisk')}
+          <div className="flex items-center justify-between gap-1.5">
+            <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1 min-w-0">
+              <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">{t('reports.inventoryRisk')}</span>
             </span>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/60">
+            <span className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/60 shrink-0">
               {t('reports.badgeSlaRisk')}
             </span>
           </div>
-          <div className="flex items-baseline justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-0.5 sm:gap-1">
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400">{riskyCount}</h3>
-            <span className="text-[11px] text-muted-foreground">{t('reports.inventoryRiskSub')}</span>
+            <span className="text-[10px] sm:text-[11px] text-muted-foreground truncate">{t('reports.inventoryRiskSub')}</span>
           </div>
         </div>
 
         {/* Unassigned Tasks */}
         <div className="rounded-2xl border border-border/80 bg-card/85 dark:bg-card/40 backdrop-blur-md p-3 sm:p-4 shadow-xs space-y-1.5">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] text-muted-foreground font-semibold flex items-center gap-1">
-              <UserX className="w-3.5 h-3.5 text-muted-foreground" />
-              {t('reports.inventoryUnassigned')}
+          <div className="flex items-center justify-between gap-1.5">
+            <span className="text-[11px] text-muted-foreground font-semibold flex items-center gap-1 min-w-0">
+              <UserX className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+              <span className="truncate">{t('reports.inventoryUnassigned')}</span>
             </span>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-secondary border border-border/60">
+            <span className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-secondary border border-border/60 shrink-0">
               {t('reports.badgeUnassigned')}
             </span>
           </div>
-          <div className="flex items-baseline justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-0.5 sm:gap-1">
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{unassignedCount}</h3>
-            <span className="text-[11px] text-muted-foreground">{t('reports.inventoryUnassignedSub')}</span>
+            <span className="text-[10px] sm:text-[11px] text-muted-foreground truncate">{t('reports.inventoryUnassignedSub')}</span>
           </div>
         </div>
       </div>
@@ -179,7 +179,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
           </div>
 
           {/* Action Tools: Search, Sort, View Mode */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto">
             {/* Search */}
             <div className="relative w-full sm:w-56">
               <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -191,55 +191,58 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
               />
             </div>
 
-            {/* Sort Dropdown */}
-            <div className="flex items-center gap-1 bg-secondary/50 border border-border/60 rounded-xl px-2 h-8 text-xs">
-              <ArrowUpDown className="w-3 h-3 text-muted-foreground shrink-0" />
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="bg-transparent text-[11px] font-semibold text-foreground focus:outline-none cursor-pointer"
-              >
-                <option value="dueDate">{t('reports.sortDueDate')}</option>
-                <option value="priority">{t('reports.sortPriority')}</option>
-                <option value="newest">{t('reports.sortNewest')}</option>
-                <option value="title">{t('reports.sortTitle')}</option>
-              </select>
-            </div>
+            {/* Sort & View Mode Row */}
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              {/* Sort Dropdown */}
+              <div className="flex-1 sm:flex-initial flex items-center gap-1 bg-secondary/50 border border-border/60 rounded-xl px-2 h-8 text-xs min-w-0">
+                <ArrowUpDown className="w-3 h-3 text-muted-foreground shrink-0" />
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  className="bg-transparent text-[11px] font-semibold text-foreground focus:outline-none cursor-pointer w-full truncate pr-1"
+                >
+                  <option value="dueDate">{t('reports.sortDueDate')}</option>
+                  <option value="priority">{t('reports.sortPriority')}</option>
+                  <option value="newest">{t('reports.sortNewest')}</option>
+                  <option value="title">{t('reports.sortTitle')}</option>
+                </select>
+              </div>
 
-            {/* View Mode Toggle */}
-            <div className="flex items-center gap-0.5 bg-secondary/50 p-0.5 rounded-xl border border-border/60">
-              <button
-                onClick={() => setViewMode('table')}
-                className={cn(
-                  'p-1.5 rounded-lg text-xs transition-all',
-                  viewMode === 'table' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
-                )}
-                title={t('reports.viewTableMode')}
-              >
-                <LayoutList className="w-3.5 h-3.5" />
-              </button>
-              <button
-                onClick={() => setViewMode('grid')}
-                className={cn(
-                  'p-1.5 rounded-lg text-xs transition-all',
-                  viewMode === 'grid' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
-                )}
-                title={t('reports.viewGridMode')}
-              >
-                <LayoutGrid className="w-3.5 h-3.5" />
-              </button>
+              {/* View Mode Toggle */}
+              <div className="flex items-center gap-0.5 bg-secondary/50 p-0.5 rounded-xl border border-border/60 shrink-0">
+                <button
+                  onClick={() => setViewMode('table')}
+                  className={cn(
+                    'p-1.5 rounded-lg text-xs transition-all',
+                    viewMode === 'table' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
+                  )}
+                  title={t('reports.viewTableMode')}
+                >
+                  <LayoutList className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={cn(
+                    'p-1.5 rounded-lg text-xs transition-all',
+                    viewMode === 'grid' ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
+                  )}
+                  title={t('reports.viewGridMode')}
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Secondary Filter Row: Status, Priority, PIC */}
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-border/50">
-          {/* Status Pills */}
-          <div className="flex flex-wrap items-center gap-1">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2 border-t border-border/50">
+          {/* Status Pills - smooth horizontal scroll on mobile */}
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1 sm:pb-0 -mx-1 px-1 flex-nowrap shrink-0">
             <button
               onClick={() => setStatusFilter('all')}
               className={cn(
-                'px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all',
+                'px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap shrink-0',
                 statusFilter === 'all' ? 'bg-secondary text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -248,7 +251,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
             <button
               onClick={() => setStatusFilter('progress')}
               className={cn(
-                'px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all',
+                'px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap shrink-0',
                 statusFilter === 'progress' ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 font-bold' : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -257,7 +260,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
             <button
               onClick={() => setStatusFilter('completed')}
               className={cn(
-                'px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all',
+                'px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap shrink-0',
                 statusFilter === 'completed' ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-bold' : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -266,7 +269,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
             <button
               onClick={() => setStatusFilter('overdue')}
               className={cn(
-                'px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all',
+                'px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap shrink-0',
                 statusFilter === 'overdue' ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300 font-bold' : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -275,7 +278,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
             <button
               onClick={() => setStatusFilter('due_soon')}
               className={cn(
-                'px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all',
+                'px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap shrink-0',
                 statusFilter === 'due_soon' ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 font-bold' : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -284,11 +287,11 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
           </div>
 
           {/* Sub Filters: Priority & PIC Dropdowns */}
-          <div className="flex items-center gap-2">
+          <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
-              className="bg-secondary/40 border border-border/60 rounded-lg px-2 h-7 text-[11px] font-semibold text-foreground focus:outline-none cursor-pointer"
+              className="bg-secondary/40 border border-border/60 rounded-lg px-2 h-7 text-[11px] font-semibold text-foreground focus:outline-none cursor-pointer w-full sm:w-auto truncate"
             >
               <option value="all">{t('reports.filterAllPriorities')}</option>
               <option value="3">{t('kanban.priorityUrgent')}</option>
@@ -300,7 +303,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
             <select
               value={picFilter}
               onChange={(e) => setPicFilter(e.target.value as any)}
-              className="bg-secondary/40 border border-border/60 rounded-lg px-2 h-7 text-[11px] font-semibold text-foreground focus:outline-none cursor-pointer"
+              className="bg-secondary/40 border border-border/60 rounded-lg px-2 h-7 text-[11px] font-semibold text-foreground focus:outline-none cursor-pointer w-full sm:w-auto truncate"
             >
               <option value="all">{t('reports.filterAllAssignments')}</option>
               <option value="assigned">{t('reports.filterHasPic')}</option>

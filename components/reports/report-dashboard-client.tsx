@@ -323,8 +323,10 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
               <span className="hidden xs:inline">{t('common.print')}</span>
             </Button>
 
-            {/* Language Switcher */}
-            <LanguageToggle />
+            {/* Language Switcher - hidden on mobile since mobile header already contains LanguageToggle */}
+            <div className="hidden md:inline-flex">
+              <LanguageToggle />
+            </div>
           </div>
         </div>
       </div>
@@ -334,7 +336,7 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
         <button
           onClick={() => setActiveTab('tasks')}
           className={cn(
-            'flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 text-center',
+            'flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 text-center min-w-0',
             activeTab === 'tasks'
               ? 'bg-card text-foreground shadow-xs border border-border/50'
               : 'text-muted-foreground hover:text-foreground'
@@ -347,20 +349,21 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
         <button
           onClick={() => setActiveTab('employees')}
           className={cn(
-            'flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 text-center',
+            'flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 text-center min-w-0',
             activeTab === 'employees'
               ? 'bg-card text-foreground shadow-xs border border-border/50'
               : 'text-muted-foreground hover:text-foreground'
           )}
         >
           <Users className="w-3.5 h-3.5 text-purple-500 shrink-0" />
-          <span className="truncate">{t('reports.tabTeam')}</span>
+          <span className="sm:hidden truncate">{t('reports.tabTeamShort')}</span>
+          <span className="hidden sm:inline truncate">{t('reports.tabTeam')}</span>
         </button>
 
         <button
           onClick={() => setActiveTab('table')}
           className={cn(
-            'flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 text-center',
+            'flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 text-center min-w-0',
             activeTab === 'table'
               ? 'bg-card text-foreground shadow-xs border border-border/50'
               : 'text-muted-foreground hover:text-foreground'

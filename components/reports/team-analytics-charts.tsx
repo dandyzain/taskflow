@@ -59,10 +59,10 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
               {t('reports.tabTeamShort')}
             </span>
           </div>
-          <div className="space-y-0.5">
-            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">{t('reports.teamSummaryAvgCompletion')}</p>
+          <div className="space-y-0.5 min-w-0">
+            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium truncate">{t('reports.teamSummaryAvgCompletion')}</p>
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{avgCompletionRate}%</h3>
-            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80">{t('reports.teamSummaryAvgCompletionSub', { completed: totalCompletedAll, total: totalAssignedAll })}</p>
+            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80 truncate">{t('reports.teamSummaryAvgCompletionSub', { completed: totalCompletedAll, total: totalAssignedAll })}</p>
           </div>
         </div>
 
@@ -76,10 +76,10 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
               SLA Delivery
             </span>
           </div>
-          <div className="space-y-0.5">
-            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">{t('reports.teamSummaryOnTime')}</p>
+          <div className="space-y-0.5 min-w-0">
+            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium truncate">{t('reports.teamSummaryOnTime')}</p>
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{avgOnTimeRate}%</h3>
-            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80">
+            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80 truncate">
               {totalOverdueAll > 0 ? t('reports.teamSummaryOnTimeSub', { overdue: totalOverdueAll }) : t('reports.teamSummaryOnTimeClean')}
             </p>
           </div>
@@ -95,12 +95,12 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
               Capacity
             </span>
           </div>
-          <div className="space-y-0.5">
-            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">{t('reports.teamSummaryWorkload')}</p>
+          <div className="space-y-0.5 min-w-0">
+            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium truncate">{t('reports.teamSummaryWorkload')}</p>
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
               {capacityCounts.optimal + capacityCounts.light}/{employeeMetrics.length}
             </h3>
-            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80">{t('reports.teamSummaryWorkloadSub')}</p>
+            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80 truncate">{t('reports.teamSummaryWorkloadSub')}</p>
           </div>
         </div>
 
@@ -114,10 +114,10 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
               Activities
             </span>
           </div>
-          <div className="space-y-0.5">
-            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">{t('reports.teamSummaryActivity')}</p>
+          <div className="space-y-0.5 min-w-0">
+            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium truncate">{t('reports.teamSummaryActivity')}</p>
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{totalActivitiesAll}</h3>
-            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80">{t('reports.teamSummaryActivitySub')}</p>
+            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80 truncate">{t('reports.teamSummaryActivitySub')}</p>
           </div>
         </div>
       </div>

@@ -140,21 +140,21 @@ export function BoardComparisonChart({ boards, tasks, workspaceId }: BoardCompar
             </div>
 
             {/* Breakdown Counters */}
-            <div className="grid grid-cols-4 gap-1.5 pt-1 text-center">
-              <div className="p-1.5 rounded-lg bg-card/60 border border-border/50">
-                <span className="block text-[10px] text-muted-foreground">{t('common.completed')}</span>
+            <div className="grid grid-cols-4 gap-1 sm:gap-1.5 pt-1 text-center">
+              <div className="p-1 sm:p-1.5 rounded-lg bg-card/60 border border-border/50 min-w-0">
+                <span className="block text-[9px] sm:text-[10px] text-muted-foreground truncate" title={t('common.completed')}>{t('common.completed')}</span>
                 <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{b.completed}</span>
               </div>
-              <div className="p-1.5 rounded-lg bg-card/60 border border-border/50">
-                <span className="block text-[10px] text-muted-foreground">{t('common.inProgress')}</span>
+              <div className="p-1 sm:p-1.5 rounded-lg bg-card/60 border border-border/50 min-w-0">
+                <span className="block text-[9px] sm:text-[10px] text-muted-foreground truncate" title={t('common.inProgress')}>{t('common.inProgress')}</span>
                 <span className="text-xs font-bold text-amber-600 dark:text-amber-400">{b.inProgress}</span>
               </div>
-              <div className="p-1.5 rounded-lg bg-card/60 border border-border/50">
-                <span className="block text-[10px] text-muted-foreground">{t('reports.kpiBacklog')}</span>
+              <div className="p-1 sm:p-1.5 rounded-lg bg-card/60 border border-border/50 min-w-0">
+                <span className="block text-[9px] sm:text-[10px] text-muted-foreground truncate" title={t('reports.kpiBacklog')}>{t('reports.kpiBacklog')}</span>
                 <span className="text-xs font-bold text-sky-600 dark:text-sky-400">{b.backlog}</span>
               </div>
-              <div className="p-1.5 rounded-lg bg-card/60 border border-border/50">
-                <span className="block text-[10px] text-muted-foreground">{t('common.overdue')}</span>
+              <div className="p-1 sm:p-1.5 rounded-lg bg-card/60 border border-border/50 min-w-0">
+                <span className="block text-[9px] sm:text-[10px] text-muted-foreground truncate" title={t('common.overdue')}>{t('common.overdue')}</span>
                 <span className={cn('text-xs font-bold', b.overdue > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-muted-foreground')}>
                   {b.overdue}
                 </span>
