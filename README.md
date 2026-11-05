@@ -3,10 +3,10 @@
 <div align="center">
   <img src="public/icon-512.png" alt="TaskFlow Logo" width="120" height="120" />
   <h3>TaskFlow — Platform Manajemen Tugas Kolaboratif & Analisis Kinerja Tim</h3>
-  <p>Dibangun dengan Next.js 15 (App Router), Tailwind CSS (Pastel Palette), @dnd-kit Sortable, Prisma ORM, dan SQLite.</p>
+  <p>Dibangun dengan Next.js 15 (App Router), Tailwind CSS (Pastel Palette), @dnd-kit Sortable, Prisma ORM, dan Neon Serverless PostgreSQL.</p>
 
   <p>
-    <a href="https://taskflow-production-41d9.up.railway.app"><strong>🌐 Buka Live Demo (Railway) »</strong></a>
+    <a href="https://taskflow-theta-five-71.vercel.app"><strong>🌐 Buka Live Demo (Vercel) »</strong></a>
   </p>
 </div>
 
@@ -19,7 +19,7 @@ TaskFlow adalah aplikasi manajemen tugas Kanban enterprise-grade yang menggabung
 Aplikasi ini sudah sepenuhnya **responsif** di seluruh perangkat (Mobile 320px, Tablet, hingga Desktop 4K) dan mendukung **PWA (Progressive Web App)**.
 
 ### 🔗 Live Deployment
-- **Production URL:** [https://taskflow-production-41d9.up.railway.app](https://taskflow-production-41d9.up.railway.app)
+- **Production URL:** [https://taskflow-theta-five-71.vercel.app](https://taskflow-theta-five-71.vercel.app)
 - **Akun Demo Cepat:**
   - **Admin / Workspace Owner:** `demo@taskflow.dev` (Password: `password123`)
   - **Core Member (Sarah):** `sarah@taskflow.dev` (Password: `password123`)
