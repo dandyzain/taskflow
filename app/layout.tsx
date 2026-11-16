@@ -4,6 +4,7 @@ import { GeistMono } from 'geist/font/mono';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from '@/components/theme-provider';
 import { MotionProvider } from '@/components/motion-provider';
+import { ConfirmProvider } from '@/components/patterns/confirm-dialog';
 import { LanguageProvider } from '@/lib/i18n/language-context';
 import { cn } from '@/lib/utils';
 import './globals.css';
@@ -36,7 +37,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <LanguageProvider>
             <MotionProvider>
-              <div className="min-h-[100dvh] bg-background">{children}</div>
+              <ConfirmProvider>
+                <div className="min-h-[100dvh] bg-background">{children}</div>
+              </ConfirmProvider>
               <Toaster
                 position="bottom-right"
                 richColors
