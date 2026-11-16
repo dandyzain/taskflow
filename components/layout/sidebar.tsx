@@ -1,54 +1,136 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useParams, usePathname } from 'next/navigation';
-import { LayoutDashboard, Plus, Trash2, LogOut, User as UserIcon, Sparkles, BarChart3, X } from 'lucide-react';
+import { m } from 'motion/react';
 import { toast } from 'sonner';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { LanguageToggle } from '@/components/language-toggle';
-import { useLanguage } from '@/lib/i18n/language-context';
-import { LogoMark } from '@/components/brand/logo';
-import { CreateBoardDialog } from '@/components/layout/create-board-dialog';
+import {
+  BarChart3,
+  MoreHorizontal,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Plus,
+  Search,
+  Trash2,
+  X,
+  ExternalLink,
+} from 'lucide-react';
 import { deleteBoard } from '@/actions/board-actions';
-import { logoutUser } from '@/actions/auth-actions';
+import { LogoMark } from '@/components/brand/logo';
+import { AccountMenu } from '@/components/layout/account-menu';
+import type { ShellBoard, ShellUser } from '@/components/layout/workspace-context';
+import { useConfirm } from '@/components/patterns/confirm-dialog';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Kbd } from '@/components/ui/kbd';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { avatarTone } from '@/lib/design/tokens';
+import { useLanguage } from '@/lib/i18n/language-context';
+import { layoutSpring } from '@/lib/motion';
 import { cn } from '@/lib/utils';
+
+export type SidebarState = 'auto' | 'expanded' | 'collapsed';
 
 interface SidebarProps {
   workspaceId: string;
   workspaceName: string;
-  boards: Array<{ id: string; title: string; description: string | null }>;
-  currentBoardId?: string;
-  currentUser?: { id: string; name: string; email: string; avatarUrl?: string | null } | null;
-  className?: string;
-  /** Provided when rendered inside the mobile drawer; shows a close button. */
+  boards: ShellBoard[];
+  currentUser?: ShellUser | null;
+  /** 'auto' = rail on tablet, full on desktop (pure CSS, no hydration flash) */
+  state?: SidebarState;
+  /** Whether the rail is currently showing (drives tooltips) */
+  isRail?: boolean;
+  onToggle?: () => void;
+  onOpenPalette: () => void;
+  onCreateBoard: () => void;
+  onOpenShortcuts: () => void;
+  /** Provided when rendered inside the mobile drawer */
   onClose?: () => void;
+  className?: string;
 }
 
-export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, currentUser, className, onClose }: SidebarProps) {
+/*
+ * Labels hide whenever the sidebar is a rail. `state` lives on the root as
+ * data-state so these variants work without JS-driven layout.
+ */
+const LABEL =
+  'truncate group-data-[state=collapsed]/sb:hidden group-data-[state=auto]/sb:max-xl:hidden';
+const RAIL_ONLY =
+  'hidden group-data-[state=collapsed]/sb:flex group-data-[state=auto]/sb:max-xl:flex';
+const FULL_ONLY =
+  'group-data-[state=collapsed]/sb:hidden group-data-[state=auto]/sb:max-xl:hidden';
+
+function NavTooltip({ label, enabled, children }: { label: string; enabled: boolean; children: React.ReactNode }) {
+  if (!enabled) return <>{children}</>;
+  return (
+    <Tooltip delayDuration={150}>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent side="right" sideOffset={10}>
+        {label}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
+function ActivePill() {
+  return (
+    <m.span
+      layoutId="sidebar-active"
+      transition={layoutSpring}
+      aria-hidden
+      className="absolute inset-0 rounded-lg bg-card shadow-e1 ring-1 ring-border"
+    />
+  );
+}
+
+export function Sidebar({
+  workspaceId,
+  workspaceName,
+  boards,
+  currentUser,
+  state = 'auto',
+  isRail = false,
+  onToggle,
+  onOpenPalette,
+  onCreateBoard,
+  onOpenShortcuts,
+  onClose,
+  className,
+}: SidebarProps) {
   const router = useRouter();
   const params = useParams();
   const pathname = usePathname();
-  const activeBoardId = (params?.boardId as string) || currentBoardId;
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const confirm = useConfirm();
   const { t } = useLanguage();
+  const activeBoardId = params?.boardId as string | undefined;
+  const reportsActive = !!pathname?.includes('/reports');
 
-  const handleDeleteBoard = async (boardId: string) => {
-    if (!confirm('Delete this board and all its data?')) return;
+  const handleDeleteBoard = async (board: ShellBoard) => {
+    const ok = await confirm({
+      title: t('ui.deleteBoardTitle', { name: board.title }),
+      description: t('ui.deleteBoardDesc'),
+      confirmLabel: t('ui.deleteBoard'),
+      destructive: true,
+    });
+    if (!ok) return;
 
-    const isCurrentBoard = activeBoardId === boardId;
-    const remainingBoards = boards.filter((b) => b.id !== boardId);
-
-    const result = await deleteBoard({ boardId, workspaceId });
+    const isCurrentBoard = activeBoardId === board.id;
+    const remainingBoards = boards.filter((b) => b.id !== board.id);
+    const result = await deleteBoard({ boardId: board.id, workspaceId });
     if (result.success) {
-      toast.success('Board deleted successfully');
+      toast.success(t('nav.boardDeleted'));
       if (isCurrentBoard) {
-        if (remainingBoards.length > 0) {
-          router.replace(`/workspace/${workspaceId}/board/${remainingBoards[0].id}`);
-        } else {
-          router.replace(`/workspace/${workspaceId}`);
-        }
+        router.replace(
+          remainingBoards.length > 0
+            ? `/workspace/${workspaceId}/board/${remainingBoards[0].id}`
+            : `/workspace/${workspaceId}`
+        );
       }
       router.refresh();
     } else {
@@ -56,158 +138,205 @@ export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, cu
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      const res = await logoutUser();
-      if (res.success) {
-        toast.success('Logged out successfully');
-        router.push('/login');
-        router.refresh();
-      } else {
-        toast.error(res.error);
-      }
-    } catch {
-      toast.error('Failed to log out');
-    }
-  };
+  const itemClass = (active: boolean) =>
+    cn(
+      'relative flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-sm font-medium outline-none transition-colors',
+      'focus-visible:ring-2 focus-visible:ring-ring',
+      'group-data-[state=collapsed]/sb:justify-center group-data-[state=collapsed]/sb:px-0 group-data-[state=auto]/sb:max-xl:justify-center group-data-[state=auto]/sb:max-xl:px-0',
+      active ? 'text-foreground' : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+    );
 
   return (
-    <div className={cn("h-full w-[272px] border-r border-border/70 bg-card/70 backdrop-blur-md flex flex-col justify-between shadow-xs", className)}>
-      <div className="flex flex-col flex-1 overflow-hidden">
-        {/* Workspace Brand Header */}
-        <div className="p-4 pt-[max(1rem,env(safe-area-inset-top))] border-b border-border/50 flex items-center justify-between gap-2.5">
-          <div className="flex items-center gap-3 min-w-0 flex-1">
-            <LogoMark className="w-9 h-9 shrink-0 drop-shadow-[0_4px_10px_rgba(139,104,246,0.30)]" />
-            <div className="min-w-0 flex-1">
-              <h2 className="font-bold text-sm truncate leading-tight text-foreground" title={workspaceName}>
-                {workspaceName}
-              </h2>
-              <span className="text-[11px] text-muted-foreground flex items-center gap-1.5 font-medium mt-0.5 whitespace-nowrap">
-                <span className="w-1.5 h-1.5 rounded-full bg-pastel-mint shrink-0" />
+    <TooltipProvider>
+      <div
+        data-state={state}
+        className={cn(
+          'group/sb flex h-full flex-col border-r bg-card/60 backdrop-blur-xl transition-[width] duration-base ease-out-expo',
+          'w-[264px] data-[state=collapsed]:w-[72px] data-[state=auto]:max-xl:w-[72px]',
+          className
+        )}
+      >
+        {/* Brand / workspace */}
+        <div className="flex h-14 shrink-0 items-center gap-2 px-3 pt-[env(safe-area-inset-top)] group-data-[state=collapsed]/sb:justify-center group-data-[state=auto]/sb:max-xl:justify-center">
+          <Link
+            href={`/workspace/${workspaceId}`}
+            className="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg p-1 outline-none focus-visible:ring-2 focus-visible:ring-ring group-data-[state=collapsed]/sb:flex-none group-data-[state=auto]/sb:max-xl:flex-none"
+            aria-label={workspaceName}
+          >
+            <LogoMark className="size-8" title="" />
+            <span className={cn('min-w-0', LABEL)}>
+              <span className="block truncate text-sm font-semibold leading-tight text-foreground">{workspaceName}</span>
+              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <span className="size-1.5 rounded-full bg-success" aria-hidden />
                 {t('nav.activeWorkspace')}
               </span>
-            </div>
-          </div>
-          {onClose && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/70 shrink-0"
-              onClick={onClose}
-              aria-label="Close navigation"
-            >
-              <X className="h-4 w-4" />
+            </span>
+          </Link>
+          {onClose ? (
+            <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label={t('ui.closeMenu')}>
+              <X className="size-4" />
             </Button>
+          ) : (
+            onToggle && (
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className={cn('text-muted-foreground', FULL_ONLY)}
+                onClick={onToggle}
+                aria-label={t('ui.collapseSidebar')}
+                title={`${t('ui.collapseSidebar')} ( [ )`}
+              >
+                <PanelLeftClose className="size-4" />
+              </Button>
+            )
           )}
         </div>
 
-        {/* Main Navigation (Dashboard & Reports) */}
-        <div className="p-3 pb-1 border-b border-border/40">
-          <Link
-            href={`/workspace/${workspaceId}/reports`}
-            onClick={() => onClose?.()}
-            className={cn(
-              'flex items-center space-x-2.5 rounded-xl px-3 py-2 text-xs font-medium transition-all duration-200',
-              pathname?.includes('/reports')
-                ? 'bg-primary/12 text-primary font-semibold shadow-xs border border-primary/20'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-            )}
-          >
-            <BarChart3 className={cn('h-3.5 w-3.5 shrink-0', pathname?.includes('/reports') ? 'text-primary' : 'text-muted-foreground')} />
-            <span>{t('nav.dashboardReports')}</span>
-          </Link>
+        {/* Search / command palette */}
+        <div className="px-3 pb-2">
+          <NavTooltip label={`${t('ui.search')} (⌘K)`} enabled={isRail}>
+            <button
+              type="button"
+              onClick={onOpenPalette}
+              className={cn(
+                'flex h-9 w-full items-center gap-2.5 rounded-lg border bg-card px-2.5 text-sm text-muted-foreground shadow-2xs outline-none transition-colors hover:border-border-strong hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring',
+                'group-data-[state=collapsed]/sb:justify-center group-data-[state=collapsed]/sb:px-0 group-data-[state=auto]/sb:max-xl:justify-center group-data-[state=auto]/sb:max-xl:px-0'
+              )}
+              aria-label={t('ui.search')}
+            >
+              <Search className="size-4 shrink-0" aria-hidden />
+              <span className={cn('flex-1 text-left', LABEL)}>{t('ui.searchShort')}</span>
+              <span className={cn('flex gap-0.5', FULL_ONLY)}>
+                <Kbd>⌘</Kbd>
+                <Kbd>K</Kbd>
+              </span>
+            </button>
+          </NavTooltip>
         </div>
 
-        {/* Boards List */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-1.5">
-          <div className="px-2 py-1.5 text-[11px] font-bold text-muted-foreground/80 uppercase tracking-wider flex items-center justify-between">
-            <span>{t('nav.boards')}</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/70 transition-all active:scale-95"
-              onClick={() => setCreateDialogOpen(true)}
-              title={t('nav.createNewBoard')}
-            >
-              <Plus className="h-3.5 w-3.5 text-primary" />
-            </Button>
+        <nav className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overflow-x-hidden px-3 pb-3" aria-label={t('ui.navigation')}>
+          <div className="space-y-0.5">
+            <NavTooltip label={t('nav.dashboardReports')} enabled={isRail}>
+              <Link
+                href={`/workspace/${workspaceId}/reports`}
+                onClick={() => onClose?.()}
+                className={itemClass(reportsActive)}
+                aria-current={reportsActive ? 'page' : undefined}
+              >
+                {reportsActive && <ActivePill />}
+                <BarChart3 className={cn('relative size-4 shrink-0', reportsActive && 'text-primary')} aria-hidden />
+                <span className={cn('relative', LABEL)}>{t('nav.dashboardReports')}</span>
+              </Link>
+            </NavTooltip>
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-0.5">
+            <div className="flex h-7 items-center justify-between px-2.5 group-data-[state=collapsed]/sb:justify-center group-data-[state=collapsed]/sb:px-0 group-data-[state=auto]/sb:max-xl:justify-center group-data-[state=auto]/sb:max-xl:px-0">
+              <span className={cn('text-xs font-medium text-muted-foreground', LABEL)}>{t('nav.boards')}</span>
+              <span className={cn('h-px w-6 bg-border', RAIL_ONLY)} aria-hidden />
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn('size-6 rounded-md text-muted-foreground hover:text-foreground tap-target', FULL_ONLY)}
+                onClick={onCreateBoard}
+                aria-label={t('nav.createNewBoard')}
+                title={t('nav.createNewBoard')}
+              >
+                <Plus className="size-4" />
+              </Button>
+            </div>
+
             {boards.map((board) => {
               const isActive = activeBoardId === board.id;
               return (
-                <div key={board.id} className="group flex items-center">
-                  <Link
-                    href={`/workspace/${workspaceId}/board/${board.id}`}
-                    onClick={() => onClose?.()}
-                    className={cn(
-                      'flex-1 flex items-center space-x-2.5 rounded-xl px-3 py-2 text-xs font-medium transition-all duration-200',
-                      isActive
-                        ? 'bg-primary/12 text-primary font-semibold shadow-xs border border-primary/20'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-                    )}
-                  >
-                    <LayoutDashboard className={cn('h-3.5 w-3.5 shrink-0', isActive ? 'text-primary' : 'text-muted-foreground')} />
-                    <span className="truncate">{board.title}</span>
-                  </Link>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 rounded-lg hover-reveal text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all shrink-0 ml-1"
-                    onClick={() => handleDeleteBoard(board.id)}
-                    title="Delete board"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
+                <div key={board.id} className="group/item relative">
+                  <NavTooltip label={board.title} enabled={isRail}>
+                    <Link
+                      href={`/workspace/${workspaceId}/board/${board.id}`}
+                      onClick={() => onClose?.()}
+                      className={cn(itemClass(isActive), 'pr-9 group-data-[state=collapsed]/sb:pr-0 group-data-[state=auto]/sb:max-xl:pr-0')}
+                      aria-current={isActive ? 'page' : undefined}
+                    >
+                      {isActive && <ActivePill />}
+                      <span
+                        aria-hidden
+                        className={cn(
+                          'relative flex size-5 shrink-0 items-center justify-center rounded-md text-2xs font-semibold',
+                          avatarTone(board.id)
+                        )}
+                      >
+                        {board.title.charAt(0).toUpperCase()}
+                      </span>
+                      <span className={cn('relative', LABEL)}>{board.title}</span>
+                    </Link>
+                  </NavTooltip>
+                  <div className={cn('absolute right-1 top-1/2 -translate-y-1/2', FULL_ONLY)}>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-7 rounded-md text-muted-foreground hover-reveal group-hover/item:opacity-100 hover:text-foreground"
+                          aria-label={`${t('ui.moreActions')}: ${board.title}`}
+                        >
+                          <MoreHorizontal className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" side="right">
+                        <DropdownMenuItem asChild>
+                          <Link href={`/workspace/${workspaceId}/board/${board.id}`} onClick={() => onClose?.()}>
+                            <ExternalLink /> {t('common.openBoard')}
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem destructive onSelect={() => handleDeleteBoard(board)}>
+                          <Trash2 /> {t('ui.deleteBoard')}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
               );
             })}
+
+            {/* New board button visible in rail mode */}
+            <NavTooltip label={t('nav.createNewBoard')} enabled={isRail}>
+              <button
+                type="button"
+                onClick={onCreateBoard}
+                className={cn(itemClass(false), 'w-full border border-dashed border-border-strong/70 hover:border-primary/50')}
+                aria-label={t('nav.createNewBoard')}
+              >
+                <Plus className="size-4 shrink-0" aria-hidden />
+                <span className={LABEL}>{t('ui.newBoard')}</span>
+              </button>
+            </NavTooltip>
+          </div>
+        </nav>
+
+        {/* Footer */}
+        <div className="shrink-0 space-y-1 border-t p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          {onToggle && !onClose && (
+            <NavTooltip label={t('ui.expandSidebar')} enabled={isRail}>
+              <button
+                type="button"
+                onClick={onToggle}
+                className={cn(itemClass(false), 'w-full', RAIL_ONLY)}
+                aria-label={t('ui.expandSidebar')}
+              >
+                <PanelLeftOpen className="size-4" aria-hidden />
+              </button>
+            </NavTooltip>
+          )}
+          <div className={FULL_ONLY}>
+            <AccountMenu user={currentUser ?? null} onOpenShortcuts={onOpenShortcuts} />
+          </div>
+          <div className={cn('justify-center', RAIL_ONLY)}>
+            <AccountMenu user={currentUser ?? null} compact onOpenShortcuts={onOpenShortcuts} />
           </div>
         </div>
       </div>
-
-      {/* User profile & preferences footer */}
-      <div className="p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] border-t border-border/50 bg-secondary/30 backdrop-blur-sm space-y-2.5">
-        {/* Quick Settings: Language, Theme & Logout */}
-        <div className="flex items-center justify-between px-0.5">
-          <div className="flex items-center gap-1.5">
-            <LanguageToggle />
-            <ThemeToggle />
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 px-2.5 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl gap-1.5 font-medium transition-all active:scale-95"
-            onClick={handleLogout}
-            title={t('nav.logout')}
-          >
-            <LogOut className="h-3.5 w-3.5" />
-            <span className="text-[11px] font-semibold">{t('nav.logout')}</span>
-          </Button>
-        </div>
-
-        {/* User Profile Card */}
-        <div className="flex items-center gap-2.5 p-2 rounded-xl bg-card/70 border border-border/40 shadow-xs">
-          <div className="w-8 h-8 rounded-full bg-pastel-lavender text-pastel-lavender-text flex items-center justify-center font-bold text-xs shrink-0 shadow-xs ring-2 ring-primary/20">
-            {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : <UserIcon className="w-4 h-4" />}
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-xs font-semibold truncate text-foreground leading-tight">
-              {currentUser?.name || t('nav.guestUser')}
-            </div>
-            <div className="text-2xs text-muted-foreground truncate mt-0.5">
-              {currentUser?.email || t('nav.notLoggedIn')}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <CreateBoardDialog
-        workspaceId={workspaceId}
-        open={createDialogOpen}
-        onOpenChange={setCreateDialogOpen}
-      />
-    </div>
+    </TooltipProvider>
   );
 }
+

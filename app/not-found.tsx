@@ -1,40 +1,64 @@
+'use client';
+
 import Link from 'next/link';
+import { ArrowLeft, Compass, LayoutGrid } from 'lucide-react';
+import { m } from 'motion/react';
 import { Button } from '@/components/ui/button';
-import { FileQuestion, ArrowLeft, LayoutDashboard } from 'lucide-react';
+import { LogoMark } from '@/components/brand/logo';
+import { useLanguage } from '@/lib/i18n/language-context';
+import { EASE_OUT } from '@/lib/motion';
 
 export default function NotFound() {
+  const { t } = useLanguage();
+
   return (
-    <div className="min-h-screen flex items-center justify-center pastel-mesh-bg p-4">
-      <div className="max-w-md w-full bg-card/80 backdrop-blur-xl border border-border/70 rounded-3xl p-8 text-center shadow-pastel space-y-6">
-        <div className="w-16 h-16 rounded-2xl bg-pastel-lavender/50 text-pastel-lavender-text border border-purple-200/50 flex items-center justify-center mx-auto shadow-xs">
-          <FileQuestion className="w-8 h-8 text-primary" />
-        </div>
+    <div className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden p-6">
+      <div className="aurora opacity-60" aria-hidden />
+      <div className="absolute inset-0 bg-dot-grid [mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_70%)]" aria-hidden />
 
-        <div className="space-y-2">
-          <span className="text-xs font-bold tracking-wider uppercase text-primary/70 bg-primary/10 px-3 py-1 rounded-full">
-            Error 404
+      <m.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: EASE_OUT }}
+        className="relative w-full max-w-md text-center"
+      >
+        <Link href="/" className="mb-10 inline-flex" aria-label="TaskFlow">
+          <LogoMark className="size-10" title="" />
+        </Link>
+
+        <div className="relative mx-auto mb-6 flex h-32 items-center justify-center">
+          <span className="text-gradient-brand select-none font-mono text-[7rem] font-semibold leading-none tracking-tighter opacity-90">
+            404
           </span>
-          <h1 className="text-2xl font-bold text-foreground">Halaman Tidak Ditemukan</h1>
-          <p className="text-sm text-muted-foreground">
-            Board atau halaman yang Anda cari tidak ada atau mungkin sudah dihapus.
-          </p>
+          <m.span
+            className="absolute right-[18%] top-0 flex size-11 items-center justify-center rounded-2xl border bg-card shadow-e2"
+            animate={{ rotate: [0, 12, -8, 0], y: [0, -6, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+            aria-hidden
+          >
+            <Compass className="size-5 text-primary" />
+          </m.span>
         </div>
 
-        <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
-          <Button asChild variant="outline" className="rounded-xl border-border/80">
-            <Link href="/" className="flex items-center gap-2">
-              <ArrowLeft className="w-4 h-4" />
-              Kembali ke Beranda
+        <p className="text-xs font-medium uppercase tracking-wider text-primary">{t('ui.notFoundEyebrow')}</p>
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight">{t('ui.notFoundTitle')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('ui.notFoundDesc')}</p>
+
+        <div className="mt-8 flex flex-col justify-center gap-2 sm:flex-row">
+          <Button asChild variant="outline">
+            <Link href="/">
+              <ArrowLeft className="size-4" aria-hidden />
+              {t('ui.backHome')}
             </Link>
           </Button>
-          <Button asChild className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-xs">
-            <Link href="/workspace/ws_demo" className="flex items-center gap-2">
-              <LayoutDashboard className="w-4 h-4" />
-              Buka Workspace
+          <Button asChild>
+            <Link href="/workspace/ws_demo">
+              <LayoutGrid className="size-4" aria-hidden />
+              {t('ui.openWorkspace')}
             </Link>
           </Button>
         </div>
-      </div>
+      </m.div>
     </div>
   );
 }

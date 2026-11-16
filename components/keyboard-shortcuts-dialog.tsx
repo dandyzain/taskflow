@@ -1,9 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { FileText, Download } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Download, FileText } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Kbd } from '@/components/ui/kbd';
 import { useLanguage } from '@/lib/i18n/language-context';
 
 interface KeyboardShortcutsDialogProps {
@@ -11,68 +11,66 @@ interface KeyboardShortcutsDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+function Row({ label, keys }: { label: string; keys: string[] }) {
+  return (
+    <div className="flex items-center justify-between gap-4 py-2">
+      <span className="text-sm text-foreground">{label}</span>
+      <span className="flex shrink-0 items-center gap-1">
+        {keys.map((k) => (
+          <Kbd key={k} className="h-6 min-w-6 text-xs">
+            {k}
+          </Kbd>
+        ))}
+      </span>
+    </div>
+  );
+}
+
 export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcutsDialogProps) {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-3xl border border-border/80 shadow-pastel bg-card/95 backdrop-blur-xl sm:max-w-[440px]">
-        <DialogTitle className="text-lg font-bold text-foreground">{t('shortcuts.title')}</DialogTitle>
-        <div className="flex flex-col space-y-4 pt-1">
-          <div>
-            <h3 className="mb-2 text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              {lang === 'id' ? 'Navigasi' : 'Navigation'}
-            </h3>
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center justify-between py-1 px-2 rounded-xl bg-secondary/40 text-xs">
-                <span className="font-medium text-foreground">{t('shortcuts.focusSearch')}</span>
-                <kbd className="inline-flex items-center justify-center rounded-lg border border-border/70 bg-card px-2 py-0.5 text-xs font-mono font-semibold text-primary shadow-2xs">/</kbd>
-              </div>
-              <div className="flex items-center justify-between py-1 px-2 rounded-xl bg-secondary/40 text-xs">
-                <span className="font-medium text-foreground">
-                  {lang === 'id' ? 'Tutup dialog / Reset filter' : 'Close dialog / Reset filters'}
-                </span>
-                <kbd className="inline-flex items-center justify-center rounded-lg border border-border/70 bg-card px-2 py-0.5 text-xs font-mono font-semibold text-primary shadow-2xs">Esc</kbd>
-              </div>
-            </div>
-          </div>
-          <div>
-            <h3 className="mb-2 text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              {lang === 'id' ? 'Bantuan Board' : 'Board Help'}
-            </h3>
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center justify-between py-1 px-2 rounded-xl bg-secondary/40 text-xs">
-                <span className="font-medium text-foreground">{t('shortcuts.openShortcuts')}</span>
-                <kbd className="inline-flex items-center justify-center rounded-lg border border-border/70 bg-card px-2 py-0.5 text-xs font-mono font-semibold text-primary shadow-2xs">?</kbd>
-              </div>
-            </div>
-          </div>
+      <DialogContent className="sm:max-w-[460px]">
+        <DialogHeader>
+          <DialogTitle>{t('shortcuts.title')}</DialogTitle>
+          <DialogDescription>{t('shortcuts.description')}</DialogDescription>
+        </DialogHeader>
 
-          {/* Quick PDF download banner */}
-          <div className="mt-2 pt-3 border-t border-border/50">
-            <a
-              href="/TaskFlow-User-Guide.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-between p-2.5 rounded-2xl bg-primary/10 border border-primary/20 hover:bg-primary/15 transition-all text-xs group"
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-primary/20 text-primary flex items-center justify-center">
-                  <FileText className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="font-semibold text-foreground">
-                    {lang === 'id' ? 'Panduan Pengguna (PDF)' : 'PDF User Guide'}
-                  </div>
-                  <div className="text-2xs text-muted-foreground">
-                    {lang === 'id' ? 'Unduh dokumentasi lengkap TaskFlow' : 'Download complete documentation'}
-                  </div>
-                </div>
-              </div>
-              <Download className="w-3.5 h-3.5 text-primary group-hover:translate-y-0.5 transition-transform" />
-            </a>
+        <section>
+          <h3 className="text-xs font-medium text-muted-foreground">{t('shortcuts.global')}</h3>
+          <div className="divide-y">
+            <Row label={t('ui.openPalette')} keys={['⌘', 'K']} />
+            <Row label={t('ui.toggleSidebar')} keys={['[']} />
+            <Row label={t('shortcuts.openShortcuts')} keys={['?']} />
+            <Row label={t('shortcuts.closeModal')} keys={['Esc']} />
           </div>
-        </div>
+        </section>
+
+        <section>
+          <h3 className="text-xs font-medium text-muted-foreground">{t('shortcuts.boardNavigation')}</h3>
+          <div className="divide-y">
+            <Row label={t('shortcuts.focusSearch')} keys={['/']} />
+            <Row label={t('shortcuts.newTask')} keys={['N']} />
+            <Row label={t('ui.dragHint').split('.')[0]} keys={['Space']} />
+          </div>
+        </section>
+
+        <a
+          href="/TaskFlow-User-Guide.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex items-center gap-3 rounded-xl border bg-secondary/50 p-3 text-sm transition-colors hover:bg-accent"
+        >
+          <span className="flex size-9 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+            <FileText className="size-4" aria-hidden />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-medium">{t('ui.userGuide')}</span>
+            <span className="block text-xs text-muted-foreground">{t('ui.userGuideSub')}</span>
+          </span>
+          <Download className="size-4 text-muted-foreground transition-transform group-hover:translate-y-0.5" aria-hidden />
+        </a>
       </DialogContent>
     </Dialog>
   );

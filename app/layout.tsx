@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
-import { Toaster } from 'sonner';
 import { ThemeProvider } from '@/components/theme-provider';
 import { MotionProvider } from '@/components/motion-provider';
+import { AppToaster } from '@/components/app-toaster';
 import { ConfirmProvider } from '@/components/patterns/confirm-dialog';
 import { LanguageProvider } from '@/lib/i18n/language-context';
 import { cn } from '@/lib/utils';
@@ -40,12 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <ConfirmProvider>
                 <div className="min-h-[100dvh] bg-background">{children}</div>
               </ConfirmProvider>
-              <Toaster
-                position="bottom-right"
-                richColors
-                closeButton
-                toastOptions={{ classNames: { toast: 'rounded-xl font-sans' } }}
-              />
+              <AppToaster />
             </MotionProvider>
           </LanguageProvider>
         </ThemeProvider>
