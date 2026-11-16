@@ -2,92 +2,134 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * TaskFlow design tokens — "Aurora Calm"
+ * ---------------------------------------------------------------------------
+ * Neutral, quiet surfaces. Colour carries meaning (status, priority, labels);
+ * the brand aurora gradient is reserved for focus, progress and celebration.
+ * Every text/background pair below is verified ≥ 4.5:1 (WCAG AA).
+ */
 @layer base {
   :root {
-    /* Main Theme: Soft Pastel Lavender & Cool Grey */
-    --background: 240 33% 98%;          /* #F8F9FD */
-    --foreground: 232 28% 22%;          /* #292C44 */
-    --card: 0 0% 100%;                  /* #FFFFFF */
-    --card-foreground: 232 28% 22%;
+    /* Surfaces */
+    --background: 240 20% 98.5%;
+    --foreground: 240 15% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 15% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 232 28% 22%;
-    
-    /* Primary: Soft Lilac / Pastel Violet */
-    --primary: 258 78% 66%;             /* #8B68F6 */
-    --primary-foreground: 0 0% 100%;
-    
-    /* Secondary & Muted */
-    --secondary: 240 40% 95%;           /* #EDEFFB */
-    --secondary-foreground: 258 60% 40%;
-    --muted: 240 28% 95%;               /* #EEF0F9 */
-    --muted-foreground: 235 16% 52%;
-    --accent: 260 75% 95%;              /* #F2EEFE */
-    --accent-foreground: 258 78% 50%;
-    
-    /* Status: Soft Pastel Rose Red */
-    --destructive: 350 82% 70%;         /* #F2788A */
-    --destructive-foreground: 0 0% 100%;
-    
-    --border: 235 25% 91%;              /* #E4E7F4 */
-    --input: 235 25% 91%;
-    --ring: 258 78% 66%;
-    --radius: 0.85rem;
+    --popover-foreground: 240 15% 12%;
+    --surface-sunken: 240 16% 96%;
 
-    /* Pastel Accents */
-    --pastel-mint: 154 58% 86%;         /* #C4EED8 */
-    --pastel-mint-text: 158 65% 26%;
-    --pastel-sky: 204 88% 87%;          /* #C3E6FC */
-    --pastel-sky-text: 207 72% 30%;
-    --pastel-peach: 24 94% 87%;         /* #FDD5BD */
-    --pastel-peach-text: 24 85% 32%;
-    --pastel-lavender: 268 76% 89%;     /* #E2D3FC */
-    --pastel-lavender-text: 268 62% 35%;
-    --pastel-rose: 342 82% 87%;         /* #FCC6D3 */
-    --pastel-rose-text: 342 70% 32%;
-    --pastel-butter: 46 92% 85%;        /* #FCEDAC */
-    --pastel-butter-text: 42 85% 28%;
+    /* Brand */
+    --primary: 252 70% 57%;
+    --primary-foreground: 0 0% 100%;
+    --brand-from: 262 83% 66%;
+    --brand-via: 239 84% 67%;
+    --brand-to: 199 89% 60%;
+
+    --secondary: 240 14% 95.5%;
+    --secondary-foreground: 240 15% 20%;
+    --muted: 240 14% 95.5%;
+    --muted-foreground: 240 6% 40%;
+    --accent: 252 90% 96.5%;
+    --accent-foreground: 252 60% 45%;
+
+    /* Semantic status */
+    --success: 152 70% 26%;
+    --success-soft: 152 55% 93%;
+    --warning: 28 90% 32%;
+    --warning-soft: 38 95% 91%;
+    --destructive: 354 70% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --danger: 354 70% 40%;
+    --danger-soft: 354 90% 95%;
+    --info: 205 85% 30%;
+    --info-soft: 205 90% 94%;
+
+    --border: 240 10% 90%;
+    --border-strong: 240 8% 82%;
+    --input: 240 10% 88%;
+    --ring: 252 70% 57%;
+    --radius: 0.75rem;
+
+    /* Pastel accents (labels, avatars, column markers) */
+    --pastel-mint: 154 58% 88%;
+    --pastel-mint-text: 158 65% 24%;
+    --pastel-sky: 204 88% 90%;
+    --pastel-sky-text: 207 72% 28%;
+    --pastel-peach: 28 94% 90%;
+    --pastel-peach-text: 24 85% 28%;
+    --pastel-lavender: 268 76% 92%;
+    --pastel-lavender-text: 268 62% 34%;
+    --pastel-rose: 342 82% 92%;
+    --pastel-rose-text: 342 70% 30%;
+    --pastel-butter: 46 92% 87%;
+    --pastel-butter-text: 42 85% 24%;
+
+    /* Elevation */
+    --shadow-color: 240 30% 20%;
+
+    /* Motion */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --dur-instant: 100ms;
+    --dur-quick: 160ms;
+    --dur-base: 240ms;
+    --dur-slow: 400ms;
   }
 
   .dark {
-    /* Dark Theme: Midnight Pastel Slate */
-    --background: 234 26% 11%;          /* #141624 */
-    --foreground: 230 30% 95%;
-    --card: 233 24% 15%;                /* #1A1C2E */
-    --card-foreground: 230 30% 95%;
-    --popover: 233 24% 15%;
-    --popover-foreground: 230 30% 95%;
-    
-    /* Primary: Soft glowing pastel purple */
-    --primary: 258 78% 70%;             /* #A082F8 */
-    --primary-foreground: 234 26% 11%;
-    
-    --secondary: 233 20% 20%;
-    --secondary-foreground: 258 78% 85%;
-    --muted: 233 20% 18%;
-    --muted-foreground: 230 18% 65%;
-    --accent: 258 35% 22%;
-    --accent-foreground: 258 78% 85%;
-    
-    --destructive: 350 75% 65%;
-    --destructive-foreground: 0 0% 100%;
-    
-    --border: 233 20% 21%;
-    --input: 233 20% 21%;
-    --ring: 258 78% 70%;
+    --background: 240 12% 6%;
+    --foreground: 240 10% 95%;
+    --card: 240 10% 9.5%;
+    --card-foreground: 240 10% 95%;
+    --popover: 240 10% 10.5%;
+    --popover-foreground: 240 10% 95%;
+    --surface-sunken: 240 11% 7.5%;
 
-    /* Pastel Accents in Dark (Slightly deeper/richer backgrounds, bright readable text) */
-    --pastel-mint: 154 45% 24%;
-    --pastel-mint-text: 154 75% 82%;
-    --pastel-sky: 204 55% 26%;
-    --pastel-sky-text: 204 85% 85%;
-    --pastel-peach: 24 55% 25%;
-    --pastel-peach-text: 24 90% 84%;
-    --pastel-lavender: 268 45% 28%;
-    --pastel-lavender-text: 268 85% 88%;
-    --pastel-rose: 342 50% 26%;
-    --pastel-rose-text: 342 85% 86%;
-    --pastel-butter: 46 55% 24%;
-    --pastel-butter-text: 46 90% 84%;
+    --primary: 252 92% 74%;
+    --primary-foreground: 240 14% 7%;
+    --brand-from: 262 90% 74%;
+    --brand-via: 239 90% 74%;
+    --brand-to: 199 92% 68%;
+
+    --secondary: 240 8% 14%;
+    --secondary-foreground: 240 10% 90%;
+    --muted: 240 8% 14%;
+    --muted-foreground: 240 6% 64%;
+    --accent: 252 30% 17%;
+    --accent-foreground: 252 92% 84%;
+
+    --success: 152 60% 62%;
+    --success-soft: 152 40% 13%;
+    --warning: 38 92% 64%;
+    --warning-soft: 35 50% 13%;
+    --destructive: 354 75% 58%;
+    --destructive-foreground: 0 0% 100%;
+    --danger: 354 90% 72%;
+    --danger-soft: 354 45% 15%;
+    --info: 205 90% 68%;
+    --info-soft: 205 50% 14%;
+
+    --border: 240 8% 16%;
+    --border-strong: 240 7% 24%;
+    --input: 240 8% 18%;
+    --ring: 252 92% 74%;
+
+    --pastel-mint: 154 40% 17%;
+    --pastel-mint-text: 154 75% 80%;
+    --pastel-sky: 204 50% 18%;
+    --pastel-sky-text: 204 85% 82%;
+    --pastel-peach: 24 50% 17%;
+    --pastel-peach-text: 24 90% 80%;
+    --pastel-lavender: 268 40% 20%;
+    --pastel-lavender-text: 268 85% 86%;
+    --pastel-rose: 342 45% 18%;
+    --pastel-rose-text: 342 85% 84%;
+    --pastel-butter: 46 50% 15%;
+    --pastel-butter-text: 46 90% 78%;
+
+    --shadow-color: 240 40% 2%;
   }
 }
 
@@ -95,46 +137,109 @@
   * {
     @apply border-border;
   }
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
   body {
-    @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    @apply bg-background text-foreground antialiased selection:bg-primary/20;
+    font-feature-settings: 'ss01', 'cv11';
+    text-rendering: optimizeLegibility;
+  }
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+  /* Radix & form controls draw their own ring */
+  button:focus-visible,
+  a:focus-visible,
+  [role='button']:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible {
+    outline-offset: 2px;
   }
 }
 
-/* Glassmorphism & Pastel Visual Enhancements */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-.dark .glass-panel {
-  background: rgba(26, 28, 46, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+@layer components {
+  /* Frosted glass — reserved for overlays and sticky chrome */
+  .glass-panel {
+    background: hsl(var(--card) / 0.78);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  }
+
+  /* App canvas: calm neutral with a faint aurora wash at the top edge */
+  .app-canvas,
+  .pastel-mesh-bg {
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(60rem 22rem at 15% -8rem, hsl(var(--brand-from) / 0.07), transparent 70%),
+      radial-gradient(50rem 20rem at 85% -10rem, hsl(var(--brand-to) / 0.06), transparent 70%);
+    background-attachment: fixed;
+  }
+  .dark .app-canvas,
+  .dark .pastel-mesh-bg {
+    background-image:
+      radial-gradient(60rem 22rem at 15% -8rem, hsl(var(--brand-from) / 0.1), transparent 70%),
+      radial-gradient(50rem 20rem at 85% -10rem, hsl(var(--brand-to) / 0.07), transparent 70%);
+  }
+
+  /* Expressive aurora used for auth/landing hero areas */
+  .aurora {
+    position: absolute;
+    inset: -20%;
+    pointer-events: none;
+    background:
+      radial-gradient(40% 50% at 20% 30%, hsl(var(--brand-from) / 0.35), transparent 70%),
+      radial-gradient(35% 45% at 80% 20%, hsl(var(--brand-to) / 0.3), transparent 70%),
+      radial-gradient(45% 50% at 60% 80%, hsl(var(--brand-via) / 0.25), transparent 70%);
+    filter: blur(40px);
+    animation: aurora-drift 24s var(--ease-in-out) infinite alternate;
+  }
+
+  .text-gradient-brand {
+    background-image: linear-gradient(
+      100deg,
+      hsl(var(--brand-from)),
+      hsl(var(--brand-via)) 50%,
+      hsl(var(--brand-to))
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .bg-gradient-brand {
+    background-image: linear-gradient(
+      120deg,
+      hsl(var(--brand-from)),
+      hsl(var(--brand-via)) 55%,
+      hsl(var(--brand-to))
+    );
+  }
+
+  /* Subtle dotted grid used behind empty states / hero previews */
+  .bg-dot-grid {
+    background-image: radial-gradient(hsl(var(--foreground) / 0.08) 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
 }
 
-.pastel-mesh-bg {
-  background-color: hsl(var(--background));
-  background-image: 
-    radial-gradient(at 10% 20%, hsla(258, 85%, 92%, 0.4) 0px, transparent 50%),
-    radial-gradient(at 90% 10%, hsla(204, 90%, 92%, 0.35) 0px, transparent 50%),
-    radial-gradient(at 80% 90%, hsla(342, 85%, 93%, 0.3) 0px, transparent 50%),
-    radial-gradient(at 10% 90%, hsla(154, 75%, 92%, 0.35) 0px, transparent 50%);
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(-3%, -2%, 0) rotate(0deg) scale(1);
+  }
+  100% {
+    transform: translate3d(3%, 2%, 0) rotate(8deg) scale(1.08);
+  }
 }
 
-.dark .pastel-mesh-bg {
-  background-color: hsl(var(--background));
-  background-image: 
-    radial-gradient(at 10% 20%, hsla(258, 70%, 25%, 0.25) 0px, transparent 50%),
-    radial-gradient(at 90% 10%, hsla(204, 70%, 25%, 0.2) 0px, transparent 50%),
-    radial-gradient(at 80% 90%, hsla(342, 60%, 25%, 0.2) 0px, transparent 50%),
-    radial-gradient(at 10% 90%, hsla(154, 60%, 22%, 0.2) 0px, transparent 50%);
+/* Scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
 }
-
-/* Smooth custom scrollbars */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
@@ -142,10 +247,12 @@
 ::-webkit-scrollbar-thumb {
   background: hsl(var(--muted-foreground) / 0.25);
   border-radius: 9999px;
-  transition: background 0.2s;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--primary) / 0.5);
+  background-clip: content-box;
 }
 
 /* ─── Responsive & Touch Utilities ───────────────────────────────────────── */
@@ -157,19 +264,20 @@
    */
   .hover-reveal {
     opacity: 1;
-    transition: opacity 0.2s ease;
+    transition: opacity var(--dur-quick) ease;
   }
   @media (hover: hover) and (pointer: fine) {
     .hover-reveal {
       opacity: 0;
     }
     .group:hover .hover-reveal,
-    .group:focus-within .hover-reveal {
+    .group:focus-within .hover-reveal,
+    .hover-reveal:focus-visible,
+    .hover-reveal[data-state='open'] {
       opacity: 1;
     }
   }
 
-  /* Horizontal scrollers (tabs, filter pills) without visible scrollbar */
   .scrollbar-none {
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -178,12 +286,31 @@
     display: none;
   }
 
-  /* Respect iPhone notch / home indicator */
+  /* Horizontal scroller edge fade (hint that more content exists) */
+  .edge-fade-x {
+    mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 24px), transparent);
+  }
+
   .pt-safe {
     padding-top: env(safe-area-inset-top);
   }
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .tap-target {
+    position: relative;
+  }
+  /* Expands the hit area of small icon buttons to ≥ 44px on touch devices */
+  @media (pointer: coarse) {
+    .tap-target::after {
+      content: '';
+      position: absolute;
+      inset: 50% auto auto 50%;
+      width: max(100%, 44px);
+      height: max(100%, 44px);
+      transform: translate(-50%, -50%);
+    }
   }
 }
 
@@ -193,5 +320,54 @@
   select,
   textarea {
     font-size: 16px !important;
+  }
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .aurora {
+    animation: none;
+  }
+}
+
+/* ─── Print ──────────────────────────────────────────────────────────────── */
+@media print {
+  @page {
+    margin: 12mm;
+  }
+  html,
+  body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+  .app-canvas,
+  .pastel-mesh-bg {
+    background: #fff !important;
+  }
+  [data-print-hide],
+  aside,
+  nav[data-mobile-tabbar],
+  header[data-mobile-header],
+  [data-sonner-toaster] {
+    display: none !important;
+  }
+  [data-print-expand] {
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .print-avoid-break {
+    break-inside: avoid;
+  }
+  * {
+    box-shadow: none !important;
+    backdrop-filter: none !important;
   }
 }

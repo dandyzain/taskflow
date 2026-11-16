@@ -104,7 +104,7 @@ export function ActivityFeed({ activities, open, onOpenChange }: ActivityFeedPro
                         <span className="font-semibold text-foreground">
                           {activity.user.name}
                         </span>
-                        <span className="text-[10px] text-muted-foreground font-mono">
+                        <span className="text-2xs text-muted-foreground font-mono">
                           {formatRelativeTime(activity.createdAt)}
                         </span>
                       </div>

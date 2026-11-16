@@ -229,7 +229,7 @@ export function ReportDashboardClient({ initialData, workspaceId }: ReportDashbo
             </div>
 
             {/* Live Indicator Pill */}
-            <span className="text-[10px] sm:text-[11px] font-semibold bg-pastel-mint/70 text-emerald-800 dark:text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-300/40 shadow-xs shrink-0 flex items-center gap-1.5">
+            <span className="text-2xs sm:text-[11px] font-semibold bg-pastel-mint/70 text-emerald-800 dark:text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-300/40 shadow-xs shrink-0 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               {t('common.live')}
             </span>

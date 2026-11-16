@@ -75,7 +75,7 @@ export function AssigneePicker({
           <Users className="h-3.5 w-3.5 text-primary" />
           Assign Members
           {selectedAssignees.length > 0 && (
-            <span className="ml-1 rounded-full bg-primary/15 px-1.5 py-0.2 text-[10px] font-bold text-primary">
+            <span className="ml-1 rounded-full bg-primary/15 px-1.5 py-0.2 text-2xs font-bold text-primary">
               {selectedAssignees.length}
             </span>
           )}
@@ -97,7 +97,7 @@ export function AssigneePicker({
                   className="flex items-center gap-2.5 rounded-xl px-2 py-1.5 text-xs hover:bg-secondary cursor-pointer transition-all text-left"
                   onClick={() => handleToggle(member)}
                 >
-                  <div className="w-6 h-6 rounded-full bg-pastel-lavender text-pastel-lavender-text text-[10px] flex items-center justify-center font-bold shrink-0 shadow-xs">
+                  <div className="w-6 h-6 rounded-full bg-pastel-lavender text-pastel-lavender-text text-2xs flex items-center justify-center font-bold shrink-0 shadow-xs">
                     {member.name.charAt(0).toUpperCase()}
                   </div>
                   <span className="flex-1 truncate font-medium text-foreground">{member.name}</span>

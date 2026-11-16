@@ -52,7 +52,7 @@ export function WorkspaceShell({
               <h1 className="font-bold text-xs truncate leading-tight text-foreground group-hover:text-primary transition-colors">
                 {workspaceName}
               </h1>
-              <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
+              <span className="text-2xs text-muted-foreground flex items-center gap-1 font-medium">
                 <span className="w-1.5 h-1.5 rounded-full bg-pastel-mint shrink-0" />
                 TaskFlow
               </span>

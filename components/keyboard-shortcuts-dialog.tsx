@@ -64,7 +64,7 @@ export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcut
                   <div className="font-semibold text-foreground">
                     {lang === 'id' ? 'Panduan Pengguna (PDF)' : 'PDF User Guide'}
                   </div>
-                  <div className="text-[10px] text-muted-foreground">
+                  <div className="text-2xs text-muted-foreground">
                     {lang === 'id' ? 'Unduh dokumentasi lengkap TaskFlow' : 'Download complete documentation'}
                   </div>
                 </div>

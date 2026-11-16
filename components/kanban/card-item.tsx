@@ -70,21 +70,21 @@ export function CardItemComponent({ card, boardId, workspaceId, isDragOverlay, o
   let priorityBadge = null
   if (card.priority === 1) {
     priorityBadge = (
-      <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium bg-pastel-sky text-pastel-sky-text border border-sky-300/30">
+      <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-2xs font-medium bg-pastel-sky text-pastel-sky-text border border-sky-300/30">
         <ArrowDown className="w-2.5 h-2.5 shrink-0" />
         {t('kanban.priorityLow')}
       </span>
     )
   } else if (card.priority === 2) {
     priorityBadge = (
-      <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium bg-pastel-peach text-pastel-peach-text border border-amber-300/30">
+      <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-2xs font-medium bg-pastel-peach text-pastel-peach-text border border-amber-300/30">
         <ArrowRight className="w-2.5 h-2.5 shrink-0" />
         {t('kanban.priorityMedium')}
       </span>
     )
   } else if (card.priority === 3) {
     priorityBadge = (
-      <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium bg-pastel-rose text-pastel-rose-text border border-rose-300/30">
+      <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-2xs font-medium bg-pastel-rose text-pastel-rose-text border border-rose-300/30">
         <ArrowUp className="w-2.5 h-2.5 shrink-0" />
         {t('kanban.priorityUrgent')}
       </span>
@@ -172,7 +172,7 @@ export function CardItemComponent({ card, boardId, workspaceId, isDragOverlay, o
                   <div
                     key={assignee.id}
                     className={cn(
-                      "w-6 h-6 rounded-full text-[10px] font-bold flex items-center justify-center border-2 border-card shadow-sm transition-transform hover:scale-110",
+                      "w-6 h-6 rounded-full text-2xs font-bold flex items-center justify-center border-2 border-card shadow-sm transition-transform hover:scale-110",
                       colorClass
                     )}
                     title={assignee.name}

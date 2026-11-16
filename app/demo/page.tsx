@@ -162,14 +162,14 @@ export default function DemoLoginPage() {
                         <span className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors">
                           {acc.name}
                         </span>
-                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${acc.badgeColor}`}>
+                        <span className={`text-2xs font-bold px-2 py-0.5 rounded-full border shrink-0 ${acc.badgeColor}`}>
                           {acc.role}
                         </span>
                       </div>
                       <div className="text-[11px] text-muted-foreground/80 mt-0.5 line-clamp-1">
                         {acc.desc}
                       </div>
-                      <div className="text-[10px] text-muted-foreground/60 font-mono mt-0.5">
+                      <div className="text-2xs text-muted-foreground/60 font-mono mt-0.5">
                         {acc.email}
                       </div>
                     </div>

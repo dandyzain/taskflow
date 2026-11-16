@@ -177,7 +177,7 @@ export function EmployeePerformanceView({ employeeMetrics, leaderboard }: Employ
         {/* Table View */}
         <div className="overflow-x-auto rounded-xl border border-border/70">
           <table className="w-full text-left text-xs min-w-[720px]">
-            <thead className="bg-secondary/40 border-b border-border/70 text-muted-foreground uppercase text-[10px] font-bold tracking-wider">
+            <thead className="bg-secondary/40 border-b border-border/70 text-muted-foreground uppercase text-2xs font-bold tracking-wider">
               <tr>
                 <th className="px-4 py-3">{t('reports.colEmployee')}</th>
                 <th className="px-3 py-3">{t('reports.colRole')}</th>
@@ -201,13 +201,13 @@ export function EmployeePerformanceView({ employeeMetrics, leaderboard }: Employ
                       <div className="flex items-center gap-2.5">
                         <Avatar className="w-7 h-7 border border-border">
                           {member.avatarUrl && <AvatarImage src={member.avatarUrl} alt={member.name} />}
-                          <AvatarFallback className="bg-pastel-lavender text-pastel-lavender-text text-[10px] font-bold">
+                          <AvatarFallback className="bg-pastel-lavender text-pastel-lavender-text text-2xs font-bold">
                             {member.name.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                         <div className="min-w-0">
                           <p className="font-bold text-xs truncate leading-tight text-foreground">{member.name}</p>
-                          <p className="text-[10px] text-muted-foreground truncate">{member.email}</p>
+                          <p className="text-2xs text-muted-foreground truncate">{member.email}</p>
                         </div>
                       </div>
                     </td>
@@ -219,7 +219,7 @@ export function EmployeePerformanceView({ employeeMetrics, leaderboard }: Employ
 
                     {/* Workload Status */}
                     <td className="px-3 py-3 text-center">
-                      <span className={cn('text-[10px] font-semibold px-2 py-0.5 rounded-full border', badge.class)}>
+                      <span className={cn('text-2xs font-semibold px-2 py-0.5 rounded-full border', badge.class)}>
                         {badge.label}
                       </span>
                     </td>
