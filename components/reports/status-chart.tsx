@@ -2,6 +2,7 @@
 
 import type { StatusDistributionItem } from '@/lib/queries/report-queries';
 import { cn } from '@/lib/utils';
+import { getStatus } from '@/lib/design/tokens';
 import { Layers } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/language-context';
 
@@ -15,7 +16,7 @@ export function StatusChart({ statusDistribution, totalTasks }: StatusChartProps
 
   if (totalTasks === 0 || statusDistribution.length === 0) {
     return (
-      <div className="rounded-2xl border border-border/80 bg-card/70 backdrop-blur-md p-5 flex flex-col justify-center items-center h-[260px] text-center shadow-xs">
+      <div className="rounded-2xl border border-border bg-card p-5 flex flex-col justify-center items-center h-[260px] text-center shadow-xs">
         <Layers className="w-8 h-8 text-muted-foreground/40 mb-2" />
         <p className="text-sm font-semibold text-foreground">{t('reports.statusChartEmpty')}</p>
         <p className="text-xs text-muted-foreground mt-0.5">{t('reports.statusChartEmptySub')}</p>
@@ -24,11 +25,11 @@ export function StatusChart({ statusDistribution, totalTasks }: StatusChartProps
   }
 
   return (
-    <div className="rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-md p-3.5 sm:p-5 shadow-xs flex flex-col justify-between space-y-4">
+    <div className="rounded-2xl border border-border bg-card p-3.5 sm:p-5 shadow-xs flex flex-col justify-between space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
-          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-pastel-mint ring-2 ring-emerald-400/30 shrink-0" />
+          <h3 className="text-[0.9375rem] font-semibold text-foreground flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-pastel-mint ring-2 ring-success/30 shrink-0" />
             {t('reports.statusChartTitle')}
           </h3>
           <p className="text-xs text-muted-foreground mt-0.5">
@@ -50,7 +51,7 @@ export function StatusChart({ statusDistribution, totalTasks }: StatusChartProps
               title={`${item.title}: ${item.count} task (${item.percentage}%)`}
               className={cn(
                 'h-full rounded-full transition-all duration-500 hover:opacity-80',
-                item.bgClass
+                getStatus(item.title).dot
               )}
             />
           ))}
@@ -70,11 +71,11 @@ export function StatusChart({ statusDistribution, totalTasks }: StatusChartProps
             className="flex items-center justify-between p-2 rounded-xl bg-secondary/40 border border-border/50 hover:bg-secondary/70 transition-colors"
           >
             <div className="flex items-center gap-2 min-w-0">
-              <span className={cn('w-2.5 h-2.5 rounded-full shrink-0 shadow-xs', item.bgClass)} />
+              <span className={cn('w-2.5 h-2.5 rounded-full shrink-0', getStatus(item.title).dot)} />
               <span className="text-xs font-medium truncate text-foreground">{item.title}</span>
             </div>
             <div className="flex items-center gap-1.5 shrink-0 pl-2">
-              <span className="text-xs font-bold text-foreground">{item.count}</span>
+              <span className="text-xs font-semibold text-foreground">{item.count}</span>
               <span className="text-2xs text-muted-foreground font-medium">({item.percentage}%)</span>
             </div>
           </div>

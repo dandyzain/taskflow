@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { BarChart3, Table2, TrendingUp } from 'lucide-react';
 import type { DailyActivityTrend } from '@/lib/queries/report-queries';
-import { TrendingUp, PlusCircle, CheckCircle2 } from 'lucide-react';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/lib/i18n/language-context';
 
@@ -10,117 +11,153 @@ interface VelocityChartProps {
   dailyTrends: DailyActivityTrend[];
 }
 
+/**
+ * Created vs completed per day. Bars are keyboard-focusable and show the same
+ * tooltip on hover or focus; a table view gives an accessible fallback.
+ */
 export function VelocityChart({ dailyTrends }: VelocityChartProps) {
   const { t, lang } = useLanguage();
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [active, setActive] = useState<number | null>(null);
+  const [mode, setMode] = useState<'chart' | 'table'>('chart');
 
-  const maxVal = Math.max(
-    1,
-    ...dailyTrends.map((d) => Math.max(d.createdCount, d.completedCount))
-  );
-
+  const maxVal = Math.max(1, ...dailyTrends.map((d) => Math.max(d.createdCount, d.completedCount)));
   const totalCreated = dailyTrends.reduce((acc, d) => acc + d.createdCount, 0);
   const totalCompleted = dailyTrends.reduce((acc, d) => acc + d.completedCount, 0);
 
   const formatDay = (dateStr: string, fallback: string) => {
-    try {
-      const d = new Date(dateStr);
-      if (isNaN(d.getTime())) return fallback;
-      return d.toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', { day: 'numeric', month: 'short' });
-    } catch {
-      return fallback;
-    }
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return fallback;
+    return d.toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', { day: 'numeric', month: 'short' });
   };
 
   return (
-    <div className="rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-md p-3.5 sm:p-5 shadow-xs flex flex-col justify-between space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-        <div>
-          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-primary shrink-0" />
+    <div className="flex h-full flex-col gap-4 rounded-2xl border bg-card p-4 shadow-e1 sm:p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="flex items-center gap-2 text-[0.9375rem] font-semibold">
+            <TrendingUp className="size-4 shrink-0 text-primary" aria-hidden />
             {t('reports.velocityChartTitle')}
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            {t('reports.velocityChartSub')}
-          </p>
+          <p className="mt-0.5 text-xs text-muted-foreground">{t('reports.velocityChartSub')}</p>
         </div>
-
-        {/* Legend */}
-        <div className="flex items-center gap-3 text-[11px] sm:text-xs shrink-0 bg-secondary/50 px-2.5 sm:px-3 py-1.5 rounded-xl border border-border/50 self-start sm:self-auto">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-pastel-sky ring-2 ring-sky-400/30" />
-            <span className="text-muted-foreground font-medium">{t('reports.createdLegend')} ({totalCreated})</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-pastel-mint ring-2 ring-emerald-400/30" />
-            <span className="text-muted-foreground font-medium">{t('reports.completedLegend')} ({totalCompleted})</span>
-          </div>
-        </div>
+        <ToggleGroup
+          type="single"
+          value={mode}
+          onValueChange={(v) => v && setMode(v as 'chart' | 'table')}
+          data-print-hide
+          aria-label={t('ui.viewMode')}
+        >
+          <ToggleGroupItem value="chart" aria-label={t('ui.viewAsChart')}>
+            <BarChart3 aria-hidden />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="table" aria-label={t('ui.viewAsTable')}>
+            <Table2 aria-hidden />
+          </ToggleGroupItem>
+        </ToggleGroup>
       </div>
 
-      {/* SVG Bar Chart Visualization */}
-      <div className="pt-4 pb-2">
-        <div className="h-44 flex items-end justify-between gap-2 sm:gap-4 px-2 border-b border-border/60">
-          {dailyTrends.map((day, idx) => {
-            const createdHeight = Math.max(8, (day.createdCount / maxVal) * 100);
-            const completedHeight = Math.max(8, (day.completedCount / maxVal) * 100);
-            const isHovered = hoveredIndex === idx;
-            const displayDate = formatDay(day.date, day.formattedDate);
+      <div className="flex items-center gap-4 text-xs">
+        <span className="flex items-center gap-1.5">
+          <span className="size-2.5 rounded-sm bg-[hsl(var(--brand-to))]" aria-hidden />
+          <span className="text-muted-foreground">{t('reports.createdLegend')}</span>
+          <span className="font-semibold tabular-nums">{totalCreated}</span>
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="size-2.5 rounded-sm bg-success" aria-hidden />
+          <span className="text-muted-foreground">{t('reports.completedLegend')}</span>
+          <span className="font-semibold tabular-nums">{totalCompleted}</span>
+        </span>
+      </div>
 
-            return (
-              <div
-                key={idx}
-                onMouseEnter={() => setHoveredIndex(idx)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                className="flex-1 flex flex-col items-center h-full justify-end group relative cursor-pointer"
-              >
-                {/* Floating Tooltip */}
-                {isHovered && (
-                  <div className={cn(
-                    "absolute -top-16 z-20 bg-popover/95 backdrop-blur-md border border-border/80 shadow-pastel px-2.5 py-1.5 rounded-xl text-center pointer-events-none whitespace-nowrap animate-in fade-in-up duration-150",
-                    idx === 0 ? "left-0" : idx === dailyTrends.length - 1 ? "right-0" : "left-1/2 -translate-x-1/2"
-                  )}>
-                    <p className="text-[11px] font-bold text-foreground">{displayDate}</p>
-                    <div className="flex items-center gap-2 text-2xs text-muted-foreground mt-0.5">
-                      <span className="text-sky-600 dark:text-sky-400 font-semibold">+{day.createdCount} {t('reports.trendCreatedSuffix')}</span>
-                      <span>•</span>
-                      <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{day.completedCount} {t('reports.trendCompletedSuffix')}</span>
+      {mode === 'chart' ? (
+        <div className="relative mt-auto">
+          {/* gridlines */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-6 top-0 flex flex-col justify-between" aria-hidden>
+            {[0, 1, 2, 3].map((i) => (
+              <span key={i} className="border-t border-dashed border-border/70" />
+            ))}
+          </div>
+          <div className="relative flex h-48 items-end gap-1.5 sm:gap-3" role="list" aria-label={t('reports.velocityChartTitle')}>
+            {dailyTrends.map((day, idx) => {
+              const createdH = Math.max(4, (day.createdCount / maxVal) * 100);
+              const completedH = Math.max(4, (day.completedCount / maxVal) * 100);
+              const isActive = active === idx;
+              const label = formatDay(day.date, day.formattedDate);
+              return (
+                <div
+                  key={idx}
+                  role="listitem"
+                  tabIndex={0}
+                  aria-label={`${label}: ${day.createdCount} ${t('reports.trendCreatedSuffix')}, ${day.completedCount} ${t('reports.trendCompletedSuffix')}`}
+                  onMouseEnter={() => setActive(idx)}
+                  onMouseLeave={() => setActive(null)}
+                  onFocus={() => setActive(idx)}
+                  onBlur={() => setActive(null)}
+                  className="group relative flex h-full flex-1 flex-col items-center justify-end rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {isActive && (
+                    <div
+                      className={cn(
+                        'pointer-events-none absolute -top-2 z-10 -translate-y-full animate-scale-in whitespace-nowrap rounded-lg bg-foreground px-2.5 py-1.5 text-xs text-background shadow-e2',
+                        idx === 0 ? 'left-0' : idx === dailyTrends.length - 1 ? 'right-0' : 'left-1/2 -translate-x-1/2'
+                      )}
+                    >
+                      <p className="font-semibold">{label}</p>
+                      <p className="opacity-80">
+                        +{day.createdCount} {t('reports.trendCreatedSuffix')} · {day.completedCount} {t('reports.trendCompletedSuffix')}
+                      </p>
                     </div>
+                  )}
+                  <div
+                    className={cn(
+                      'flex h-[calc(100%-1.5rem)] w-full items-end justify-center gap-0.5 rounded-md transition-colors sm:gap-1',
+                      isActive && 'bg-secondary/70'
+                    )}
+                  >
+                    <div
+                      style={{ height: `${createdH}%` }}
+                      className="w-2.5 rounded-t-[4px] bg-[hsl(var(--brand-to))] transition-opacity sm:w-3.5"
+                    />
+                    <div
+                      style={{ height: `${completedH}%` }}
+                      className="w-2.5 rounded-t-[4px] bg-success transition-opacity sm:w-3.5"
+                    />
                   </div>
-                )}
-
-                {/* Bars Pair */}
-                <div className="w-full flex items-end justify-center gap-0.5 sm:gap-1.5 h-full pb-1">
-                  {/* Created Bar */}
-                  <div
-                    style={{ height: `${createdHeight}%` }}
+                  <span
                     className={cn(
-                      'w-2 sm:w-4 rounded-t-md sm:rounded-t-lg bg-pastel-sky transition-all duration-300 shadow-xs hover:brightness-105',
-                      isHovered ? 'ring-2 ring-sky-400/40' : ''
+                      'h-6 pt-1.5 text-2xs tabular-nums text-muted-foreground transition-colors',
+                      isActive && 'font-medium text-foreground'
                     )}
-                  />
-                  {/* Completed Bar */}
-                  <div
-                    style={{ height: `${completedHeight}%` }}
-                    className={cn(
-                      'w-2 sm:w-4 rounded-t-md sm:rounded-t-lg bg-pastel-mint transition-all duration-300 shadow-xs hover:brightness-105',
-                      isHovered ? 'ring-2 ring-emerald-400/40' : ''
-                    )}
-                  />
+                  >
+                    {label}
+                  </span>
                 </div>
-
-                {/* Date Label */}
-                <span className={cn(
-                  'text-2xs font-semibold text-muted-foreground transition-colors pt-1.5',
-                  isHovered ? 'text-primary font-bold' : ''
-                )}>
-                  {displayDate}
-                </span>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="overflow-hidden rounded-xl border">
+          <table className="w-full text-sm">
+            <thead className="bg-secondary/60 text-xs text-muted-foreground">
+              <tr>
+                <th scope="col" className="px-3 py-2 text-left font-medium">{t('ui.date')}</th>
+                <th scope="col" className="px-3 py-2 text-right font-medium">{t('reports.createdLegend')}</th>
+                <th scope="col" className="px-3 py-2 text-right font-medium">{t('reports.completedLegend')}</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {dailyTrends.map((day, idx) => (
+                <tr key={idx}>
+                  <td className="px-3 py-2">{formatDay(day.date, day.formattedDate)}</td>
+                  <td className="px-3 py-2 text-right tabular-nums">{day.createdCount}</td>
+                  <td className="px-3 py-2 text-right tabular-nums">{day.completedCount}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

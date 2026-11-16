@@ -450,6 +450,11 @@ export const translations = {
       dragColumn: 'Drag to reorder column',
       dragCard: 'Drag task',
       columnJump: 'Jump to column',
+      range30: '30 days',
+      range7: '7 days',
+      trend7d: '7-day trend',
+      dateRange: 'Date range',
+      date: 'Date',
     },
   },
 
@@ -902,6 +907,11 @@ export const translations = {
       dragColumn: 'Seret untuk mengurutkan kolom',
       dragCard: 'Seret tugas',
       columnJump: 'Lompat ke kolom',
+      range30: '30 hari',
+      range7: '7 hari',
+      trend7d: 'Tren 7 hari',
+      dateRange: 'Rentang waktu',
+      date: 'Tanggal',
     },
   },
 } as const;
