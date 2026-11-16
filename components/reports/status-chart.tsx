@@ -55,7 +55,7 @@ export function StatusChart({ statusDistribution, totalTasks }: StatusChartProps
             />
           ))}
         </div>
-        <div className="flex justify-between text-[10px] text-muted-foreground px-0.5">
+        <div className="flex justify-between text-2xs text-muted-foreground px-0.5">
           <span>0%</span>
           <span>50%</span>
           <span>100%</span>
@@ -75,7 +75,7 @@ export function StatusChart({ statusDistribution, totalTasks }: StatusChartProps
             </div>
             <div className="flex items-center gap-1.5 shrink-0 pl-2">
               <span className="text-xs font-bold text-foreground">{item.count}</span>
-              <span className="text-[10px] text-muted-foreground font-medium">({item.percentage}%)</span>
+              <span className="text-2xs text-muted-foreground font-medium">({item.percentage}%)</span>
             </div>
           </div>
         ))}

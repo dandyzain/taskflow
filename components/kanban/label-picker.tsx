@@ -95,7 +95,7 @@ export function LabelPicker({
           <Tag className="h-3.5 w-3.5 text-primary" />
           Manage Labels
           {selectedLabels.length > 0 && (
-            <span className="ml-1 rounded-full bg-primary/15 px-1.5 py-0.2 text-[10px] font-bold text-primary">
+            <span className="ml-1 rounded-full bg-primary/15 px-1.5 py-0.2 text-2xs font-bold text-primary">
               {selectedLabels.length}
             </span>
           )}

@@ -250,28 +250,28 @@ export function KpiDetailModal({
     switch (priority) {
       case 3:
         return (
-          <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold bg-pastel-rose text-pastel-rose-text border border-rose-300/40 shrink-0">
+          <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-2xs font-semibold bg-pastel-rose text-pastel-rose-text border border-rose-300/40 shrink-0">
             <ArrowUp className="w-2.5 h-2.5 shrink-0" />
             High
           </span>
         );
       case 2:
         return (
-          <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold bg-pastel-peach text-pastel-peach-text border border-amber-300/40 shrink-0">
+          <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-2xs font-semibold bg-pastel-peach text-pastel-peach-text border border-amber-300/40 shrink-0">
             <ArrowRight className="w-2.5 h-2.5 shrink-0" />
             Medium
           </span>
         );
       case 1:
         return (
-          <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold bg-pastel-sky text-pastel-sky-text border border-sky-300/40 shrink-0">
+          <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-2xs font-semibold bg-pastel-sky text-pastel-sky-text border border-sky-300/40 shrink-0">
             <ArrowDown className="w-2.5 h-2.5 shrink-0" />
             Low
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium bg-muted text-muted-foreground border border-border/50 shrink-0">
+          <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-2xs font-medium bg-muted text-muted-foreground border border-border/50 shrink-0">
             <Circle className="w-2 h-2 shrink-0 opacity-60" />
             None
           </span>
@@ -308,7 +308,7 @@ export function KpiDetailModal({
             </div>
             <span
               className={cn(
-                'text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-full border shrink-0',
+                'text-2xs sm:text-xs font-bold px-2.5 py-1 rounded-full border shrink-0',
                 config.badgeColor
               )}
             >
@@ -320,13 +320,13 @@ export function KpiDetailModal({
           {metricType !== 'members' ? (
             <div className="grid grid-cols-3 gap-2 pt-1 text-xs">
               <div className="bg-secondary/40 border border-border/50 rounded-xl p-2 text-center">
-                <span className="text-[10px] text-muted-foreground block font-medium">
+                <span className="text-2xs text-muted-foreground block font-medium">
                   {lang === 'id' ? 'Total Terpilih' : 'Total Items'}
                 </span>
                 <span className="text-sm font-bold text-foreground">{relevantTasks.length}</span>
               </div>
               <div className="bg-secondary/40 border border-border/50 rounded-xl p-2 text-center">
-                <span className="text-[10px] text-muted-foreground block font-medium">
+                <span className="text-2xs text-muted-foreground block font-medium">
                   {t('kanban.priorityUrgent')}
                 </span>
                 <span className="text-sm font-bold text-rose-600 dark:text-rose-400">
@@ -334,7 +334,7 @@ export function KpiDetailModal({
                 </span>
               </div>
               <div className="bg-secondary/40 border border-border/50 rounded-xl p-2 text-center">
-                <span className="text-[10px] text-muted-foreground block font-medium">
+                <span className="text-2xs text-muted-foreground block font-medium">
                   {t('reports.inventoryUnassigned')}
                 </span>
                 <span className="text-sm font-bold text-amber-600 dark:text-amber-400">
@@ -345,13 +345,13 @@ export function KpiDetailModal({
           ) : (
             <div className="grid grid-cols-3 gap-2 pt-1 text-xs">
               <div className="bg-secondary/40 border border-border/50 rounded-xl p-2 text-center">
-                <span className="text-[10px] text-muted-foreground block font-medium">
+                <span className="text-2xs text-muted-foreground block font-medium">
                   {lang === 'id' ? 'Total Anggota' : 'Total Members'}
                 </span>
                 <span className="text-sm font-bold text-foreground">{members.length}</span>
               </div>
               <div className="bg-secondary/40 border border-border/50 rounded-xl p-2 text-center">
-                <span className="text-[10px] text-muted-foreground block font-medium">
+                <span className="text-2xs text-muted-foreground block font-medium">
                   {lang === 'id' ? 'Rata-rata Tugas' : 'Avg Workload'}
                 </span>
                 <span className="text-sm font-bold text-primary">
@@ -359,7 +359,7 @@ export function KpiDetailModal({
                 </span>
               </div>
               <div className="bg-secondary/40 border border-border/50 rounded-xl p-2 text-center">
-                <span className="text-[10px] text-muted-foreground block font-medium">
+                <span className="text-2xs text-muted-foreground block font-medium">
                   {lang === 'id' ? 'Rasio Selesai' : 'Completion Rate'}
                 </span>
                 <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
@@ -457,7 +457,7 @@ export function KpiDetailModal({
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-sm text-foreground truncate">{member.name}</span>
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-medium">
+                        <Badge variant="outline" className="text-2xs px-1.5 py-0 font-medium">
                           {member.role}
                         </Badge>
                       </div>
@@ -468,12 +468,12 @@ export function KpiDetailModal({
                   {/* Member Stats */}
                   <div className="flex items-center gap-3 sm:gap-4 flex-wrap sm:flex-nowrap justify-between sm:justify-end shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/40">
                     <div className="text-left sm:text-right">
-                      <span className="text-[10px] text-muted-foreground block font-medium">
+                      <span className="text-2xs text-muted-foreground block font-medium">
                         {t('reports.colWorkload')}
                       </span>
                       <span
                         className={cn(
-                          'text-[10px] font-bold px-2 py-0.5 rounded-full border inline-block mt-0.5',
+                          'text-2xs font-bold px-2 py-0.5 rounded-full border inline-block mt-0.5',
                           member.workloadStatus === 'optimal'
                             ? 'bg-pastel-mint text-emerald-800 dark:text-emerald-200 border-emerald-300/40'
                             : member.workloadStatus === 'heavy'
@@ -488,7 +488,7 @@ export function KpiDetailModal({
                     </div>
 
                     <div className="text-left sm:text-right">
-                      <span className="text-[10px] text-muted-foreground block font-medium">
+                      <span className="text-2xs text-muted-foreground block font-medium">
                         {lang === 'id' ? 'Tugas Ditugaskan' : 'Assigned Tasks'}
                       </span>
                       <span className="text-xs font-bold text-foreground">
@@ -497,7 +497,7 @@ export function KpiDetailModal({
                     </div>
 
                     <div className="w-20 text-right">
-                      <span className="text-[10px] text-muted-foreground block font-medium">
+                      <span className="text-2xs text-muted-foreground block font-medium">
                         {t('common.completed')}
                       </span>
                       <span className="text-xs font-bold text-primary">{member.completionRate}%</span>
@@ -583,7 +583,7 @@ export function KpiDetailModal({
                         {task.assignees.slice(0, 3).map((assignee) => (
                           <div
                             key={assignee.id}
-                            className="w-6 h-6 rounded-full bg-pastel-lavender text-pastel-lavender-text font-bold text-[10px] flex items-center justify-center border-2 border-card shadow-2xs"
+                            className="w-6 h-6 rounded-full bg-pastel-lavender text-pastel-lavender-text font-bold text-2xs flex items-center justify-center border-2 border-card shadow-2xs"
                           >
                             {assignee.name.charAt(0).toUpperCase()}
                           </div>
@@ -595,7 +595,7 @@ export function KpiDetailModal({
                         )}
                       </div>
                     ) : (
-                      <span className="text-[10px] text-muted-foreground/70 italic px-2 py-0.5 rounded-md bg-muted/40">
+                      <span className="text-2xs text-muted-foreground/70 italic px-2 py-0.5 rounded-md bg-muted/40">
                         {t('common.unassigned')}
                       </span>
                     )}

@@ -196,7 +196,7 @@ export function Sidebar({ workspaceId, workspaceName, boards, currentBoardId, cu
             <div className="text-xs font-semibold truncate text-foreground leading-tight">
               {currentUser?.name || t('nav.guestUser')}
             </div>
-            <div className="text-[10px] text-muted-foreground truncate mt-0.5">
+            <div className="text-2xs text-muted-foreground truncate mt-0.5">
               {currentUser?.email || t('nav.notLoggedIn')}
             </div>
           </div>

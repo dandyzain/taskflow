@@ -75,7 +75,7 @@ export function LanguageToggle({ className, variant = 'popover' }: LanguageToggl
         className="w-48 p-1.5 rounded-2xl border-border/80 shadow-pastel bg-card/95 backdrop-blur-xl"
       >
         <div className="space-y-1">
-          <div className="px-2.5 py-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+          <div className="px-2.5 py-1 text-2xs font-bold text-muted-foreground uppercase tracking-wider">
             Language / Bahasa
           </div>
 
@@ -93,7 +93,7 @@ export function LanguageToggle({ className, variant = 'popover' }: LanguageToggl
             )}
           >
             <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-md bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300 flex items-center justify-center text-[10px] font-bold border border-sky-300/40">
+              <span className="w-5 h-5 rounded-md bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300 flex items-center justify-center text-2xs font-bold border border-sky-300/40">
                 EN
               </span>
               <span>English</span>
@@ -115,7 +115,7 @@ export function LanguageToggle({ className, variant = 'popover' }: LanguageToggl
             )}
           >
             <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-md bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300 flex items-center justify-center text-[10px] font-bold border border-rose-300/40">
+              <span className="w-5 h-5 rounded-md bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300 flex items-center justify-center text-2xs font-bold border border-rose-300/40">
                 ID
               </span>
               <span>Bahasa Indonesia</span>

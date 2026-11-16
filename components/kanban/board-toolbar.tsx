@@ -55,7 +55,7 @@ export const BoardToolbar = React.forwardRef<HTMLInputElement, BoardToolbarProps
             placeholder={t('kanban.searchTasks')}
             className="pl-8 pr-8 h-9 text-xs rounded-xl bg-background/80 border-border/70 focus-visible:ring-primary/40 focus-visible:bg-background transition-all w-full"
           />
-          <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none hidden sm:inline-flex items-center px-1.5 py-0.5 text-[9px] font-mono font-medium text-muted-foreground/70 bg-muted/80 rounded border border-border/60">
+          <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none hidden sm:inline-flex items-center px-1.5 py-0.5 text-2xs font-mono font-medium text-muted-foreground/70 bg-muted/80 rounded border border-border/60">
             /
           </kbd>
         </div>
@@ -163,7 +163,7 @@ export const BoardToolbar = React.forwardRef<HTMLInputElement, BoardToolbarProps
           >
             <RotateCcw className="h-3 w-3 mr-1.5" />
             {t('kanban.clearFilters')}
-            <Badge className="ml-1.5 px-1.5 py-0 text-[10px] font-semibold bg-primary/15 text-primary border-transparent rounded-full">
+            <Badge className="ml-1.5 px-1.5 py-0 text-2xs font-semibold bg-primary/15 text-primary border-transparent rounded-full">
               {activeFilterCount}
             </Badge>
           </Button>

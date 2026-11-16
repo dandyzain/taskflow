@@ -87,7 +87,7 @@ export function DeadlineHealthChart({ tasks }: DeadlineHealthChartProps) {
             />
           )}
         </div>
-        <div className="flex justify-between text-[10px] text-muted-foreground px-0.5">
+        <div className="flex justify-between text-2xs text-muted-foreground px-0.5">
           <span>0%</span>
           <span>{t('reports.timelineDistribution')}</span>
           <span>100%</span>
@@ -106,9 +106,9 @@ export function DeadlineHealthChart({ tasks }: DeadlineHealthChartProps) {
           </div>
           <div className="flex items-baseline justify-between pt-1">
             <span className="text-lg sm:text-xl font-bold text-emerald-600 dark:text-emerald-400">{onTrack}</span>
-            <span className="text-[10px] font-semibold text-muted-foreground">{onTrackPercent}%</span>
+            <span className="text-2xs font-semibold text-muted-foreground">{onTrackPercent}%</span>
           </div>
-          <p className="text-[10px] text-muted-foreground/80">{t('reports.onTrackDesc')}</p>
+          <p className="text-2xs text-muted-foreground/80">{t('reports.onTrackDesc')}</p>
         </div>
 
         {/* Due Soon */}
@@ -121,9 +121,9 @@ export function DeadlineHealthChart({ tasks }: DeadlineHealthChartProps) {
           </div>
           <div className="flex items-baseline justify-between pt-1">
             <span className="text-lg sm:text-xl font-bold text-amber-600 dark:text-amber-400">{dueSoon}</span>
-            <span className="text-[10px] font-semibold text-muted-foreground">{dueSoonPercent}%</span>
+            <span className="text-2xs font-semibold text-muted-foreground">{dueSoonPercent}%</span>
           </div>
-          <p className="text-[10px] text-muted-foreground/80">{t('reports.dueSoonDesc')}</p>
+          <p className="text-2xs text-muted-foreground/80">{t('reports.dueSoonDesc')}</p>
         </div>
 
         {/* Overdue */}
@@ -136,9 +136,9 @@ export function DeadlineHealthChart({ tasks }: DeadlineHealthChartProps) {
           </div>
           <div className="flex items-baseline justify-between pt-1">
             <span className="text-lg sm:text-xl font-bold text-rose-600 dark:text-rose-400">{overdue}</span>
-            <span className="text-[10px] font-semibold text-muted-foreground">{overduePercent}%</span>
+            <span className="text-2xs font-semibold text-muted-foreground">{overduePercent}%</span>
           </div>
-          <p className="text-[10px] text-muted-foreground/80">{t('reports.overdueDesc')}</p>
+          <p className="text-2xs text-muted-foreground/80">{t('reports.overdueDesc')}</p>
         </div>
 
         {/* No Deadline */}
@@ -151,9 +151,9 @@ export function DeadlineHealthChart({ tasks }: DeadlineHealthChartProps) {
           </div>
           <div className="flex items-baseline justify-between pt-1">
             <span className="text-lg sm:text-xl font-bold text-foreground">{withoutDueDate}</span>
-            <span className="text-[10px] font-semibold text-muted-foreground">{withoutDueDatePercent}%</span>
+            <span className="text-2xs font-semibold text-muted-foreground">{withoutDueDatePercent}%</span>
           </div>
-          <p className="text-[10px] text-muted-foreground/80">{t('reports.noDeadlineDesc')}</p>
+          <p className="text-2xs text-muted-foreground/80">{t('reports.noDeadlineDesc')}</p>
         </div>
       </div>
     </div>

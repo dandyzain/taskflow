@@ -182,7 +182,7 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: 
                   </div>
                   <span
                     className={cn(
-                      'text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-full border truncate max-w-[80px] sm:max-w-none shrink-0',
+                      'text-2xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-full border truncate max-w-[80px] sm:max-w-none shrink-0',
                       card.badgeColor
                     )}
                   >
@@ -199,11 +199,11 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: 
                     </h3>
                     <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
                   </div>
-                  <p className="text-[10px] sm:text-[11px] text-muted-foreground/80 truncate pt-0.5">{card.subtitle}</p>
+                  <p className="text-2xs sm:text-[11px] text-muted-foreground/80 truncate pt-0.5">{card.subtitle}</p>
                 </div>
 
                 {/* Subtle Click Hint on Hover */}
-                <div className="pt-2 mt-2 border-t border-border/40 flex items-center justify-between text-[10px] text-muted-foreground/70 group-hover:text-primary transition-colors font-medium">
+                <div className="pt-2 mt-2 border-t border-border/40 flex items-center justify-between text-2xs text-muted-foreground/70 group-hover:text-primary transition-colors font-medium">
                   <span>{t('common.viewDetails')}</span>
                   <span>↗</span>
                 </div>

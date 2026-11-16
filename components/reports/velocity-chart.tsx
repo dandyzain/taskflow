@@ -81,7 +81,7 @@ export function VelocityChart({ dailyTrends }: VelocityChartProps) {
                     idx === 0 ? "left-0" : idx === dailyTrends.length - 1 ? "right-0" : "left-1/2 -translate-x-1/2"
                   )}>
                     <p className="text-[11px] font-bold text-foreground">{displayDate}</p>
-                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-0.5">
+                    <div className="flex items-center gap-2 text-2xs text-muted-foreground mt-0.5">
                       <span className="text-sky-600 dark:text-sky-400 font-semibold">+{day.createdCount} {t('reports.trendCreatedSuffix')}</span>
                       <span>•</span>
                       <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{day.completedCount} {t('reports.trendCompletedSuffix')}</span>
@@ -111,7 +111,7 @@ export function VelocityChart({ dailyTrends }: VelocityChartProps) {
 
                 {/* Date Label */}
                 <span className={cn(
-                  'text-[10px] font-semibold text-muted-foreground transition-colors pt-1.5',
+                  'text-2xs font-semibold text-muted-foreground transition-colors pt-1.5',
                   isHovered ? 'text-primary font-bold' : ''
                 )}>
                   {displayDate}

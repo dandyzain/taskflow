@@ -55,14 +55,14 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
             <div className="w-8 h-8 rounded-xl bg-pastel-mint flex items-center justify-center shadow-xs">
               <CheckCircle2 className="w-4 h-4 text-emerald-700 dark:text-emerald-300" />
             </div>
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200/60">
+            <span className="text-2xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200/60">
               {t('reports.tabTeamShort')}
             </span>
           </div>
           <div className="space-y-0.5 min-w-0">
             <p className="text-[11px] sm:text-xs text-muted-foreground font-medium truncate">{t('reports.teamSummaryAvgCompletion')}</p>
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{avgCompletionRate}%</h3>
-            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80 truncate">{t('reports.teamSummaryAvgCompletionSub', { completed: totalCompletedAll, total: totalAssignedAll })}</p>
+            <p className="text-2xs sm:text-[11px] text-muted-foreground/80 truncate">{t('reports.teamSummaryAvgCompletionSub', { completed: totalCompletedAll, total: totalAssignedAll })}</p>
           </div>
         </div>
 
@@ -72,14 +72,14 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
             <div className="w-8 h-8 rounded-xl bg-pastel-sky flex items-center justify-center shadow-xs">
               <Clock className="w-4 h-4 text-sky-700 dark:text-sky-300" />
             </div>
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300 border border-sky-200/60">
+            <span className="text-2xs font-semibold px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300 border border-sky-200/60">
               SLA Delivery
             </span>
           </div>
           <div className="space-y-0.5 min-w-0">
             <p className="text-[11px] sm:text-xs text-muted-foreground font-medium truncate">{t('reports.teamSummaryOnTime')}</p>
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{avgOnTimeRate}%</h3>
-            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80 truncate">
+            <p className="text-2xs sm:text-[11px] text-muted-foreground/80 truncate">
               {totalOverdueAll > 0 ? t('reports.teamSummaryOnTimeSub', { overdue: totalOverdueAll }) : t('reports.teamSummaryOnTimeClean')}
             </p>
           </div>
@@ -91,7 +91,7 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
             <div className="w-8 h-8 rounded-xl bg-pastel-peach flex items-center justify-center shadow-xs">
               <Scale className="w-4 h-4 text-amber-700 dark:text-amber-300" />
             </div>
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/60">
+            <span className="text-2xs font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/60">
               Capacity
             </span>
           </div>
@@ -100,7 +100,7 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
               {capacityCounts.optimal + capacityCounts.light}/{employeeMetrics.length}
             </h3>
-            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80 truncate">{t('reports.teamSummaryWorkloadSub')}</p>
+            <p className="text-2xs sm:text-[11px] text-muted-foreground/80 truncate">{t('reports.teamSummaryWorkloadSub')}</p>
           </div>
         </div>
 
@@ -110,14 +110,14 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
             <div className="w-8 h-8 rounded-xl bg-pastel-lavender flex items-center justify-center shadow-xs">
               <Zap className="w-4 h-4 text-purple-700 dark:text-purple-300" />
             </div>
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border border-purple-200/60">
+            <span className="text-2xs font-semibold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border border-purple-200/60">
               Activities
             </span>
           </div>
           <div className="space-y-0.5 min-w-0">
             <p className="text-[11px] sm:text-xs text-muted-foreground font-medium truncate">{t('reports.teamSummaryActivity')}</p>
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{totalActivitiesAll}</h3>
-            <p className="text-[10px] sm:text-[11px] text-muted-foreground/80 truncate">{t('reports.teamSummaryActivitySub')}</p>
+            <p className="text-2xs sm:text-[11px] text-muted-foreground/80 truncate">{t('reports.teamSummaryActivitySub')}</p>
           </div>
         </div>
       </div>
@@ -138,7 +138,7 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
             </div>
 
             {/* Legend */}
-            <div className="flex items-center gap-2 text-[10px] sm:text-[11px] bg-secondary/50 px-2.5 py-1 rounded-xl border border-border/50 shrink-0 self-start sm:self-auto">
+            <div className="flex items-center gap-2 text-2xs sm:text-[11px] bg-secondary/50 px-2.5 py-1 rounded-xl border border-border/50 shrink-0 self-start sm:self-auto">
               <span className="flex items-center gap-1 text-muted-foreground">
                 <span className="w-2 h-2 rounded-full bg-pastel-mint" /> {t('common.completed')}
               </span>
@@ -176,7 +176,7 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
                       </Avatar>
                       <div className="min-w-0">
                         <span className="text-xs font-bold text-foreground truncate block">{member.name}</span>
-                        <span className="text-[10px] text-muted-foreground truncate block">{member.role}</span>
+                        <span className="text-2xs text-muted-foreground truncate block">{member.role}</span>
                       </div>
                     </div>
 
@@ -185,7 +185,7 @@ export function TeamAnalyticsCharts({ employeeMetrics }: TeamAnalyticsChartsProp
                         <span className="font-bold text-emerald-600 dark:text-emerald-400">{member.completedTasks}</span>
                         <span className="text-muted-foreground">/{member.totalAssigned}</span>
                       </div>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-secondary border border-border/60">
+                      <span className="text-2xs font-bold px-2 py-0.5 rounded-md bg-secondary border border-border/60">
                         {member.completionRate}%
                       </span>
                     </div>
