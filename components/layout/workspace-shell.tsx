@@ -1,110 +1,239 @@
 'use client';
 
 import * as React from 'react';
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Menu, LayoutDashboard, BarChart3, Plus } from 'lucide-react';
-import { Sidebar } from '@/components/layout/sidebar';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { Menu, Search } from 'lucide-react';
+import { Sidebar, type SidebarState } from '@/components/layout/sidebar';
+import { MobileTabBar } from '@/components/layout/mobile-tab-bar';
+import {
+  WorkspaceProvider,
+  type BoardBridge,
+  type ShellBoard,
+  type ShellUser,
+} from '@/components/layout/workspace-context';
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { LanguageToggle } from '@/components/language-toggle';
 import { LogoMark } from '@/components/brand/logo';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { useEverTrue } from '@/hooks/use-ever-true';
+import { useLanguage } from '@/lib/i18n/language-context';
+import dynamic from 'next/dynamic';
+
+// Overlays are code-split and only fetched the first time they open
+const CommandPalette = dynamic(() => import('@/components/layout/command-palette').then((m) => m.CommandPalette), { ssr: false });
+const AccountDrawer = dynamic(() => import('@/components/layout/account-drawer').then((m) => m.AccountDrawer), { ssr: false });
+const CreateBoardDialog = dynamic(() => import('@/components/layout/create-board-dialog').then((m) => m.CreateBoardDialog), { ssr: false });
+const KeyboardShortcutsDialog = dynamic(() =>
+  import('@/components/keyboard-shortcuts-dialog').then((m) => m.KeyboardShortcutsDialog)
+, { ssr: false });
 
 interface WorkspaceShellProps {
   workspaceId: string;
   workspaceName: string;
-  boards: Array<{ id: string; title: string; description: string | null }>;
-  currentUser?: { id: string; name: string; email: string; avatarUrl?: string | null } | null;
+  boards: ShellBoard[];
+  currentUser?: ShellUser | null;
   children: React.ReactNode;
 }
 
-export function WorkspaceShell({
-  workspaceId,
-  workspaceName,
-  boards,
-  currentUser,
-  children,
-}: WorkspaceShellProps) {
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+const SIDEBAR_KEY = 'taskflow_sidebar';
+
+function isTypingTarget(el: EventTarget | null) {
+  const node = el as HTMLElement | null;
+  return !!node && (node.tagName === 'INPUT' || node.tagName === 'TEXTAREA' || node.tagName === 'SELECT' || node.isContentEditable);
+}
+
+export function WorkspaceShell({ workspaceId, workspaceName, boards, currentUser, children }: WorkspaceShellProps) {
+  const { t } = useLanguage();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [createBoardOpen, setCreateBoardOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  // Board → chrome bridge kept in a ref so board updates don't re-render the shell
+  const bridgeRef = React.useRef<BoardBridge | null>(null);
+  const getBridge = useCallback(() => bridgeRef.current, []);
+  const setBridge = useCallback((b: BoardBridge | null) => {
+    bridgeRef.current = b;
+  }, []);
+  const [sidebarState, setSidebarState] = useState<SidebarState>('auto');
+  const isXl = useMediaQuery('(min-width: 1280px)');
+  const [paletteWarm, setPaletteWarm] = useState(false);
+  const paletteMounted = useEverTrue(paletteOpen || paletteWarm);
+  const createBoardMounted = useEverTrue(createBoardOpen);
+  const shortcutsMounted = useEverTrue(shortcutsOpen);
+  const accountMounted = useEverTrue(accountOpen);
+
+  // Restore the user's explicit sidebar preference (if any)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(SIDEBAR_KEY);
+      if (saved === 'expanded' || saved === 'collapsed') setSidebarState(saved);
+    } catch {
+      /* storage unavailable */
+    }
+  }, []);
+
+  const isRail = sidebarState === 'collapsed' || (sidebarState === 'auto' && !isXl);
+
+  const toggleSidebar = useCallback(() => {
+    setSidebarState(() => {
+      const next: SidebarState = isRail ? 'expanded' : 'collapsed';
+      try {
+        localStorage.setItem(SIDEBAR_KEY, next);
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  }, [isRail]);
+
+  // Warm the command palette chunk when the browser is idle so the first ⌘K
+  // opens instantly (and no keystrokes are lost while it loads)
+  useEffect(() => {
+    const warm = () => void import('@/components/layout/command-palette').then(() => setPaletteWarm(true));
+    const ric = (window as Window & { requestIdleCallback?: (cb: () => void) => number }).requestIdleCallback;
+    if (ric) ric(warm);
+    else window.setTimeout(warm, 1500);
+  }, []);
+
+  // Global shortcuts: ⌘K palette, [ sidebar, ? help
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setPaletteOpen((o) => !o);
+        return;
+      }
+      if (e.metaKey || e.ctrlKey || e.altKey || isTypingTarget(e.target)) return;
+      if (document.querySelector('[role="dialog"], [role="alertdialog"]')) return;
+      if (e.key === '[') {
+        e.preventDefault();
+        toggleSidebar();
+      } else if (e.key === '?') {
+        e.preventDefault();
+        setShortcutsOpen(true);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [toggleSidebar]);
+
+  const ctx = useMemo(
+    () => ({
+      workspaceId,
+      workspaceName,
+      boards,
+      currentUser: currentUser ?? null,
+      openPalette: () => setPaletteOpen(true),
+      openCreateBoard: () => setCreateBoardOpen(true),
+      openShortcuts: () => setShortcutsOpen(true),
+      getBridge,
+      setBridge,
+    }),
+    [workspaceId, workspaceName, boards, currentUser, getBridge, setBridge]
+  );
+
+  const sharedSidebarProps = {
+    workspaceId,
+    workspaceName,
+    boards,
+    currentUser,
+    onOpenPalette: () => setPaletteOpen(true),
+    onCreateBoard: () => setCreateBoardOpen(true),
+    onOpenShortcuts: () => setShortcutsOpen(true),
+  };
 
   return (
-    <div className="flex flex-col md:flex-row h-[100dvh] w-full pastel-mesh-bg overflow-hidden">
-      {/* Mobile Top Navigation Bar (visible below md breakpoint) */}
-      <header className="md:hidden flex items-center justify-between px-3.5 py-2.5 pt-[max(0.625rem,env(safe-area-inset-top))] bg-card/80 backdrop-blur-lg border-b border-border/70 z-30 shrink-0">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-9 w-9 rounded-xl text-foreground hover:bg-muted/70 shrink-0 active:scale-95"
-            onClick={() => setMobileDrawerOpen(true)}
-            aria-label="Open navigation menu"
-          >
-            <Menu className="h-5 w-5 text-foreground" />
-          </Button>
-
-          <Link
-            href={`/workspace/${workspaceId}`}
-            className="flex items-center gap-2 min-w-0 group"
-          >
-            <LogoMark className="w-8 h-8 drop-shadow-[0_4px_10px_rgba(139,104,246,0.30)]" />
-            <div className="min-w-0">
-              <h1 className="font-bold text-xs truncate leading-tight text-foreground group-hover:text-primary transition-colors">
-                {workspaceName}
-              </h1>
-              <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-pastel-mint shrink-0" />
-                TaskFlow
-              </span>
-            </div>
-          </Link>
-        </div>
-
-        <div className="flex items-center gap-1 shrink-0">
-          <Link
-            href={`/workspace/${workspaceId}/reports`}
-            className="h-8 w-8 inline-flex items-center justify-center rounded-xl text-muted-foreground hover:text-primary hover:bg-muted/70 transition-colors"
-            title="Reports & Analytics"
-          >
-            <BarChart3 className="h-4 w-4" />
-          </Link>
-          <LanguageToggle />
-          <ThemeToggle />
-        </div>
-      </header>
-
-      {/* Desktop Sidebar (visible on md and up) */}
-      <aside className="hidden md:flex h-full shrink-0">
-        <Sidebar
-          workspaceId={workspaceId}
-          workspaceName={workspaceName}
-          boards={boards}
-          currentUser={currentUser}
-        />
-      </aside>
-
-      {/* Mobile Drawer (Sheet sliding from the left) */}
-      <Sheet open={mobileDrawerOpen} onOpenChange={setMobileDrawerOpen}>
-        <SheetContent
-          side="left"
-          hideClose
-          className="p-0 w-[290px] max-w-[88vw] border-r border-border/80 bg-card/95 backdrop-blur-xl"
+    <WorkspaceProvider value={ctx}>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[60] focus:rounded-lg focus:bg-card focus:px-3 focus:py-2 focus:text-sm focus:shadow-e2"
+      >
+        {t('ui.skipToContent')}
+      </a>
+      <div className="app-canvas flex h-[100dvh] w-full flex-col overflow-hidden md:flex-row">
+        {/* Mobile top bar */}
+        <header
+          data-mobile-header
+          className="glass-panel z-30 flex shrink-0 items-center gap-2 border-b px-3 pb-2 pt-[max(0.5rem,env(safe-area-inset-top))] md:hidden"
         >
-          <Sidebar
-            workspaceId={workspaceId}
-            workspaceName={workspaceName}
-            boards={boards}
-            currentUser={currentUser}
-            className="w-full border-r-0"
-            onClose={() => setMobileDrawerOpen(false)}
-          />
-        </SheetContent>
-      </Sheet>
+          <Button variant="ghost" size="icon" onClick={() => setDrawerOpen(true)} aria-label={t('ui.openMenu')}>
+            <Menu className="size-5" />
+          </Button>
+          <Link href={`/workspace/${workspaceId}`} className="flex min-w-0 flex-1 items-center gap-2">
+            <LogoMark className="size-7" title="" />
+            <span className="truncate text-sm font-semibold">{workspaceName}</span>
+          </Link>
+          <Button variant="ghost" size="icon" onClick={() => setPaletteOpen(true)} aria-label={t('ui.search')}>
+            <Search className="size-5" />
+          </Button>
+        </header>
 
-      {/* Main Content Area */}
-      <main className="flex-1 overflow-hidden h-full flex flex-col min-w-0">
-        {children}
-      </main>
-    </div>
+        {/* Desktop / tablet sidebar */}
+        <aside className="hidden h-full shrink-0 md:flex">
+          <Sidebar {...sharedSidebarProps} state={sidebarState} isRail={isRail} onToggle={toggleSidebar} />
+        </aside>
+
+        {/* Mobile navigation drawer */}
+        <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
+          <SheetContent side="left" hideClose className="w-[296px] max-w-[86vw] border-r-0 p-0">
+            <SheetTitle className="sr-only">{t('ui.navigation')}</SheetTitle>
+            <SheetDescription className="sr-only">{workspaceName}</SheetDescription>
+            <Sidebar
+              {...sharedSidebarProps}
+              state="expanded"
+              className="w-full border-r-0 bg-card"
+              onClose={() => setDrawerOpen(false)}
+            />
+          </SheetContent>
+        </Sheet>
+
+        <main
+          id="main-content"
+          tabIndex={-1}
+          data-print-expand
+          className="flex h-full min-w-0 flex-1 flex-col overflow-hidden pb-[calc(4rem+env(safe-area-inset-bottom))] outline-none md:pb-0"
+        >
+          {children}
+        </main>
+
+        <MobileTabBar
+          workspaceId={workspaceId}
+          onBoards={() => setDrawerOpen(true)}
+          onSearch={() => setPaletteOpen(true)}
+          onCreate={() => {
+            const b = bridgeRef.current;
+            if (b) b.newTask();
+            else setCreateBoardOpen(true);
+          }}
+          onAccount={() => setAccountOpen(true)}
+        />
+      </div>
+
+      {paletteMounted && (
+      <CommandPalette
+        open={paletteOpen}
+        onOpenChange={setPaletteOpen}
+        workspaceId={workspaceId}
+        boards={boards}
+        bridge={paletteOpen ? bridgeRef.current : null}
+        onCreateBoard={() => setCreateBoardOpen(true)}
+        onOpenShortcuts={() => setShortcutsOpen(true)}
+      />
+      )}
+      {createBoardMounted && (
+        <CreateBoardDialog workspaceId={workspaceId} open={createBoardOpen} onOpenChange={setCreateBoardOpen} />
+      )}
+      {shortcutsMounted && <KeyboardShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} />}
+      {accountMounted && (
+        <AccountDrawer
+          open={accountOpen}
+          onOpenChange={setAccountOpen}
+          user={currentUser ?? null}
+          onOpenShortcuts={() => setShortcutsOpen(true)}
+        />
+      )}
+    </WorkspaceProvider>
   );
 }

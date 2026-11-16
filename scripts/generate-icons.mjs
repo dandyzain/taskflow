@@ -8,7 +8,7 @@ const root = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace
 const svg = await readFile(path.join(root, 'app', 'icon.svg'), 'utf8');
 
 // Full-bleed variant (no rounded corners) for iOS / maskable icons — the OS applies its own mask.
-const fullBleed = svg.replace(/rx="18"/g, 'rx="0"');
+const fullBleed = svg.replace(/rx="16"/g, 'rx="0"');
 
 async function render(source, size, out) {
   await mkdir(path.dirname(out), { recursive: true });

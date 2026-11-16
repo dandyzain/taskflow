@@ -1,4 +1,7 @@
 import type { Config } from "tailwindcss";
+import defaultTheme from "tailwindcss/defaultTheme";
+
+const hsl = (v: string) => `hsl(var(${v}) / <alpha-value>)`;
 
 const config: Config = {
   darkMode: ["class"],
@@ -6,70 +9,88 @@ const config: Config = {
     "./pages/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
+    "./hooks/**/*.{ts,tsx}",
+    "./lib/**/*.{ts,tsx}",
   ],
   theme: {
+    screens: {
+      xs: "400px",
+      ...defaultTheme.screens,
+    },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-geist-sans)", ...defaultTheme.fontFamily.sans],
+        mono: ["var(--font-geist-mono)", ...defaultTheme.fontFamily.mono],
+      },
+      fontSize: {
+        "2xs": ["0.6875rem", { lineHeight: "1rem" }], // 11px — micro badges only
+      },
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        border: {
+          DEFAULT: hsl("--border"),
+          strong: hsl("--border-strong"),
+        },
+        input: hsl("--input"),
+        ring: hsl("--ring"),
+        background: hsl("--background"),
+        foreground: hsl("--foreground"),
+        surface: {
+          sunken: hsl("--surface-sunken"),
+        },
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: hsl("--primary"),
+          foreground: hsl("--primary-foreground"),
+        },
+        brand: {
+          from: hsl("--brand-from"),
+          via: hsl("--brand-via"),
+          to: hsl("--brand-to"),
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: hsl("--secondary"),
+          foreground: hsl("--secondary-foreground"),
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: hsl("--destructive"),
+          foreground: hsl("--destructive-foreground"),
         },
+        success: { DEFAULT: hsl("--success"), soft: hsl("--success-soft") },
+        warning: { DEFAULT: hsl("--warning"), soft: hsl("--warning-soft") },
+        danger: { DEFAULT: hsl("--danger"), soft: hsl("--danger-soft") },
+        info: { DEFAULT: hsl("--info"), soft: hsl("--info-soft") },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: hsl("--muted"),
+          foreground: hsl("--muted-foreground"),
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: hsl("--accent"),
+          foreground: hsl("--accent-foreground"),
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: hsl("--popover"),
+          foreground: hsl("--popover-foreground"),
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: hsl("--card"),
+          foreground: hsl("--card-foreground"),
         },
-        // Pastel palette
         pastel: {
-          mint: {
-            DEFAULT: "hsl(var(--pastel-mint))",
-            text: "hsl(var(--pastel-mint-text))",
-          },
-          sky: {
-            DEFAULT: "hsl(var(--pastel-sky))",
-            text: "hsl(var(--pastel-sky-text))",
-          },
-          peach: {
-            DEFAULT: "hsl(var(--pastel-peach))",
-            text: "hsl(var(--pastel-peach-text))",
-          },
-          lavender: {
-            DEFAULT: "hsl(var(--pastel-lavender))",
-            text: "hsl(var(--pastel-lavender-text))",
-          },
-          rose: {
-            DEFAULT: "hsl(var(--pastel-rose))",
-            text: "hsl(var(--pastel-rose-text))",
-          },
-          butter: {
-            DEFAULT: "hsl(var(--pastel-butter))",
-            text: "hsl(var(--pastel-butter-text))",
-          },
+          mint: { DEFAULT: hsl("--pastel-mint"), text: hsl("--pastel-mint-text") },
+          sky: { DEFAULT: hsl("--pastel-sky"), text: hsl("--pastel-sky-text") },
+          peach: { DEFAULT: hsl("--pastel-peach"), text: hsl("--pastel-peach-text") },
+          lavender: { DEFAULT: hsl("--pastel-lavender"), text: hsl("--pastel-lavender-text") },
+          rose: { DEFAULT: hsl("--pastel-rose"), text: hsl("--pastel-rose-text") },
+          butter: { DEFAULT: hsl("--pastel-butter"), text: hsl("--pastel-butter-text") },
         },
+      },
+      opacity: {
+        "12": "0.12",
+        "8": "0.08",
+      },
+      spacing: {
+        "4.5": "1.125rem",
+        "13": "3.25rem",
+        "18": "4.5rem",
       },
       borderRadius: {
         "3xl": "1.5rem",
@@ -79,11 +100,31 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      backdropBlur: {
+        xs: "2px",
+      },
       boxShadow: {
-        pastel: "0 10px 25px -5px rgba(139, 104, 246, 0.1), 0 8px 10px -6px rgba(139, 104, 246, 0.05)",
-        card: "0 2px 10px -2px rgba(26, 28, 46, 0.05), 0 1px 3px -1px rgba(26, 28, 46, 0.03)",
-        "card-hover": "0 14px 28px -6px rgba(139, 104, 246, 0.15), 0 6px 12px -4px rgba(26, 28, 46, 0.06)",
-        float: "0 20px 35px -10px rgba(139, 104, 246, 0.2)",
+        "2xs": "0 1px 0 0 hsl(var(--shadow-color) / 0.04)",
+        xs: "0 1px 2px 0 hsl(var(--shadow-color) / 0.06)",
+        // Elevation scale
+        e1: "0 1px 2px hsl(var(--shadow-color) / 0.06), 0 1px 1px hsl(var(--shadow-color) / 0.04)",
+        e2: "0 4px 12px -2px hsl(var(--shadow-color) / 0.1), 0 2px 4px -2px hsl(var(--shadow-color) / 0.06)",
+        e3: "0 20px 40px -12px hsl(var(--shadow-color) / 0.25), 0 8px 16px -8px hsl(var(--shadow-color) / 0.12)",
+        glow: "0 0 0 1px hsl(var(--primary) / 0.25), 0 8px 30px -6px hsl(var(--primary) / 0.35)",
+        // Legacy aliases (kept so older markup keeps rendering sensibly)
+        pastel: "0 20px 40px -12px hsl(var(--shadow-color) / 0.2), 0 8px 16px -8px hsl(var(--shadow-color) / 0.1)",
+        card: "0 1px 2px hsl(var(--shadow-color) / 0.06), 0 1px 1px hsl(var(--shadow-color) / 0.04)",
+        "card-hover": "0 8px 20px -6px hsl(var(--shadow-color) / 0.14), 0 3px 6px -3px hsl(var(--shadow-color) / 0.08)",
+        float: "0 24px 48px -12px hsl(var(--shadow-color) / 0.3), 0 0 0 1px hsl(var(--primary) / 0.2)",
+      },
+      transitionTimingFunction: {
+        "out-expo": "cubic-bezier(0.16, 1, 0.3, 1)",
+      },
+      transitionDuration: {
+        instant: "100ms",
+        quick: "160ms",
+        base: "240ms",
+        slow: "400ms",
       },
       keyframes: {
         "fade-in-up": {
@@ -98,25 +139,26 @@ const config: Config = {
           "0%": { opacity: "0", transform: "scale(0.96)" },
           "100%": { opacity: "1", transform: "scale(1)" },
         },
-        float: {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-4px)" },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
         },
-        pulseSoft: {
-          "0%, 100%": { opacity: "1", transform: "scale(1)" },
-          "50%": { opacity: "0.85", transform: "scale(0.98)" },
+        shake: {
+          "0%, 100%": { transform: "translateX(0)" },
+          "20%, 60%": { transform: "translateX(-4px)" },
+          "40%, 80%": { transform: "translateX(4px)" },
         },
       },
       animation: {
-        "fade-in-up": "fade-in-up 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
-        "fade-in": "fade-in 0.25s ease-out",
-        "scale-in": "scale-in 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
-        float: "float 4s ease-in-out infinite",
-        "pulse-soft": "pulseSoft 2s ease-in-out infinite",
+        "fade-in-up": "fade-in-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) both",
+        "fade-in": "fade-in 0.25s ease-out both",
+        "scale-in": "scale-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) both",
+        shimmer: "shimmer 2.2s linear infinite",
+        shake: "shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/container-queries")],
 };
 
 export default config;

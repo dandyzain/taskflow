@@ -3,7 +3,7 @@
 <div align="center">
   <img src="public/icon-512.png" alt="TaskFlow Logo" width="120" height="120" />
   <h3>TaskFlow — Platform Manajemen Tugas Kolaboratif & Analisis Kinerja Tim</h3>
-  <p>Dibangun dengan Next.js 15 (App Router), Tailwind CSS (Pastel Palette), @dnd-kit Sortable, Prisma ORM, dan Neon Serverless PostgreSQL.</p>
+  <p>Dibangun dengan Next.js 15 (App Router), Tailwind CSS (Aurora Calm design tokens), @dnd-kit Sortable, Prisma ORM, dan Neon Serverless PostgreSQL.</p>
 
   <p>
     <a href="https://taskflow-theta-five-71.vercel.app"><strong>🌐 Buka Live Demo (Vercel) »</strong></a>
@@ -41,10 +41,19 @@ Aplikasi ini sudah sepenuhnya **responsif** di seluruh perangkat (Mobile 320px, 
 - **Top Performers Podium:** Peringkat 3 besar kontributor terbaik dengan sistem medali dan rasio keberhasilan.
 - **Tabel Evaluasi Anggota Tim:** Rincian beban kerja (*optimal, heavy, overloaded*), total tugas yang diemban, tugas sedang berjalan, dan riwayat aktivitas.
 
-### 3. 🎨 Desain Modern Pastel & Dark Mode
-- **Tema Pastel Elegan:** Menggunakan palet pastel lembut (*Lavender, Sky Blue, Mint, Peach*) dengan background *mesh gradient* yang nyaman di mata.
-- **Dark Mode Support:** Transisi halus antara mode terang dan mode gelap dengan kontras warna yang terjaga.
-- **Brand Identity & Iconography:** Dilengkapi logo SVG kustom berbentuk monogram "T" dan blok Kanban serta icon multi-resolusi untuk iOS dan Android.
+### 3. 🎨 Desain "Aurora Calm" & Dark Mode
+- **Design tokens semantik:** permukaan netral, warna hanya untuk makna (status, prioritas, label); gradien *aurora* brand untuk fokus, progres, dan momen "selesai". Semua pasangan teks/latar lolos WCAG AA (≥ 4.5:1) di mode terang & gelap.
+- **Tipografi Geist** (Sans + Mono dengan angka *tabular* untuk KPI), skala elevasi `e1–e3`, token durasi/easing animasi.
+- **Animasi bermakna:** drag & drop dengan *lift* dan *spring*, konfeti saat tugas masuk kolom Done, transisi halaman, reveal saat scroll, grafik yang "menggambar" diri. Semua menghormati `prefers-reduced-motion`.
+- **Brand Identity & Iconography:** logo SVG monogram "T" dari blok Kanban serta ikon multi-resolusi untuk iOS dan Android.
+
+### 4. ⌨️ Produktivitas & UX
+- **Command palette (⌘K / Ctrl+K):** lompat ke board, cari tugas, buat board/tugas, ganti tema & bahasa.
+- **Quick-add:** ketik `Perbaiki login !urgent @sarah #bug` untuk langsung mengisi prioritas, assignee, dan label.
+- **Panel detail tugas** (side panel di desktop, bottom sheet di ponsel) dengan indikator *Saving… / Saved*.
+- **Hapus dengan Undo** (5 detik), dialog konfirmasi yang konsisten, filter & mode tampilan (Board / List) tersimpan di URL.
+- **Pintasan:** `⌘K` palette · `/` cari · `N` tugas baru · `[` ciutkan sidebar · `?` bantuan · `Space` + panah untuk memindah kartu dengan keyboard.
+- **Responsif penuh:** sidebar rail di tablet, tab bar bawah + column switcher di ponsel, kolom bisa diciutkan.
 
 ---
 
@@ -52,11 +61,27 @@ Aplikasi ini sudah sepenuhnya **responsif** di seluruh perangkat (Mobile 320px, 
 
 - **Framework:** [Next.js 15](https://nextjs.org/) (App Router, Server Actions, React Server Components)
 - **Bahasa:** TypeScript 5
-- **Styling:** Tailwind CSS, Radix UI Primitives, Lucide Icons, Sonner Toast
+- **Styling & UI:** Tailwind CSS (design tokens), Radix UI Primitives, Lucide Icons, Sonner Toast, Geist font
+- **Motion & Interaksi:** [Motion](https://motion.dev) (LazyMotion), `cmdk` (command palette), `vaul` (bottom sheet), `@number-flow/react` (angka KPI), `canvas-confetti` (lazy)
 - **Drag and Drop:** `@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities`
-- **Database & ORM:** SQLite, [Prisma ORM](https://www.prisma.io/)
+- **Database & ORM:** PostgreSQL (Neon), [Prisma ORM](https://www.prisma.io/)
 - **State & Optimistic UI:** React Optimistic Updates dengan rollback otomatis saat koneksi gagal
-- **Hosting / Deployment:** Docker, Railway
+- **Hosting / Deployment:** Vercel (juga mendukung Docker / Railway)
+
+---
+
+## 🧩 Struktur UI
+
+```
+components/
+  ui/         primitives (shadcn/Radix): button, dialog, sheet, drawer, dropdown-menu, tabs, command, …
+  patterns/   pola lintas fitur: PriorityBadge, DueChip, AvatarStack, EmptyState, ConfirmDialog, Reveal
+  layout/     app shell: sidebar/rail, command palette, mobile tab bar, account menu
+  kanban/     board, kolom, kartu, card panel, list view, quick-add
+  reports/    dashboard, KPI, grafik
+lib/design/tokens.ts   satu sumber kebenaran untuk prioritas, status, tenggat, warna avatar
+lib/motion.ts          preset durasi, easing, dan spring
+```
 
 ---
 
