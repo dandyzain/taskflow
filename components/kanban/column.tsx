@@ -1,143 +1,188 @@
 'use client';
 
-import { useState } from 'react';
-import { useSortable } from '@dnd-kit/sortable';
+import { memo, useState } from 'react';
+import { useSortable, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import * as m from 'motion/react-m';
+import { toast } from 'sonner';
+import { ChevronsLeftRight, ChevronsRightLeft, GripVertical, Inbox, MoreHorizontal, Pencil, Plus, Trash2 } from 'lucide-react';
 import { CardItemComponent } from '@/components/kanban/card-item';
 import { CreateCardForm } from '@/components/kanban/create-card-form';
+import { useConfirm } from '@/components/patterns/confirm-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import type { BoardColumn, CardItem } from '@/types/kanban';
-import { cn } from '@/lib/utils';
-import { GripVertical, Trash2 } from 'lucide-react';
-import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import type { AssigneeItem, BoardColumn, CardItem, LabelItem } from '@/types/kanban';
 import { updateColumn, deleteColumn } from '@/actions/column-actions';
+import { getStatus } from '@/lib/design/tokens';
 import { useLanguage } from '@/lib/i18n/language-context';
+import { EASE_OUT } from '@/lib/motion';
+import { cn } from '@/lib/utils';
 
 interface ColumnProps {
   column: BoardColumn;
+  /** Unfiltered card count — the badge shows "filtered / total" when they differ */
+  totalCount: number;
   boardId: string;
   workspaceId: string;
+  index: number;
+  collapsed: boolean;
+  isDropTarget: boolean;
+  composerOpen: boolean;
+  availableLabels: LabelItem[];
+  availableMembers: AssigneeItem[];
+  onComposerOpenChange: (columnId: string, open: boolean) => void;
+  onToggleCollapse: (columnId: string) => void;
+  onOpenCard: (cardId: string) => void;
   onCardCreated: (card: CardItem) => void;
-  onCardUpdated: (card: CardItem) => void;
-  onCardDeleted: (cardId: string) => void;
   onColumnUpdated: (columnId: string, title: string) => void;
   onColumnDeleted: (columnId: string) => void;
 }
 
-function getColumnIndicatorColor(title: string) {
-  const lower = title.toLowerCase();
-  if (lower.includes('backlog')) return 'bg-pastel-lavender ring-purple-400/30';
-  if (lower.includes('to do') || lower.includes('todo')) return 'bg-pastel-sky ring-sky-400/30';
-  if (lower.includes('progress') || lower.includes('in dev')) return 'bg-pastel-peach ring-amber-400/30';
-  if (lower.includes('done') || lower.includes('complete')) return 'bg-pastel-mint ring-emerald-400/30';
-  return 'bg-primary/50 ring-primary/20';
-}
-
-export function KanbanColumn({ 
-  column, 
-  boardId, 
-  workspaceId, 
-  onCardCreated, 
-  onCardUpdated, 
-  onCardDeleted,
+function KanbanColumnInner({
+  column,
+  totalCount,
+  boardId,
+  workspaceId,
+  index,
+  collapsed,
+  isDropTarget,
+  composerOpen,
+  availableLabels,
+  availableMembers,
+  onComposerOpenChange,
+  onToggleCollapse,
+  onOpenCard,
+  onCardCreated,
   onColumnUpdated,
-  onColumnDeleted
+  onColumnDeleted,
 }: ColumnProps) {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
+  const confirm = useConfirm();
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(column.title);
+  const status = getStatus(column.title);
 
-  const {
-    setNodeRef,
-    attributes,
-    listeners,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+  const { setNodeRef, setActivatorNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
     id: column.id,
-    data: {
-      type: 'Column' as const,
-      column,
-    },
+    data: { type: 'Column' as const, column },
   });
 
-  const style = {
-    transition,
-    transform: CSS.Transform.toString(transform),
-  };
+  const style = { transition, transform: CSS.Translate.toString(transform) };
 
   const handleUpdate = async () => {
+    setIsEditing(false);
     if (editTitle.trim() === '' || editTitle === column.title) {
-      setIsEditing(false);
       setEditTitle(column.title);
       return;
     }
-
-    const result = await updateColumn({
-      columnId: column.id,
-      title: editTitle,
-      boardId,
-      workspaceId,
-    });
-
+    const result = await updateColumn({ columnId: column.id, title: editTitle, boardId, workspaceId });
     if (result.success) {
       onColumnUpdated(column.id, editTitle);
-      toast.success(lang === 'id' ? 'Kolom berhasil diperbarui' : 'Column updated');
+      toast.success(t('ui.columnUpdated'));
     } else {
       toast.error(result.error);
       setEditTitle(column.title);
     }
-    setIsEditing(false);
   };
 
   const handleDelete = async () => {
-    if (!confirm(t('kanban.deleteColumnConfirm'))) {
-      return;
-    }
-
-    const result = await deleteColumn({
-      columnId: column.id,
-      boardId,
-      workspaceId,
+    const ok = await confirm({
+      title: t('ui.deleteColumnTitle', { name: column.title }),
+      description: t('ui.deleteColumnDesc', { count: totalCount }),
+      destructive: true,
     });
-
+    if (!ok) return;
+    const result = await deleteColumn({ columnId: column.id, boardId, workspaceId });
     if (result.success) {
       onColumnDeleted(column.id);
-      toast.success(lang === 'id' ? 'Kolom berhasil dihapus' : 'Column deleted');
+      toast.success(t('ui.columnDeleted'));
     } else {
       toast.error(result.error);
     }
   };
 
-  const indicatorDot = getColumnIndicatorColor(column.title);
+  const count =
+    column.cards.length === totalCount ? String(totalCount) : `${column.cards.length}/${totalCount}`;
+
+  // ── Collapsed: slim vertical strip (still a drop target) ──
+  if (collapsed) {
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        data-column-id={column.id}
+        className={cn(
+          'flex w-12 shrink-0 snap-center flex-col items-center gap-3 rounded-2xl border bg-surface-sunken/80 py-3 transition-[box-shadow,background-color] duration-quick',
+          isDropTarget && 'bg-accent ring-2 ring-primary/40',
+          isDragging && 'opacity-50'
+        )}
+      >
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={() => onToggleCollapse(column.id)}
+          aria-label={`${t('ui.expandColumn')}: ${column.title}`}
+          title={t('ui.expandColumn')}
+        >
+          <ChevronsLeftRight className="size-4" />
+        </Button>
+        <span className={cn('size-2 rounded-full', status.dot)} aria-hidden />
+        <span className="rounded-full bg-card px-1.5 text-2xs font-medium tabular-nums text-muted-foreground ring-1 ring-border">
+          {count}
+        </span>
+        <button
+          type="button"
+          ref={setActivatorNodeRef}
+          {...attributes}
+          {...listeners}
+          aria-label={`${t('ui.dragColumn')}: ${column.title}`}
+          className="flex-1 cursor-grab touch-none text-sm font-medium text-foreground [writing-mode:vertical-rl] active:cursor-grabbing"
+        >
+          {column.title}
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={cn(
-        "w-[280px] sm:w-[300px] min-w-[280px] sm:min-w-[300px] flex flex-col bg-secondary/50 dark:bg-card/40 backdrop-blur-md rounded-2xl border border-border/70 shadow-xs transition-all duration-200 snap-center sm:snap-align-none shrink-0",
-        isDragging && "opacity-40 ring-2 ring-primary/40 scale-[0.98]"
-      )}
+    <m.section
+      initial={{ y: 10 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.3, ease: EASE_OUT, delay: Math.min(index, 6) * 0.04 }}
+      className="flex max-h-full min-h-0 shrink-0 snap-center flex-col sm:snap-align-none"
+      aria-label={column.title}
     >
-      {/* Column Header */}
-      <div className="px-3.5 py-3 flex items-center justify-between group">
-        <div className="flex items-center gap-2.5 flex-1 min-w-0">
-          <div 
-            {...attributes} 
+      <div
+        ref={setNodeRef}
+        style={style}
+        data-column-id={column.id}
+        className={cn(
+          'relative flex max-h-full min-h-0 w-[85vw] max-w-[320px] flex-col rounded-2xl border bg-surface-sunken/80 backdrop-blur-sm sm:w-[296px]',
+          'transition-[box-shadow,background-color,border-color] duration-base ease-out-expo',
+          isDropTarget && 'border-primary/40 bg-accent/70 shadow-glow',
+          isDragging && 'opacity-50'
+        )}
+      >
+        {/* Header */}
+        <header className="group flex items-center gap-2 px-3 pb-2 pt-3">
+          <button
+            type="button"
+            ref={setActivatorNodeRef}
+            {...attributes}
             {...listeners}
-            className="cursor-grab active:cursor-grabbing text-muted-foreground/60 hover:text-foreground transition-colors p-1 sm:p-0.5 rounded touch-none"
-            title={lang === 'id' ? 'Geser kolom' : 'Drag column'}
+            aria-label={`${t('ui.dragColumn')}: ${column.title}`}
+            className="-ml-1 flex size-7 cursor-grab touch-none items-center justify-center rounded-md text-muted-foreground/70 outline-none transition-colors hover:bg-card hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring active:cursor-grabbing"
           >
-            <GripVertical size={15} />
-          </div>
-
-          {/* Status Indicator Dot */}
-          <span className={cn("w-2.5 h-2.5 rounded-full ring-2 shrink-0 transition-transform group-hover:scale-110", indicatorDot)} />
+            <GripVertical className="size-4" aria-hidden />
+          </button>
+          <span className={cn('size-2.5 shrink-0 rounded-full ring-4 ring-card', status.dot)} aria-hidden />
 
           {isEditing ? (
             <Input
@@ -145,73 +190,100 @@ export function KanbanColumn({
               onChange={(e) => setEditTitle(e.target.value)}
               onBlur={handleUpdate}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') handleUpdate();
+                if (e.key === 'Enter') e.currentTarget.blur();
                 if (e.key === 'Escape') {
                   setEditTitle(column.title);
                   setIsEditing(false);
                 }
               }}
               autoFocus
-              className="h-7 px-2 text-sm font-semibold rounded-lg bg-card"
+              className="h-7 flex-1 px-2 text-sm font-semibold"
+              aria-label={t('ui.rename')}
             />
           ) : (
-            <h3 
-              className="font-semibold text-sm truncate cursor-pointer text-foreground select-none"
+            <h2
+              className="min-w-0 flex-1 cursor-text truncate text-sm font-semibold text-foreground"
               onDoubleClick={() => setIsEditing(true)}
-              title={lang === 'id' ? 'Klik dua kali untuk mengedit nama kolom' : 'Double click to edit title'}
             >
               {column.title}
-            </h3>
+            </h2>
+          )}
+
+          <span className="rounded-full bg-card px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground ring-1 ring-border">
+            {count}
+          </span>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover-reveal size-7 rounded-md text-muted-foreground hover:text-foreground tap-target"
+                aria-label={`${t('ui.columnActions')}: ${column.title}`}
+              >
+                <MoreHorizontal className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onSelect={() => onComposerOpenChange(column.id, true)}>
+                <Plus /> {t('kanban.addTask')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setTimeout(() => setIsEditing(true), 0)}>
+                <Pencil /> {t('ui.rename')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => onToggleCollapse(column.id)}>
+                <ChevronsRightLeft /> {t('ui.collapseColumn')}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem destructive onSelect={handleDelete}>
+                <Trash2 /> {t('kanban.deleteColumn')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </header>
+
+        {/* Cards */}
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 pb-1">
+          <SortableContext items={column.cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
+            <ul className="flex min-h-[3rem] flex-col gap-2 pb-1">
+              {column.cards.map((card) => (
+                <li key={card.id}>
+                  <CardItemComponent card={card} onOpen={onOpenCard} />
+                </li>
+              ))}
+            </ul>
+          </SortableContext>
+
+          {column.cards.length === 0 && !composerOpen && (
+            <div
+              className={cn(
+                'mb-1 flex flex-col items-center gap-1 rounded-xl border border-dashed px-3 py-5 text-center transition-colors',
+                isDropTarget ? 'border-primary/50 text-primary' : 'border-border-strong/70 text-muted-foreground'
+              )}
+            >
+              <Inbox className="size-5 opacity-70" aria-hidden />
+              <p className="text-xs font-medium">{t('ui.emptyColumn')}</p>
+              <p className="text-2xs opacity-80">{t('ui.emptyColumnHint')}</p>
+            </div>
           )}
         </div>
-        
-        <div className="flex items-center gap-1 shrink-0 ml-2">
-          {/* Card Count Pill */}
-          <span className="text-[11px] font-semibold text-muted-foreground bg-card/80 px-2 py-0.5 rounded-full border border-border/50 shadow-xs">
-            {column.cards.length}
-          </span>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6 text-muted-foreground/60 hover-reveal hover:text-destructive hover:bg-destructive/10 rounded-lg"
-            onClick={handleDelete}
-            title={t('kanban.deleteColumn')}
-          >
-            <Trash2 size={13} />
-          </Button>
+
+        {/* Composer */}
+        <div className="px-2 pb-2 pt-1">
+          <CreateCardForm
+            columnId={column.id}
+            boardId={boardId}
+            workspaceId={workspaceId}
+            onCardCreated={onCardCreated}
+            availableLabels={availableLabels}
+            availableMembers={availableMembers}
+            open={composerOpen}
+            onOpenChange={(open) => onComposerOpenChange(column.id, open)}
+          />
         </div>
       </div>
-      
-      {/* Cards Scroll Area */}
-      <ScrollArea className="flex-1 max-h-[calc(100dvh-260px)] sm:max-h-[calc(100vh-230px)]">
-        <div className="px-2.5 pb-2.5 space-y-2.5">
-          <SortableContext
-            items={column.cards.map((c) => c.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            {column.cards.map((card) => (
-              <CardItemComponent 
-                key={card.id} 
-                card={card} 
-                boardId={boardId}
-                workspaceId={workspaceId}
-                onCardUpdated={onCardUpdated}
-                onCardDeleted={onCardDeleted}
-              />
-            ))}
-          </SortableContext>
-        </div>
-      </ScrollArea>
-      
-      {/* Add Card Form Footer */}
-      <div className="px-2.5 pb-2.5 pt-1">
-        <CreateCardForm
-          columnId={column.id}
-          boardId={boardId}
-          workspaceId={workspaceId}
-          onCardCreated={onCardCreated}
-        />
-      </div>
-    </div>
+    </m.section>
   );
 }
+
+export const KanbanColumn = memo(KanbanColumnInner);
