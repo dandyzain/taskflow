@@ -1,12 +1,14 @@
 import { redirect } from 'next/navigation';
 import { getOptionalUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { LandingPage } from '@/components/landing/landing-page';
 
 export default async function HomePage() {
   const user = await getOptionalUser();
 
+  // Signed-out visitors get the public landing page (previously: redirect to /login)
   if (!user) {
-    redirect('/login');
+    return <LandingPage />;
   }
 
   // Find user's first workspace and board
