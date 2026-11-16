@@ -8,13 +8,18 @@ import { Button } from '@/components/ui/button';
 import { Kbd } from '@/components/ui/kbd';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
 import { PriorityBadge } from '@/components/patterns/priority-badge';
 import { UserAvatar } from '@/components/patterns/user-avatar';
 import type { PriorityFilter } from '@/hooks/use-board-filter';
 import { PRIORITY_ORDER } from '@/lib/design/tokens';
 import { useLanguage } from '@/lib/i18n/language-context';
 import { cn } from '@/lib/utils';
+import dynamic from 'next/dynamic';
+import { useEverTrue } from '@/hooks/use-ever-true';
+
+const FiltersDrawer = dynamic(() => import('@/components/kanban/filters-drawer').then((m) => m.FiltersDrawer), {
+  ssr: false,
+});
 
 export type BoardView = 'board' | 'list';
 
@@ -56,6 +61,7 @@ export const BoardToolbar = React.forwardRef<HTMLInputElement, BoardToolbarProps
 ) {
   const { t } = useLanguage();
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const filtersMounted = useEverTrue(filtersOpen);
   const nonSearchFilters = activeFilterCount - (searchQuery.trim() ? 1 : 0);
 
   const triggerCls = (active: boolean) =>
@@ -193,30 +199,11 @@ export const BoardToolbar = React.forwardRef<HTMLInputElement, BoardToolbarProps
         </ToggleGroupItem>
       </ToggleGroup>
 
-      <Drawer open={filtersOpen} onOpenChange={setFiltersOpen}>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>{t('ui.filters')}</DrawerTitle>
-            <DrawerDescription className="sr-only">{t('ui.filters')}</DrawerDescription>
-          </DrawerHeader>
-          <div className="grid gap-3 px-4 [&>button]:h-11">{filters}</div>
-          <DrawerFooter className="flex-row">
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={() => {
-                onClearFilters();
-                setFiltersOpen(false);
-              }}
-            >
-              {t('kanban.clearFilters')}
-            </Button>
-            <Button className="flex-1" onClick={() => setFiltersOpen(false)}>
-              {t('common.close')}
-            </Button>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
+      {filtersMounted && (
+        <FiltersDrawer open={filtersOpen} onOpenChange={setFiltersOpen} onClearFilters={onClearFilters}>
+          {filters}
+        </FiltersDrawer>
+      )}
     </div>
   );
 });

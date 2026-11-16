@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { useState, useEffect, useId } from "react"
-import { m } from "motion/react"
+import * as m from "motion/react-m"
 import { Activity as ActivityIcon, Pencil } from "lucide-react"
 import { toast } from "sonner"
 import { updateBoard } from "@/actions/board-actions"
@@ -10,7 +10,10 @@ import { fetchActivities } from "@/actions/activity-actions"
 import type { ActivityItem } from "@/lib/queries/activity-queries"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { ActivityFeed } from "./activity-feed"
+import dynamic from "next/dynamic"
+import { useEverTrue } from "@/hooks/use-ever-true"
+
+const ActivityFeed = dynamic(() => import("./activity-feed").then((m) => m.ActivityFeed), { ssr: false })
 import { useLanguage } from "@/lib/i18n/language-context"
 import { EASE_OUT } from "@/lib/motion"
 
@@ -135,6 +138,7 @@ export function BoardHeader({
     setIsEditingDescription(false)
   }
 
+  const activityMounted = useEverTrue(activityOpen)
   const pct = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0
 
   return (
@@ -215,7 +219,7 @@ export function BoardHeader({
         </Button>
       </div>
 
-      <ActivityFeed activities={activities} loading={activityOpen && !activitiesLoaded} open={activityOpen} onOpenChange={setActivityOpen} />
+      {activityMounted && <ActivityFeed activities={activities} loading={activityOpen && !activitiesLoaded} open={activityOpen} onOpenChange={setActivityOpen} />}
     </div>
   )
 }

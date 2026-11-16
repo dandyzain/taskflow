@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { m } from 'motion/react';
+import * as m from 'motion/react-m';
 import { ArrowRight, Crown, Loader2, Sparkles } from 'lucide-react';
 import { loginUser } from '@/actions/auth-actions';
 import { AuthShell } from '@/components/auth/auth-shell';
@@ -71,8 +71,8 @@ export default function DemoLoginPage() {
           return (
             <m.li
               key={acc.email}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ y: 10 }}
+              animate={{ y: 0 }}
               transition={{ duration: 0.35, ease: EASE_OUT, delay: 0.1 + i * 0.06 }}
             >
               <button

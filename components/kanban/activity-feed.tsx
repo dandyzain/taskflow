@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { m } from 'motion/react'
+import * as m from 'motion/react-m'
 import { Activity as ActivityIcon } from 'lucide-react'
 import type { ActivityItem } from '@/lib/queries/activity-queries'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'

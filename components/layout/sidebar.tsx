@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter, useParams, usePathname } from 'next/navigation';
-import { m } from 'motion/react';
+import * as m from 'motion/react-m';
 import { toast } from 'sonner';
 import {
   BarChart3,

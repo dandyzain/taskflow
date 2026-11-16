@@ -6,8 +6,6 @@ import { KpiCards } from '@/components/reports/kpi-cards';
 import { StatusChart } from '@/components/reports/status-chart';
 import { PriorityChart } from '@/components/reports/priority-chart';
 import { VelocityChart } from '@/components/reports/velocity-chart';
-import { EmployeePerformanceView } from '@/components/reports/employee-performance-view';
-import { TaskTable } from '@/components/reports/task-table';
 import { BoardComparisonChart } from '@/components/reports/board-comparison-chart';
 import { DeadlineHealthChart } from '@/components/reports/deadline-health-chart';
 import { exportTasksToCSV, exportEmployeesToCSV } from '@/components/reports/export-utils';
@@ -33,6 +31,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Reveal } from '@/components/patterns/reveal';
+import dynamic from 'next/dynamic';
+
+// Secondary tabs are fetched on demand
+const EmployeePerformanceView = dynamic(() =>
+  import('@/components/reports/employee-performance-view').then((m) => m.EmployeePerformanceView)
+, { ssr: false });
+const TaskTable = dynamic(() => import('@/components/reports/task-table').then((m) => m.TaskTable), { ssr: false });
 
 interface ReportDashboardClientProps {
   initialData: WorkspaceReportData;

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowLeft, Compass, LayoutGrid } from 'lucide-react';
-import { m } from 'motion/react';
+import * as m from 'motion/react-m';
 import { Button } from '@/components/ui/button';
 import { LogoMark } from '@/components/brand/logo';
 import { useLanguage } from '@/lib/i18n/language-context';
@@ -12,13 +12,13 @@ export default function NotFound() {
   const { t } = useLanguage();
 
   return (
-    <div className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden p-6">
+    <main className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden p-6">
       <div className="aurora opacity-60" aria-hidden />
       <div className="absolute inset-0 bg-dot-grid [mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_70%)]" aria-hidden />
 
       <m.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ y: 12 }}
+        animate={{ y: 0 }}
         transition={{ duration: 0.4, ease: EASE_OUT }}
         className="relative w-full max-w-md text-center"
       >
@@ -59,6 +59,6 @@ export default function NotFound() {
           </Button>
         </div>
       </m.div>
-    </div>
+    </main>
   );
 }

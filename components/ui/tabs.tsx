@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
-import { m } from 'motion/react';
+import * as m from 'motion/react-m';
 import { cn } from '@/lib/utils';
 import { layoutSpring } from '@/lib/motion';
 
