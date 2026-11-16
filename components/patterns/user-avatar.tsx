@@ -32,7 +32,7 @@ export function UserAvatar({ user, size = 'md', className, ring }: UserAvatarPro
     <Avatar className={cn(SIZE[size], ring && 'ring-2 ring-card', className)} title={user.name}>
       {user.avatarUrl ? <AvatarImage src={user.avatarUrl} alt="" /> : null}
       <AvatarFallback className={cn('font-semibold', avatarTone(user.id || user.name))}>
-        {initials(user.name)}
+        {size === 'xs' || size === 'sm' ? initials(user.name).charAt(0) : initials(user.name)}
       </AvatarFallback>
     </Avatar>
   );
