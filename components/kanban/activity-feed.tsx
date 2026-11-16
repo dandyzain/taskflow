@@ -1,130 +1,121 @@
 'use client'
 
 import * as React from 'react'
+import * as m from 'motion/react-m'
+import { Activity as ActivityIcon } from 'lucide-react'
 import type { ActivityItem } from '@/lib/queries/activity-queries'
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Activity as ActivityIcon, Sparkles } from 'lucide-react'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Skeleton } from '@/components/ui/skeleton'
+import { EmptyState } from '@/components/patterns/empty-state'
+import { UserAvatar } from '@/components/patterns/user-avatar'
+import { useLanguage } from '@/lib/i18n/language-context'
+import { EASE_OUT } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 interface ActivityFeedProps {
-  activities: ActivityItem[];
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  activities: ActivityItem[]
+  open: boolean
+  loading?: boolean
+  onOpenChange: (open: boolean) => void
 }
 
-function formatAction(action: string): string {
-  const actionMap: Record<string, string> = {
-    'CARD_CREATED': 'created a card',
-    'CARD_UPDATED': 'updated card details',
-    'CARD_MOVED': 'moved a card',
-    'CARD_REORDERED': 'reordered a card',
-    'CARD_DELETED': 'deleted a card',
-    'COLUMN_CREATED': 'created a column',
-    'COLUMN_UPDATED': 'renamed a column',
-    'COLUMN_DELETED': 'deleted a column',
-    'COLUMN_REORDERED': 'reordered columns',
-    'BOARD_CREATED': 'created a board',
-    'BOARD_UPDATED': 'updated board details',
-    'BOARD_DELETED': 'deleted a board',
-    'CARD_ASSIGNED': 'assigned a member',
-    'CARD_UNASSIGNED': 'unassigned a member',
-    'WORKSPACE_CREATED': 'created the workspace',
-  };
-  return actionMap[action] ?? action.toLowerCase().replace(/_/g, ' ');
+const ENTITY_DOT: Record<string, string> = {
+  CARD: 'bg-[hsl(205_85%_55%)]',
+  COLUMN: 'bg-[hsl(268_70%_65%)]',
+  BOARD: 'bg-[hsl(152_60%_45%)]',
+  WORKSPACE: 'bg-[hsl(32_95%_55%)]',
 }
 
-function formatRelativeTime(dateStr: string): string {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-  
-  if (diffMins < 1) return 'just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return date.toLocaleDateString();
-}
+export function ActivityFeed({ activities, open, loading, onOpenChange }: ActivityFeedProps) {
+  const { t, lang } = useLanguage()
 
-function getEntityBadge(entityType: string) {
-  switch (entityType) {
-    case 'CARD':
-      return { dot: 'bg-pastel-sky ring-sky-300/50', label: 'Card' };
-    case 'COLUMN':
-      return { dot: 'bg-pastel-lavender ring-purple-300/50', label: 'Column' };
-    case 'BOARD':
-      return { dot: 'bg-pastel-mint ring-emerald-300/50', label: 'Board' };
-    case 'WORKSPACE':
-      return { dot: 'bg-pastel-peach ring-amber-300/50', label: 'Workspace' };
-    default:
-      return { dot: 'bg-muted-foreground ring-border', label: entityType };
+  const relative = (dateStr: string) => {
+    const diff = Date.now() - new Date(dateStr).getTime()
+    const mins = Math.floor(diff / 60000)
+    if (mins < 1) return t('ui.justNow')
+    if (mins < 60) return t('ui.minutesAgo', { n: mins })
+    const hours = Math.floor(mins / 60)
+    if (hours < 24) return t('ui.hoursAgo', { n: hours })
+    const days = Math.floor(hours / 24)
+    if (days < 7) return t('ui.daysAgo', { n: days })
+    return new Date(dateStr).toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US')
   }
-}
 
-export function ActivityFeed({ activities, open, onOpenChange }: ActivityFeedProps) {
+  const describe = (action: string) => {
+    const key = `ui.act${action}`
+    const v = t(key)
+    return v === key ? action.toLowerCase().replace(/_/g, ' ') : v
+  }
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="flex flex-col h-full w-[380px] sm:w-[480px] border-l border-border/70 bg-card/95 backdrop-blur-xl px-0 py-5 shadow-pastel">
-        <SheetHeader className="px-6 mb-3 border-b border-border/50 pb-3">
-          <SheetTitle className="flex items-center gap-2.5 text-base font-bold text-foreground">
-            <div className="w-7 h-7 rounded-lg bg-primary/15 text-primary flex items-center justify-center">
-              <ActivityIcon className="w-4 h-4" />
-            </div>
-            Activity Trail
+      <SheetContent className="flex h-full w-[420px] max-w-[92vw] flex-col gap-0 p-0 sm:max-w-[420px]">
+        <SheetHeader className="border-b px-5 py-4">
+          <SheetTitle className="flex items-center gap-2.5 text-base">
+            <span className="flex size-8 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+              <ActivityIcon className="size-4" aria-hidden />
+            </span>
+            {t('ui.activityTrail')}
           </SheetTitle>
+          <SheetDescription className="sr-only">{t('ui.activityTrail')}</SheetDescription>
         </SheetHeader>
-        
-        <ScrollArea className="flex-1 px-6">
-          {activities.length === 0 ? (
-            <div className="text-center text-muted-foreground/70 py-12 text-xs italic">
-              No recorded activity yet
-            </div>
-          ) : (
-            <div className="relative pl-4 border-l border-border/60 space-y-4 py-2">
-              {activities.map((activity) => {
-                const badge = getEntityBadge(activity.entityType);
-                return (
-                  <div key={activity.id} className="relative group text-xs">
-                    {/* Timeline dot */}
-                    <div className={cn(
-                      "absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full ring-2 shadow-xs transition-transform group-hover:scale-125",
-                      badge.dot
-                    )} />
-                    
-                    <div className="p-3 rounded-2xl bg-secondary/40 border border-border/50 shadow-2xs group-hover:border-primary/20 transition-all space-y-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-semibold text-foreground">
-                          {activity.user.name}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground font-mono">
-                          {formatRelativeTime(activity.createdAt)}
-                        </span>
-                      </div>
-                      
-                      <p className="text-muted-foreground leading-relaxed">
-                        {formatAction(activity.action)}
-                      </p>
 
-                      {'title' in activity.metadata && typeof activity.metadata.title === 'string' && (
-                        <div className="text-[11px] font-medium text-foreground bg-card/80 px-2 py-1 rounded-lg border border-border/40 mt-1 truncate">
-                          &quot;{activity.metadata.title}&quot;
-                        </div>
-                      )}
-                    </div>
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+          {loading ? (
+            <div className="space-y-4">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="flex gap-3">
+                  <Skeleton className="size-8 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-3.5 w-2/3" />
+                    <Skeleton className="h-3 w-1/3" />
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
+          ) : activities.length === 0 ? (
+            <EmptyState icon={ActivityIcon} title={t('ui.noActivity')} size="sm" />
+          ) : (
+            <ol className="relative space-y-1 before:absolute before:bottom-2 before:left-4 before:top-2 before:w-px before:bg-border">
+              {activities.map((activity, i) => {
+                const title =
+                  'title' in activity.metadata && typeof activity.metadata.title === 'string'
+                    ? activity.metadata.title
+                    : null
+                return (
+                  <m.li
+                    key={activity.id}
+                    initial={{ opacity: 0, x: 8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.25, ease: EASE_OUT, delay: Math.min(i, 12) * 0.025 }}
+                    className="relative flex gap-3 rounded-xl p-1.5 transition-colors hover:bg-secondary/60"
+                  >
+                    <span className="relative">
+                      <UserAvatar user={{ id: activity.user.id ?? activity.user.name, name: activity.user.name }} size="md" ring />
+                      <span
+                        className={cn(
+                          'absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full ring-2 ring-card',
+                          ENTITY_DOT[activity.entityType] ?? 'bg-muted-foreground'
+                        )}
+                        aria-hidden
+                      />
+                    </span>
+                    <div className="min-w-0 flex-1 pt-0.5 text-sm">
+                      <p className="leading-snug">
+                        <span className="font-medium text-foreground">{activity.user.name}</span>{' '}
+                        <span className="text-muted-foreground">{describe(activity.action)}</span>
+                      </p>
+                      {title && <p className="mt-0.5 truncate text-sm text-foreground/90">“{title}”</p>}
+                      <time className="text-xs text-muted-foreground" dateTime={activity.createdAt}>
+                        {relative(activity.createdAt)}
+                      </time>
+                    </div>
+                  </m.li>
+                )
+              })}
+            </ol>
           )}
-        </ScrollArea>
+        </div>
       </SheetContent>
     </Sheet>
   )

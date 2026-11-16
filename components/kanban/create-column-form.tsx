@@ -1,12 +1,12 @@
 "use client"
 
 import * as React from "react"
-import { Plus, X, Check } from "lucide-react"
+import { Check, Loader2, Plus, X } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { BoardColumn } from "@/types/kanban"
+import type { BoardColumn } from "@/types/kanban"
 import { createColumn } from "@/actions/column-actions"
 import { useLanguage } from "@/lib/i18n/language-context"
 
@@ -16,15 +16,16 @@ interface CreateColumnFormProps {
   onColumnCreated: (column: BoardColumn) => void
 }
 
-export function CreateColumnForm({
-  boardId,
-  workspaceId,
-  onColumnCreated,
-}: CreateColumnFormProps) {
-  const { t, lang } = useLanguage()
+export function CreateColumnForm({ boardId, workspaceId, onColumnCreated }: CreateColumnFormProps) {
+  const { t } = useLanguage()
   const [isOpen, setIsOpen] = React.useState(false)
   const [title, setTitle] = React.useState("")
   const [isSubmitting, setIsSubmitting] = React.useState(false)
+
+  const close = () => {
+    setIsOpen(false)
+    setTitle("")
+  }
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault()
@@ -32,90 +33,65 @@ export function CreateColumnForm({
 
     setIsSubmitting(true)
     try {
-      const result = await createColumn({
-        title: title.trim(),
-        boardId,
-        workspaceId,
-      })
+      const result = await createColumn({ title: title.trim(), boardId, workspaceId })
       if (!result.success) {
         toast.error(result.error)
         return
       }
-      const newColumn: BoardColumn = {
+      onColumnCreated({
         id: result.data.columnId,
         title: title.trim(),
         position: result.data.position,
         cards: [],
-      }
-      onColumnCreated(newColumn)
-      setTitle("")
-      setIsOpen(false)
+      })
+      close()
     } catch {
-      toast.error(lang === 'id' ? 'Gagal membuat kolom' : 'Failed to create column')
+      toast.error(t("ui.createColumnFailed"))
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSubmit()
-    } else if (e.key === "Escape") {
-      setIsOpen(false)
-      setTitle("")
-    }
-  }
+  const shell = "w-[85vw] max-w-[320px] shrink-0 snap-center sm:w-[296px] sm:snap-align-none"
 
   if (!isOpen) {
     return (
-      <div className="w-[280px] sm:w-[300px] min-w-[280px] sm:min-w-[300px] h-fit snap-center sm:snap-align-none shrink-0">
-        <Button
-          variant="outline"
-          className="w-full h-12 border-2 border-dashed border-border/80 hover:border-primary/50 bg-secondary/30 hover:bg-secondary/70 rounded-2xl justify-center text-muted-foreground hover:text-foreground transition-all duration-200 active:scale-[0.98] font-semibold text-xs shadow-xs"
+      <div className={shell}>
+        <button
+          type="button"
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border-strong/70 text-sm font-medium text-muted-foreground outline-none transition-colors hover:border-primary/50 hover:bg-card/60 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
           onClick={() => setIsOpen(true)}
         >
-          <Plus className="mr-2 h-4 w-4 text-primary" />
-          {t('kanban.addColumn')}
-        </Button>
+          <Plus className="size-4" aria-hidden />
+          {t("kanban.addColumn")}
+        </button>
       </div>
     )
   }
 
   return (
-    <div className="w-[280px] sm:w-[300px] min-w-[280px] sm:min-w-[300px] h-fit bg-card/90 backdrop-blur-md border border-primary/30 rounded-2xl p-3.5 shadow-pastel flex flex-col gap-2.5 animate-scale-in snap-center sm:snap-align-none shrink-0">
+    <form
+      onSubmit={handleSubmit}
+      className={`${shell} animate-scale-in space-y-2 rounded-2xl border bg-card p-3 shadow-e2`}
+    >
       <Input
         autoFocus
-        placeholder={t('kanban.enterColumnTitle')}
+        placeholder={t("kanban.enterColumnTitle")}
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        onKeyDown={handleKeyDown}
+        onKeyDown={(e) => e.key === "Escape" && close()}
         disabled={isSubmitting}
-        className="h-9 text-xs rounded-xl border-border/80 focus-visible:ring-primary/40 bg-background/80"
+        aria-label={t("kanban.enterColumnTitle")}
       />
       <div className="flex items-center gap-1.5">
-        <Button
-          variant="default"
-          size="sm"
-          onClick={() => handleSubmit()}
-          disabled={isSubmitting || !title.trim()}
-          className="flex-1 h-8 text-xs font-semibold rounded-xl shadow-xs hover:shadow-pastel transition-all active:scale-95"
-        >
-          <Check className="mr-1.5 h-3.5 w-3.5" />
-          {t('kanban.addColumn')}
+        <Button type="submit" size="sm" disabled={isSubmitting || !title.trim()} className="flex-1">
+          {isSubmitting ? <Loader2 className="size-3.5 animate-spin" aria-hidden /> : <Check className="size-3.5" aria-hidden />}
+          {t("kanban.addColumn")}
         </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted"
-          onClick={() => {
-            setIsOpen(false)
-            setTitle("")
-          }}
-          disabled={isSubmitting}
-        >
-          <X className="h-4 w-4" />
+        <Button type="button" variant="ghost" size="icon-sm" onClick={close} disabled={isSubmitting} aria-label={t("common.cancel")}>
+          <X className="size-4" />
         </Button>
       </div>
-    </div>
+    </form>
   )
 }

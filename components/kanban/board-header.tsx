@@ -1,35 +1,88 @@
 'use client'
 
 import * as React from "react"
-import { useState, useEffect } from "react"
-import { Activity as ActivityIcon, Pencil, Sparkles } from "lucide-react"
+import { useState, useEffect, useId } from "react"
+import * as m from "motion/react-m"
+import { Activity as ActivityIcon, Pencil } from "lucide-react"
 import { toast } from "sonner"
 import { updateBoard } from "@/actions/board-actions"
 import { fetchActivities } from "@/actions/activity-actions"
 import type { ActivityItem } from "@/lib/queries/activity-queries"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { ActivityFeed } from "./activity-feed"
+import dynamic from "next/dynamic"
+import { useEverTrue } from "@/hooks/use-ever-true"
+
+const ActivityFeed = dynamic(() => import("./activity-feed").then((m) => m.ActivityFeed), { ssr: false })
 import { useLanguage } from "@/lib/i18n/language-context"
+import { EASE_OUT } from "@/lib/motion"
 
 interface BoardHeaderProps {
   title: string
   description: string | null
   boardId: string
   workspaceId: string
+  doneCount: number
+  totalCount: number
 }
 
-export function BoardHeader({ title: initialTitle, description: initialDescription, boardId, workspaceId }: BoardHeaderProps) {
-  const { t, lang } = useLanguage()
+/** Gradient completion ring that animates as tasks move to "Done". */
+function ProgressRing({ value, label }: { value: number; label: string }) {
+  const gid = useId().replace(/:/g, "")
+  const r = 16
+  const c = 2 * Math.PI * r
+  return (
+    <div className="flex items-center gap-2.5" role="img" aria-label={label}>
+      <span className="relative">
+      <svg viewBox="0 0 40 40" className="size-10 -rotate-90" aria-hidden>
+        <defs>
+          <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="hsl(var(--brand-from))" />
+            <stop offset="100%" stopColor="hsl(var(--brand-to))" />
+          </linearGradient>
+        </defs>
+        <circle cx="20" cy="20" r={r} fill="none" strokeWidth="4" className="stroke-border" />
+        <m.circle
+          cx="20"
+          cy="20"
+          r={r}
+          fill="none"
+          strokeWidth="4"
+          strokeLinecap="round"
+          stroke={`url(#${gid})`}
+          strokeDasharray={c}
+          initial={{ strokeDashoffset: c }}
+          animate={{ strokeDashoffset: c * (1 - value / 100) }}
+          transition={{ duration: 0.9, ease: EASE_OUT }}
+        />
+      </svg>
+      <span className="absolute inset-0 flex items-center justify-center text-2xs font-semibold tabular-nums sm:hidden" aria-hidden>
+        {value}
+      </span>
+      </span>
+      <div className="hidden leading-tight sm:block">
+        <div className="text-sm font-semibold tabular-nums">{value}%</div>
+        <div className="text-xs text-muted-foreground">{label}</div>
+      </div>
+    </div>
+  )
+}
+
+export function BoardHeader({
+  title: initialTitle,
+  description: initialDescription,
+  boardId,
+  workspaceId,
+  doneCount,
+  totalCount,
+}: BoardHeaderProps) {
+  const { t } = useLanguage()
   const [title, setTitle] = useState(initialTitle)
   const [description, setDescription] = useState(initialDescription || "")
-  
   const [isEditingTitle, setIsEditingTitle] = useState(false)
   const [editTitle, setEditTitle] = useState(initialTitle)
-  
   const [isEditingDescription, setIsEditingDescription] = useState(false)
   const [editDescription, setEditDescription] = useState(initialDescription || "")
-  
   const [isSaving, setIsSaving] = useState(false)
   const [activityOpen, setActivityOpen] = useState(false)
   const [activities, setActivities] = useState<ActivityItem[]>([])
@@ -37,7 +90,7 @@ export function BoardHeader({ title: initialTitle, description: initialDescripti
 
   useEffect(() => {
     if (activityOpen && !activitiesLoaded) {
-      fetchActivities(workspaceId).then(data => {
+      fetchActivities(workspaceId).then((data) => {
         setActivities(data)
         setActivitiesLoaded(true)
       })
@@ -50,14 +103,12 @@ export function BoardHeader({ title: initialTitle, description: initialDescripti
       setEditTitle(title)
       return
     }
-
     setIsSaving(true)
     const result = await updateBoard({ boardId, workspaceId, title: editTitle })
     setIsSaving(false)
-
     if (result.success) {
       setTitle(editTitle)
-      toast.success(t('kanban.boardTitleUpdated'))
+      toast.success(t("kanban.boardTitleUpdated"))
     } else {
       setEditTitle(title)
       toast.error(result.error)
@@ -65,32 +116,21 @@ export function BoardHeader({ title: initialTitle, description: initialDescripti
     setIsEditingTitle(false)
   }
 
-  const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleTitleSave()
-    } else if (e.key === "Escape") {
-      setIsEditingTitle(false)
-      setEditTitle(title)
-    }
-  }
-
   const handleDescriptionSave = async () => {
     if (editDescription === description) {
       setIsEditingDescription(false)
       return
     }
-
     setIsSaving(true)
-    const result = await updateBoard({ 
-      boardId, 
-      workspaceId, 
-      description: editDescription.trim() === "" ? null : editDescription 
+    const result = await updateBoard({
+      boardId,
+      workspaceId,
+      description: editDescription.trim() === "" ? null : editDescription,
     })
     setIsSaving(false)
-
     if (result.success) {
       setDescription(editDescription)
-      toast.success(t('kanban.boardDescUpdated'))
+      toast.success(t("kanban.boardDescUpdated"))
     } else {
       setEditDescription(description)
       toast.error(result.error)
@@ -98,83 +138,88 @@ export function BoardHeader({ title: initialTitle, description: initialDescripti
     setIsEditingDescription(false)
   }
 
-  const handleDescriptionKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Escape") {
-      setIsEditingDescription(false)
-      setEditDescription(description)
-    }
-  }
+  const activityMounted = useEverTrue(activityOpen)
+  const pct = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3 sm:mb-5 pb-3 border-b border-border/50 shrink-0">
-      <div className="flex flex-col gap-1 w-full max-w-2xl min-w-0">
+    <div className="mb-3 flex shrink-0 items-start justify-between gap-3 sm:mb-5">
+      <div className="flex min-w-0 max-w-2xl flex-1 flex-col gap-1">
         {isEditingTitle ? (
           <input
             autoFocus
-            className="h-auto text-xl sm:text-2xl font-bold border-none bg-transparent outline-none focus:ring-0 p-0 text-foreground w-full"
+            className="w-full rounded-lg bg-secondary/60 px-1.5 py-0.5 text-2xl font-semibold tracking-tight text-foreground outline-none ring-2 ring-primary/30 sm:text-[1.75rem]"
             value={editTitle}
             onChange={(e) => setEditTitle(e.target.value)}
             onBlur={handleTitleSave}
-            onKeyDown={handleTitleKeyDown}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleTitleSave()
+              else if (e.key === "Escape") {
+                setIsEditingTitle(false)
+                setEditTitle(title)
+              }
+            }}
             disabled={isSaving}
+            aria-label={t("ui.rename")}
           />
         ) : (
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <h1 
-              className="text-xl sm:text-2xl font-bold tracking-tight cursor-pointer hover:opacity-85 transition-all flex items-center gap-2 group text-foreground truncate"
+          <h1 className="min-w-0">
+            <button
+              type="button"
+              className="group -mx-1.5 flex max-w-full items-center gap-2 rounded-lg px-1.5 py-0.5 text-left text-xl font-semibold tracking-tight text-foreground outline-none transition-colors hover:bg-secondary/70 sm:text-2xl focus-visible:ring-2 focus-visible:ring-ring sm:text-[1.75rem]"
               onClick={() => setIsEditingTitle(true)}
-              title={lang === 'id' ? 'Klik untuk mengganti nama board' : 'Click to rename board'}
+              title={t("ui.renameBoardHint")}
             >
               <span className="truncate">{title}</span>
-              <Pencil className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground/60 hover-reveal shrink-0" />
-            </h1>
-          </div>
+              <Pencil className="hover-reveal size-4 shrink-0 text-muted-foreground" aria-hidden />
+            </button>
+          </h1>
         )}
 
         {isEditingDescription ? (
           <Textarea
             autoFocus
-            className="min-h-[70px] resize-none mt-1 rounded-xl text-xs"
+            className="mt-1 min-h-[72px] resize-none text-sm"
             value={editDescription}
             onChange={(e) => setEditDescription(e.target.value)}
             onBlur={handleDescriptionSave}
-            onKeyDown={handleDescriptionKeyDown}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                setIsEditingDescription(false)
+                setEditDescription(description)
+              }
+            }}
             disabled={isSaving}
           />
         ) : (
-          <div 
-            className="cursor-pointer group flex items-start mt-0.5"
+          <button
+            type="button"
+            className="group -mx-1.5 flex items-start rounded-md px-1.5 py-0.5 text-left text-sm text-muted-foreground outline-none transition-colors hover:bg-secondary/70 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
             onClick={() => setIsEditingDescription(true)}
           >
-            {description ? (
-              <p className="text-muted-foreground text-xs leading-relaxed hover:opacity-85 transition-opacity line-clamp-2 sm:line-clamp-none">
-                {description}
-              </p>
-            ) : (
-              <p className="text-muted-foreground/60 text-xs italic group-hover:text-muted-foreground transition-colors">
-                {lang === 'id' ? 'Tambahkan deskripsi untuk board ini...' : 'Add a description for this board...'}
-              </p>
-            )}
-            <Pencil className="h-3 w-3 ml-1.5 hover-reveal text-muted-foreground shrink-0 mt-0.5" />
-          </div>
+            <span className={description ? "line-clamp-1 sm:line-clamp-2" : "italic opacity-80"}>
+              {description || t("ui.addBoardDescription")}
+            </span>
+            <Pencil className="hover-reveal ml-1.5 mt-0.5 size-3 shrink-0" aria-hidden />
+          </button>
         )}
       </div>
 
-      <Button
-        variant="outline"
-        size="sm"
-        className="gap-2 shrink-0 rounded-xl bg-card/80 hover:bg-accent border-border/70 shadow-xs hover:shadow-sm transition-all duration-200 active:scale-95 text-xs font-medium self-end sm:self-auto h-8 sm:h-9"
-        onClick={() => setActivityOpen(true)}
-      >
-        <ActivityIcon className="h-3.5 w-3.5 text-primary" />
-        <span>{t('kanban.activityFeed')}</span>
-      </Button>
+      <div className="flex shrink-0 items-center gap-2 sm:gap-4">
+        <ProgressRing value={pct} label={t("ui.completion", { done: doneCount, total: totalCount })} />
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-9 w-9 px-0 sm:w-auto sm:px-3"
+          onClick={() => setActivityOpen(true)}
+          aria-label={t("kanban.activityFeed")}
+          data-print-hide
+        >
+          <ActivityIcon className="size-4 text-primary" aria-hidden />
+          <span className="hidden sm:inline">{t("kanban.activityFeed")}</span>
+        </Button>
+      </div>
 
-      <ActivityFeed 
-        activities={activities} 
-        open={activityOpen} 
-        onOpenChange={setActivityOpen} 
-      />
+      {activityMounted && <ActivityFeed activities={activities} loading={activityOpen && !activitiesLoaded} open={activityOpen} onOpenChange={setActivityOpen} />}
     </div>
   )
 }

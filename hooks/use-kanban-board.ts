@@ -320,6 +320,16 @@ export function useKanbanBoard(initialData: BoardData) {
     })));
   }, []);
 
+  /** Re-insert a card (e.g. after "Undo delete") at its previous index. */
+  const handleRestoreCard = useCallback((card: CardItem, index: number) => {
+    setColumns(prev => prev.map(col => {
+      if (col.id !== card.columnId || col.cards.some(c => c.id === card.id)) return col;
+      const cards = [...col.cards];
+      cards.splice(Math.max(0, Math.min(index, cards.length)), 0, card);
+      return { ...col, cards };
+    }));
+  }, []);
+
   const handleUpdateColumn = useCallback((columnId: string, title: string) => {
     setColumns(prev => prev.map(col => 
       col.id === columnId ? { ...col, title } : col
@@ -341,6 +351,7 @@ export function useKanbanBoard(initialData: BoardData) {
     handleCreateColumn,
     handleUpdateCard,
     handleDeleteCard,
+    handleRestoreCard,
     handleUpdateColumn,
     handleDeleteColumn,
   };
