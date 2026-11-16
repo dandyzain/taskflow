@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { m } from 'motion/react';
+import * as m from 'motion/react-m';
 import { BarChart3, LayoutGrid, Plus, Search, UserRound } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/language-context';
 import { layoutSpring } from '@/lib/motion';

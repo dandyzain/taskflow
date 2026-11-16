@@ -46,7 +46,7 @@ export function CardFace({ card, lifted }: { card: CardItem; lifted?: boolean })
         </div>
       )}
 
-      <h4 className="text-sm font-medium leading-snug text-foreground [overflow-wrap:anywhere]">{card.title}</h4>
+      <h3 className="text-sm font-medium leading-snug text-foreground [overflow-wrap:anywhere]">{card.title}</h3>
 
       {card.description && (
         <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">

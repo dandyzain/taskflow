@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { m } from 'motion/react';
+import * as m from 'motion/react-m';
 import { Logo } from '@/components/brand/logo';
 import { BoardPreview } from '@/components/brand/board-preview';
 import { LanguageToggle } from '@/components/language-toggle';
@@ -41,8 +41,8 @@ export function AuthShell({ title, description, eyebrow, children, footer, wide 
 
         <main className="flex flex-1 items-center justify-center py-10">
           <m.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 12 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.45, ease: EASE_OUT }}
             className={wide ? 'w-full max-w-md' : 'w-full max-w-sm'}
           >
@@ -77,8 +77,8 @@ export function AuthShell({ title, description, eyebrow, children, footer, wide 
             <BoardPreview />
           </m.div>
           <m.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 12 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.6, ease: EASE_OUT, delay: 0.35 }}
             className="mt-10 text-center"
           >

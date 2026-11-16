@@ -14,9 +14,13 @@ import {
 } from 'lucide-react';
 import type { TaskItemReport, EmployeeMetric, WorkspaceReportData, DailyActivityTrend } from '@/lib/queries/report-queries';
 import NumberFlow from '@number-flow/react';
-import { m } from 'motion/react';
+import * as m from 'motion/react-m';
 import { EASE_OUT } from '@/lib/motion';
-import { KpiDetailModal, type KpiMetricType } from '@/components/reports/kpi-detail-modal';
+import type { KpiMetricType } from '@/components/reports/kpi-detail-modal';
+import dynamic from 'next/dynamic';
+import { useEverTrue } from '@/hooks/use-ever-true';
+
+const KpiDetailModal = dynamic(() => import('@/components/reports/kpi-detail-modal').then((m) => m.KpiDetailModal), { ssr: false });
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/lib/i18n/language-context';
 
@@ -167,6 +171,7 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId, da
     },
   ];
 
+  const modalMounted = useEverTrue(selectedMetric !== null);
   const trendFor: Partial<Record<KpiMetricType, number[]>> = {
     total: dailyTrends.map((d) => d.createdCount),
     completed: dailyTrends.map((d) => d.completedCount),
@@ -192,8 +197,8 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId, da
                 type="button"
                 data-kpi={card.metricType}
                 data-value={card.value}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ y: 10 }}
+                animate={{ y: 0 }}
                 transition={{ duration: 0.35, ease: EASE_OUT, delay: i * 0.04 }}
                 onClick={() => setSelectedMetric(card.metricType)}
                 className={cn(
@@ -235,6 +240,7 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId, da
       </section>
 
       {/* Pop-up Detail Modal */}
+      {modalMounted && (
       <KpiDetailModal
         open={selectedMetric !== null}
         onOpenChange={(open) => {
@@ -246,6 +252,7 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId, da
         summary={summary}
         workspaceId={workspaceId}
       />
+      )}
     </>
   );
 }

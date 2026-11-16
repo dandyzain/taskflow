@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { m, useScroll, useTransform } from 'motion/react';
+import { useScroll, useTransform } from 'motion/react';
+import * as m from 'motion/react-m';
 import { ArrowRight, BarChart3, Command, MousePointer2, Smartphone, Sparkles } from 'lucide-react';
 import { Logo } from '@/components/brand/logo';
 import { BoardPreview } from '@/components/brand/board-preview';
@@ -52,6 +53,7 @@ export function LandingPage() {
         </div>
       </m.header>
 
+      <main id="main-content">
       {/* Hero */}
       <section className="relative">
         <div className="pointer-events-none absolute inset-x-0 -top-40 h-[40rem] overflow-hidden" aria-hidden>
@@ -64,8 +66,8 @@ export function LandingPage() {
 
         <div className="relative mx-auto max-w-6xl px-4 pb-10 pt-14 text-center sm:px-6 sm:pt-20">
           <m.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 10 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.5, ease: EASE_OUT }}
             className="inline-flex h-8 items-center gap-2 rounded-full border bg-card/70 px-3 text-xs font-medium text-muted-foreground shadow-e1 backdrop-blur"
           >
@@ -74,8 +76,8 @@ export function LandingPage() {
           </m.div>
 
           <m.h1
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 14 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.6, ease: EASE_OUT, delay: 0.06 }}
             className="mx-auto mt-6 max-w-3xl text-balance text-[2.6rem] font-semibold leading-[1.05] tracking-[-0.035em] sm:text-6xl lg:text-7xl"
           >
@@ -84,8 +86,8 @@ export function LandingPage() {
           </m.h1>
 
           <m.p
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 14 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.6, ease: EASE_OUT, delay: 0.12 }}
             className="mx-auto mt-5 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg"
           >
@@ -93,8 +95,8 @@ export function LandingPage() {
           </m.p>
 
           <m.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 14 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.6, ease: EASE_OUT, delay: 0.18 }}
             className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row"
           >
@@ -113,8 +115,8 @@ export function LandingPage() {
           {/* Product preview with scroll-linked tilt */}
           <div className="mx-auto mt-14 max-w-4xl [perspective:1400px]">
             <m.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ y: 40 }}
+              animate={{ y: 0 }}
               transition={{ duration: 0.8, ease: EASE_OUT, delay: 0.25 }}
             >
               <m.div style={{ rotateX, y }} className="origin-top">
@@ -180,6 +182,8 @@ export function LandingPage() {
           </div>
         </Reveal>
       </section>
+
+      </main>
 
       <footer className="border-t">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:px-6">

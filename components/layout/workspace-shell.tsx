@@ -5,22 +5,28 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Menu, Search } from 'lucide-react';
 import { Sidebar, type SidebarState } from '@/components/layout/sidebar';
-import { CommandPalette } from '@/components/layout/command-palette';
 import { MobileTabBar } from '@/components/layout/mobile-tab-bar';
-import { AccountDrawer } from '@/components/layout/account-drawer';
-import { CreateBoardDialog } from '@/components/layout/create-board-dialog';
 import {
   WorkspaceProvider,
   type BoardBridge,
   type ShellBoard,
   type ShellUser,
 } from '@/components/layout/workspace-context';
-import { KeyboardShortcutsDialog } from '@/components/keyboard-shortcuts-dialog';
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { LogoMark } from '@/components/brand/logo';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { useEverTrue } from '@/hooks/use-ever-true';
 import { useLanguage } from '@/lib/i18n/language-context';
+import dynamic from 'next/dynamic';
+
+// Overlays are code-split and only fetched the first time they open
+const CommandPalette = dynamic(() => import('@/components/layout/command-palette').then((m) => m.CommandPalette), { ssr: false });
+const AccountDrawer = dynamic(() => import('@/components/layout/account-drawer').then((m) => m.AccountDrawer), { ssr: false });
+const CreateBoardDialog = dynamic(() => import('@/components/layout/create-board-dialog').then((m) => m.CreateBoardDialog), { ssr: false });
+const KeyboardShortcutsDialog = dynamic(() =>
+  import('@/components/keyboard-shortcuts-dialog').then((m) => m.KeyboardShortcutsDialog)
+, { ssr: false });
 
 interface WorkspaceShellProps {
   workspaceId: string;
@@ -44,9 +50,19 @@ export function WorkspaceShell({ workspaceId, workspaceName, boards, currentUser
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [createBoardOpen, setCreateBoardOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
-  const [bridge, setBridge] = useState<BoardBridge | null>(null);
+  // Board → chrome bridge kept in a ref so board updates don't re-render the shell
+  const bridgeRef = React.useRef<BoardBridge | null>(null);
+  const getBridge = useCallback(() => bridgeRef.current, []);
+  const setBridge = useCallback((b: BoardBridge | null) => {
+    bridgeRef.current = b;
+  }, []);
   const [sidebarState, setSidebarState] = useState<SidebarState>('auto');
   const isXl = useMediaQuery('(min-width: 1280px)');
+  const [paletteWarm, setPaletteWarm] = useState(false);
+  const paletteMounted = useEverTrue(paletteOpen || paletteWarm);
+  const createBoardMounted = useEverTrue(createBoardOpen);
+  const shortcutsMounted = useEverTrue(shortcutsOpen);
+  const accountMounted = useEverTrue(accountOpen);
 
   // Restore the user's explicit sidebar preference (if any)
   useEffect(() => {
@@ -71,6 +87,15 @@ export function WorkspaceShell({ workspaceId, workspaceName, boards, currentUser
       return next;
     });
   }, [isRail]);
+
+  // Warm the command palette chunk when the browser is idle so the first ⌘K
+  // opens instantly (and no keystrokes are lost while it loads)
+  useEffect(() => {
+    const warm = () => void import('@/components/layout/command-palette').then(() => setPaletteWarm(true));
+    const ric = (window as Window & { requestIdleCallback?: (cb: () => void) => number }).requestIdleCallback;
+    if (ric) ric(warm);
+    else window.setTimeout(warm, 1500);
+  }, []);
 
   // Global shortcuts: ⌘K palette, [ sidebar, ? help
   useEffect(() => {
@@ -103,10 +128,10 @@ export function WorkspaceShell({ workspaceId, workspaceName, boards, currentUser
       openPalette: () => setPaletteOpen(true),
       openCreateBoard: () => setCreateBoardOpen(true),
       openShortcuts: () => setShortcutsOpen(true),
-      bridge,
+      getBridge,
       setBridge,
     }),
-    [workspaceId, workspaceName, boards, currentUser, bridge]
+    [workspaceId, workspaceName, boards, currentUser, getBridge, setBridge]
   );
 
   const sharedSidebarProps = {
@@ -177,28 +202,38 @@ export function WorkspaceShell({ workspaceId, workspaceName, boards, currentUser
           workspaceId={workspaceId}
           onBoards={() => setDrawerOpen(true)}
           onSearch={() => setPaletteOpen(true)}
-          onCreate={() => (bridge ? bridge.newTask() : setCreateBoardOpen(true))}
+          onCreate={() => {
+            const b = bridgeRef.current;
+            if (b) b.newTask();
+            else setCreateBoardOpen(true);
+          }}
           onAccount={() => setAccountOpen(true)}
         />
       </div>
 
+      {paletteMounted && (
       <CommandPalette
         open={paletteOpen}
         onOpenChange={setPaletteOpen}
         workspaceId={workspaceId}
         boards={boards}
-        bridge={bridge}
+        bridge={paletteOpen ? bridgeRef.current : null}
         onCreateBoard={() => setCreateBoardOpen(true)}
         onOpenShortcuts={() => setShortcutsOpen(true)}
       />
-      <CreateBoardDialog workspaceId={workspaceId} open={createBoardOpen} onOpenChange={setCreateBoardOpen} />
-      <KeyboardShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} />
-      <AccountDrawer
-        open={accountOpen}
-        onOpenChange={setAccountOpen}
-        user={currentUser ?? null}
-        onOpenShortcuts={() => setShortcutsOpen(true)}
-      />
+      )}
+      {createBoardMounted && (
+        <CreateBoardDialog workspaceId={workspaceId} open={createBoardOpen} onOpenChange={setCreateBoardOpen} />
+      )}
+      {shortcutsMounted && <KeyboardShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} />}
+      {accountMounted && (
+        <AccountDrawer
+          open={accountOpen}
+          onOpenChange={setAccountOpen}
+          user={currentUser ?? null}
+          onOpenShortcuts={() => setShortcutsOpen(true)}
+        />
+      )}
     </WorkspaceProvider>
   );
 }

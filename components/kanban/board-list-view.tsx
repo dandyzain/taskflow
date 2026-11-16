@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { m } from 'motion/react';
+import * as m from 'motion/react-m';
 import { ChevronDown, Plus } from 'lucide-react';
 import type { BoardColumn } from '@/types/kanban';
 import { LabelBadge } from '@/components/kanban/label-badge';
@@ -33,8 +33,8 @@ export function BoardListView({ columns, totals, onOpenCard, onAddTask }: BoardL
         return (
           <m.section
             key={col.id}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 8 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.25, ease: EASE_OUT, delay: Math.min(ci, 6) * 0.04 }}
             className="overflow-hidden rounded-2xl border bg-card shadow-e1"
           >
@@ -49,7 +49,7 @@ export function BoardListView({ columns, totals, onOpenCard, onAddTask }: BoardL
                 aria-hidden
               />
               <span className={cn('size-2.5 rounded-full', status.dot)} aria-hidden />
-              <h3 className="flex-1 text-sm font-semibold">{col.title}</h3>
+              <h2 className="flex-1 text-sm font-semibold">{col.title}</h2>
               <span className="rounded-full bg-card px-2 py-0.5 text-xs tabular-nums text-muted-foreground ring-1 ring-border">
                 {col.cards.length === totals[col.id] ? col.cards.length : `${col.cards.length}/${totals[col.id]}`}
               </span>

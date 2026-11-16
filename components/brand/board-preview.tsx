@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { LayoutGroup, m, useReducedMotion } from 'motion/react';
+import { LayoutGroup, useReducedMotion } from 'motion/react';
+import * as m from 'motion/react-m';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

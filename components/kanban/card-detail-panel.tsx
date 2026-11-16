@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, m } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import { toast } from 'sonner';
 import { CalendarDays, Check, CircleDashed, Flag, Loader2, Tag, Trash2, Users, X } from 'lucide-react';
 import { updateCard } from '@/actions/card-crud-actions';

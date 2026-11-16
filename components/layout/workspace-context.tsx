@@ -35,7 +35,8 @@ interface WorkspaceContextValue {
   openPalette: () => void;
   openCreateBoard: () => void;
   openShortcuts: () => void;
-  bridge: BoardBridge | null;
+  /** Read the current board bridge (ref-backed: updating it never re-renders the shell) */
+  getBridge: () => BoardBridge | null;
   setBridge: (bridge: BoardBridge | null) => void;
 }
 

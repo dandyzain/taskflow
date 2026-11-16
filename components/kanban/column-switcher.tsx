@@ -1,6 +1,6 @@
 'use client';
 
-import { m } from 'motion/react';
+import * as m from 'motion/react-m';
 import type { BoardColumn } from '@/types/kanban';
 import { getStatus } from '@/lib/design/tokens';
 import { useLanguage } from '@/lib/i18n/language-context';

@@ -3,7 +3,7 @@
 import { memo, useState } from 'react';
 import { useSortable, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { m } from 'motion/react';
+import * as m from 'motion/react-m';
 import { toast } from 'sonner';
 import { ChevronsLeftRight, ChevronsRightLeft, GripVertical, Inbox, MoreHorizontal, Pencil, Plus, Trash2 } from 'lucide-react';
 import { CardItemComponent } from '@/components/kanban/card-item';
@@ -153,8 +153,8 @@ function KanbanColumnInner({
 
   return (
     <m.section
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ y: 10 }}
+      animate={{ y: 0 }}
       transition={{ duration: 0.3, ease: EASE_OUT, delay: Math.min(index, 6) * 0.04 }}
       className="flex max-h-full min-h-0 shrink-0 snap-center flex-col sm:snap-align-none"
       aria-label={column.title}
@@ -201,12 +201,12 @@ function KanbanColumnInner({
               aria-label={t('ui.rename')}
             />
           ) : (
-            <h3
+            <h2
               className="min-w-0 flex-1 cursor-text truncate text-sm font-semibold text-foreground"
               onDoubleClick={() => setIsEditing(true)}
             >
               {column.title}
-            </h3>
+            </h2>
           )}
 
           <span className="rounded-full bg-card px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground ring-1 ring-border">

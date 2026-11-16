@@ -31,9 +31,7 @@ import { CreateColumnForm } from '@/components/kanban/create-column-form';
 import { BoardHeader } from '@/components/kanban/board-header';
 import { BoardToolbar, type BoardView } from '@/components/kanban/board-toolbar';
 import { BoardShortcuts } from '@/components/kanban/board-shortcuts';
-import { BoardListView } from '@/components/kanban/board-list-view';
 import { ColumnSwitcher } from '@/components/kanban/column-switcher';
-import { CardDetailPanel } from '@/components/kanban/card-detail-panel';
 import { useWorkspace } from '@/components/layout/workspace-context';
 import { EmptyState } from '@/components/patterns/empty-state';
 import { Button } from '@/components/ui/button';
@@ -44,6 +42,11 @@ import { getStatus, getStatusKind } from '@/lib/design/tokens';
 import { useLanguage } from '@/lib/i18n/language-context';
 import { celebrate } from '@/lib/celebrate';
 import type { BoardData, LabelItem, AssigneeItem, CardItem } from '@/types/kanban';
+import dynamic from 'next/dynamic';
+import { useEverTrue } from '@/hooks/use-ever-true';
+
+const CardDetailPanel = dynamic(() => import('@/components/kanban/card-detail-panel').then((m) => m.CardDetailPanel), { ssr: false });
+const BoardListView = dynamic(() => import('@/components/kanban/board-list-view').then((m) => m.BoardListView), { ssr: false });
 
 interface KanbanBoardProps {
   initialData: BoardData;
@@ -446,6 +449,7 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
   useEffect(() => () => setBridge?.(null), [setBridge]);
 
   const noResults = activeFilterCount > 0 && visibleCount === 0;
+  const panelMounted = useEverTrue(panelOpen);
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -574,6 +578,7 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
         </>
       )}
 
+      {panelMounted && (
       <CardDetailPanel
         card={openCardData?.card ?? null}
         columnTitle={openCardData?.columnTitle ?? ''}
@@ -584,6 +589,7 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
         onCardUpdated={handleUpdateCard}
         onRequestDelete={requestDelete}
       />
+      )}
     </div>
   );
 }
