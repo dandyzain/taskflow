@@ -98,15 +98,15 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
       {/* 4 Task Inventory Analytics KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5">
         {/* Total Tasks */}
-        <div className="rounded-2xl border border-border/80 bg-card/85 dark:bg-card/40 backdrop-blur-md p-3 sm:p-4 shadow-xs space-y-1.5">
+        <div className="rounded-2xl border border-border bg-card p-3 sm:p-4 shadow-xs space-y-1.5">
           <div className="flex items-center justify-between gap-1.5">
             <span className="text-[11px] text-muted-foreground font-semibold truncate">{t('reports.inventoryFiltered')}</span>
-            <span className="text-2xs font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-secondary border border-border/60 shrink-0">
+            <span className="text-2xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-full bg-secondary border border-border/60 shrink-0">
               {tasks.length > 0 ? Math.round((totalCount / tasks.length) * 100) : 0}% {t('common.all')}
             </span>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-0.5 sm:gap-1">
-            <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{totalCount}</h3>
+            <h3 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">{totalCount}</h3>
             <span className="text-2xs sm:text-[11px] text-muted-foreground truncate">
               {t('reports.inventoryFilteredSub', { total: tasks.length.toString() })}
             </span>
@@ -114,63 +114,63 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
         </div>
 
         {/* Urgent Tasks */}
-        <div className="rounded-2xl border border-rose-300/40 dark:border-rose-700/40 bg-card/85 dark:bg-card/40 backdrop-blur-md p-3 sm:p-4 shadow-xs space-y-1.5">
+        <div className="rounded-2xl border border-danger/25 bg-card p-3 sm:p-4 shadow-xs space-y-1.5">
           <div className="flex items-center justify-between gap-1.5">
-            <span className="text-[11px] text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1 min-w-0">
+            <span className="text-[11px] text-danger font-semibold flex items-center gap-1 min-w-0">
               <Flame className="w-3.5 h-3.5 shrink-0" />
               <span className="truncate">{t('reports.inventoryUrgent')}</span>
             </span>
-            <span className="text-2xs font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200/60 shrink-0">
+            <span className="text-2xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-full bg-danger-soft text-danger border border-danger/25 shrink-0">
               {t('reports.badgeHigh')}
             </span>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-0.5 sm:gap-1">
-            <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-rose-600 dark:text-rose-400">{urgentCount}</h3>
+            <h3 className="text-xl sm:text-2xl font-semibold tracking-tight text-danger">{urgentCount}</h3>
             <span className="text-2xs sm:text-[11px] text-muted-foreground truncate">{t('reports.inventoryUrgentSub')}</span>
           </div>
         </div>
 
         {/* Risky / Overdue Tasks */}
-        <div className="rounded-2xl border border-amber-300/40 dark:border-amber-700/40 bg-card/85 dark:bg-card/40 backdrop-blur-md p-3 sm:p-4 shadow-xs space-y-1.5">
+        <div className="rounded-2xl border border-warning/25 bg-card p-3 sm:p-4 shadow-xs space-y-1.5">
           <div className="flex items-center justify-between gap-1.5">
-            <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1 min-w-0">
+            <span className="text-[11px] text-warning font-semibold flex items-center gap-1 min-w-0">
               <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
               <span className="truncate">{t('reports.inventoryRisk')}</span>
             </span>
-            <span className="text-2xs font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/60 shrink-0">
+            <span className="text-2xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-full bg-warning-soft text-warning border border-warning/25 shrink-0">
               {t('reports.badgeSlaRisk')}
             </span>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-0.5 sm:gap-1">
-            <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400">{riskyCount}</h3>
+            <h3 className="text-xl sm:text-2xl font-semibold tracking-tight text-warning">{riskyCount}</h3>
             <span className="text-2xs sm:text-[11px] text-muted-foreground truncate">{t('reports.inventoryRiskSub')}</span>
           </div>
         </div>
 
         {/* Unassigned Tasks */}
-        <div className="rounded-2xl border border-border/80 bg-card/85 dark:bg-card/40 backdrop-blur-md p-3 sm:p-4 shadow-xs space-y-1.5">
+        <div className="rounded-2xl border border-border bg-card p-3 sm:p-4 shadow-xs space-y-1.5">
           <div className="flex items-center justify-between gap-1.5">
             <span className="text-[11px] text-muted-foreground font-semibold flex items-center gap-1 min-w-0">
               <UserX className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
               <span className="truncate">{t('reports.inventoryUnassigned')}</span>
             </span>
-            <span className="text-2xs font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-secondary border border-border/60 shrink-0">
+            <span className="text-2xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-full bg-secondary border border-border/60 shrink-0">
               {t('reports.badgeUnassigned')}
             </span>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-0.5 sm:gap-1">
-            <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{unassignedCount}</h3>
+            <h3 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">{unassignedCount}</h3>
             <span className="text-2xs sm:text-[11px] text-muted-foreground truncate">{t('reports.inventoryUnassignedSub')}</span>
           </div>
         </div>
       </div>
 
       {/* Main Container */}
-      <div className="rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-md p-3.5 sm:p-5 shadow-xs space-y-4">
+      <div className="rounded-2xl border border-border bg-card p-3.5 sm:p-5 shadow-xs space-y-4">
         {/* Header & Controls */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           <div>
-            <h3 className="text-sm font-bold text-foreground">
+            <h3 className="text-[0.9375rem] font-semibold text-foreground">
               {t('reports.taskInventoryTitle', { count: totalCount.toString() })}
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
@@ -187,7 +187,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={t('reports.modalSearchPlaceholder')}
-                className="pl-8 h-8 text-xs rounded-xl bg-background/60 border-border/80 w-full"
+                className="pl-8 h-8 text-xs rounded-xl bg-background/60 border-border w-full"
               />
             </div>
 
@@ -252,7 +252,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
               onClick={() => setStatusFilter('progress')}
               className={cn(
                 'px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap shrink-0',
-                statusFilter === 'progress' ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 font-bold' : 'text-muted-foreground hover:text-foreground'
+                statusFilter === 'progress' ? 'bg-warning/15 text-warning font-semibold' : 'text-muted-foreground hover:text-foreground'
               )}
             >
               {t('common.inProgress')}
@@ -261,7 +261,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
               onClick={() => setStatusFilter('completed')}
               className={cn(
                 'px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap shrink-0',
-                statusFilter === 'completed' ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-bold' : 'text-muted-foreground hover:text-foreground'
+                statusFilter === 'completed' ? 'bg-success/15 text-success font-semibold' : 'text-muted-foreground hover:text-foreground'
               )}
             >
               {t('common.completed')}
@@ -270,7 +270,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
               onClick={() => setStatusFilter('overdue')}
               className={cn(
                 'px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap shrink-0',
-                statusFilter === 'overdue' ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300 font-bold' : 'text-muted-foreground hover:text-foreground'
+                statusFilter === 'overdue' ? 'bg-danger/15 text-danger font-semibold' : 'text-muted-foreground hover:text-foreground'
               )}
             >
               {t('common.overdue')}
@@ -279,7 +279,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
               onClick={() => setStatusFilter('due_soon')}
               className={cn(
                 'px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap shrink-0',
-                statusFilter === 'due_soon' ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 font-bold' : 'text-muted-foreground hover:text-foreground'
+                statusFilter === 'due_soon' ? 'bg-warning/15 text-warning font-semibold' : 'text-muted-foreground hover:text-foreground'
               )}
             >
               {t('common.dueSoon')}
@@ -314,9 +314,9 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
 
         {/* View Mode 1: Table View */}
         {viewMode === 'table' ? (
-          <div className="overflow-x-auto rounded-xl border border-border/70 scrollbar-none -mx-1 sm:mx-0">
+          <div className="overflow-x-auto rounded-xl border border-border scrollbar-none -mx-1 sm:mx-0">
             <table className="w-full text-left text-xs min-w-[640px]">
-              <thead className="bg-secondary/40 border-b border-border/70 text-muted-foreground uppercase text-2xs font-bold tracking-wider">
+              <thead className="bg-secondary/40 border-b border-border text-muted-foreground uppercase text-2xs font-semibold tracking-wider">
                 <tr>
                   <th className="px-4 py-3">{t('common.title')}</th>
                   <th className="px-3 py-3">Board</th>
@@ -338,11 +338,11 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                   sortedTasks.map((task) => {
                     const priorityBadge =
                       task.priority === 3
-                        ? 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border-rose-200'
+                        ? 'bg-danger-soft text-danger border-danger/25'
                         : task.priority === 2
-                        ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border-amber-200'
+                        ? 'bg-warning-soft text-warning border-warning/25'
                         : task.priority === 1
-                        ? 'bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300 border-sky-200'
+                        ? 'bg-info-soft text-info border-info/25'
                         : 'bg-muted text-muted-foreground border-border';
 
                     return (
@@ -376,9 +376,9 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                           <span className={cn(
                             'text-2xs font-semibold px-2 py-0.5 rounded-full border',
                             task.isCompleted
-                              ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200'
+                              ? 'bg-success-soft text-success border-success/25'
                               : task.isInProgress
-                              ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border-amber-200'
+                              ? 'bg-warning-soft text-warning border-warning/25'
                               : 'bg-secondary text-foreground border-border/60'
                           )}>
                             {task.columnTitle}
@@ -401,9 +401,9 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                                 className={cn(
                                   'font-medium',
                                   task.isOverdue
-                                    ? 'text-rose-600 dark:text-rose-400 font-bold'
+                                    ? 'text-danger font-semibold'
                                     : task.isDueSoon
-                                    ? 'text-amber-600 dark:text-amber-400 font-semibold'
+                                    ? 'text-warning font-semibold'
                                     : 'text-muted-foreground'
                                 )}
                               >
@@ -414,7 +414,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                                 })}
                               </span>
                               {task.isOverdue && (
-                                <span className="text-2xs bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 px-1 py-0.5 rounded font-bold border border-rose-200">
+                                <span className="text-2xs bg-danger-soft text-danger px-1 py-0.5 rounded font-semibold border border-danger/25">
                                   {t('common.overdue')}
                                 </span>
                               )}
@@ -431,7 +431,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                               {task.assignees.map((u) => (
                                 <Avatar key={u.id} className="w-6 h-6 border-2 border-background" title={u.name}>
                                   {u.avatarUrl && <AvatarImage src={u.avatarUrl} alt={u.name} />}
-                                  <AvatarFallback className="text-[9px] font-bold bg-pastel-lavender text-pastel-lavender-text">
+                                  <AvatarFallback className="text-[9px] font-semibold bg-pastel-lavender text-pastel-lavender-text">
                                     {u.name.charAt(0).toUpperCase()}
                                   </AvatarFallback>
                                 </Avatar>
@@ -479,17 +479,17 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
               sortedTasks.map((task) => {
                 const priorityBadge =
                   task.priority === 3
-                    ? 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border-rose-200'
+                    ? 'bg-danger-soft text-danger border-danger/25'
                     : task.priority === 2
-                    ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border-amber-200'
+                    ? 'bg-warning-soft text-warning border-warning/25'
                     : task.priority === 1
-                    ? 'bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300 border-sky-200'
+                    ? 'bg-info-soft text-info border-info/25'
                     : 'bg-muted text-muted-foreground border-border';
 
                 return (
                   <div
                     key={task.id}
-                    className="p-3.5 rounded-xl bg-secondary/25 border border-border/70 hover:border-primary/40 hover:shadow-card-hover transition-all duration-200 flex flex-col justify-between space-y-3"
+                    className="p-3.5 rounded-xl bg-secondary/25 border border-border hover:border-primary/40 hover:shadow-e2 transition-all duration-200 flex flex-col justify-between space-y-3"
                   >
                     <div className="space-y-2">
                       {/* Board & Priority Pills */}
@@ -497,13 +497,13 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                         <span className="px-2 py-0.5 rounded-md bg-secondary font-medium text-muted-foreground truncate max-w-[140px] border border-border/50">
                           {task.boardTitle}
                         </span>
-                        <span className={cn('px-2 py-0.5 rounded-full font-bold border shrink-0', priorityBadge)}>
+                        <span className={cn('px-2 py-0.5 rounded-full font-semibold border shrink-0', priorityBadge)}>
                           {task.priorityLabel}
                         </span>
                       </div>
 
                       {/* Title & Description */}
-                      <h4 className="text-xs sm:text-sm font-bold text-foreground leading-snug line-clamp-2">
+                      <h4 className="text-xs sm:text-[0.9375rem] font-semibold text-foreground leading-snug line-clamp-2">
                         {task.title}
                       </h4>
                       {task.description && (
@@ -533,9 +533,9 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                         <span className={cn(
                           'text-2xs font-semibold px-2 py-0.5 rounded-full border',
                           task.isCompleted
-                            ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200'
+                            ? 'bg-success-soft text-success border-success/25'
                             : task.isInProgress
-                            ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border-amber-200'
+                            ? 'bg-warning-soft text-warning border-warning/25'
                             : 'bg-secondary text-foreground border-border/60'
                         )}>
                           {task.columnTitle}
@@ -545,9 +545,9 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                           <div className={cn(
                             'flex items-center gap-1 text-[11px]',
                             task.isOverdue
-                              ? 'text-rose-600 dark:text-rose-400 font-bold'
+                              ? 'text-danger font-semibold'
                               : task.isDueSoon
-                              ? 'text-amber-600 dark:text-amber-400 font-semibold'
+                              ? 'text-warning font-semibold'
                               : 'text-muted-foreground'
                           )}>
                             <Calendar className="w-3 h-3 shrink-0" />
@@ -570,7 +570,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                             task.assignees.map((u) => (
                               <Avatar key={u.id} className="w-5 h-5 border-2 border-background" title={u.name}>
                                 {u.avatarUrl && <AvatarImage src={u.avatarUrl} alt={u.name} />}
-                                <AvatarFallback className="text-[8px] font-bold bg-pastel-lavender text-pastel-lavender-text">
+                                <AvatarFallback className="text-[8px] font-semibold bg-pastel-lavender text-pastel-lavender-text">
                                   {u.name.charAt(0).toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
@@ -584,7 +584,7 @@ export function TaskTable({ tasks, workspaceId }: TaskTableProps) {
                         {workspaceId && (
                           <Link
                             href={`/workspace/${workspaceId}/board/${task.boardId}`}
-                            className="inline-flex items-center gap-1 text-[11px] font-bold text-primary hover:underline"
+                            className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline"
                           >
                             <span>{t('common.openBoard')}</span>
                             <ArrowUpRight className="w-3 h-3" />

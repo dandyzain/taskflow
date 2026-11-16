@@ -232,6 +232,32 @@
   }
 }
 
+/* Chart bars draw in when their <Reveal> enters the viewport */
+@keyframes bar-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes bar-y {
+  from {
+    transform: scaleY(0);
+  }
+}
+[data-animate-bars]:not([data-inview]) [style*='width:'] {
+  transform: scaleX(0);
+}
+[data-animate-bars]:not([data-inview]) [style*='height:'] {
+  transform: scaleY(0);
+}
+[data-animate-bars][data-inview] [style*='width:'] {
+  transform-origin: left center;
+  animation: bar-x 0.9s var(--ease-out) both;
+}
+[data-animate-bars][data-inview] [style*='height:'] {
+  transform-origin: center bottom;
+  animation: bar-y 0.8s var(--ease-out) both;
+}
+
 /* Scrollbars */
 * {
   scrollbar-width: thin;
@@ -298,6 +324,10 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
 
+  [data-print-only] {
+    display: none;
+  }
+
   .tap-target {
     position: relative;
   }
@@ -359,12 +389,35 @@
   [data-sonner-toaster] {
     display: none !important;
   }
-  [data-print-expand] {
+  /* Release the app shell's fixed viewport height so every page prints */
+  .app-canvas {
+    display: block !important;
     height: auto !important;
     overflow: visible !important;
   }
+  #main-content,
+  #main-content > div,
+  [data-print-expand] {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    padding-bottom: 0 !important;
+  }
   .print-avoid-break {
     break-inside: avoid;
+  }
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  [data-animate-bars] [style*='width:'],
+  [data-animate-bars] [style*='height:'] {
+    transform: none !important;
+    animation: none !important;
+  }
+  [data-print-only] {
+    display: block !important;
   }
   * {
     box-shadow: none !important;

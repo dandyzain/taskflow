@@ -12,7 +12,10 @@ import {
   ArrowUp,
   ChevronRight,
 } from 'lucide-react';
-import type { TaskItemReport, EmployeeMetric, WorkspaceReportData } from '@/lib/queries/report-queries';
+import type { TaskItemReport, EmployeeMetric, WorkspaceReportData, DailyActivityTrend } from '@/lib/queries/report-queries';
+import NumberFlow from '@number-flow/react';
+import { m } from 'motion/react';
+import { EASE_OUT } from '@/lib/motion';
 import { KpiDetailModal, type KpiMetricType } from '@/components/reports/kpi-detail-modal';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/lib/i18n/language-context';
@@ -23,9 +26,34 @@ interface KpiCardsProps {
   tasks: TaskItemReport[];
   members: EmployeeMetric[];
   workspaceId: string;
+  dailyTrends?: DailyActivityTrend[];
 }
 
-export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: KpiCardsProps) {
+/** Tiny trend line for KPI tiles. */
+function Sparkline({ values, className }: { values: number[]; className?: string }) {
+  if (values.length < 2) return null;
+  const max = Math.max(1, ...values);
+  const pts = values.map((v, i) => `${(i / (values.length - 1)) * 100},${28 - (v / max) * 24}`).join(' ');
+  return (
+    <svg viewBox="0 0 100 30" preserveAspectRatio="none" className={cn('h-7 w-20', className)} aria-hidden>
+      <polyline points={`0,30 ${pts} 100,30`} className="fill-current opacity-[0.12]" stroke="none" />
+      <m.polyline
+        points={pts}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        vectorEffect="non-scaling-stroke"
+        initial={{ pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 1, ease: EASE_OUT, delay: 0.2 }}
+      />
+    </svg>
+  );
+}
+
+export function KpiCards({ summary, boardsCount, tasks, members, workspaceId, dailyTrends = [] }: KpiCardsProps) {
   const [selectedMetric, setSelectedMetric] = useState<KpiMetricType | null>(null);
   const { t } = useLanguage();
 
@@ -38,10 +66,10 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: 
       value: summary.totalTasks,
       subtitle: `${boardsCount} ${t('reports.kpiTotalTasksSub')}`,
       icon: ListTodo,
-      iconBg: 'bg-pastel-sky/60 text-sky-800 dark:text-sky-200',
+      iconBg: 'bg-pastel-sky/60 text-info',
       badge: t('reports.allBoards'),
-      badgeColor: 'bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300 border-sky-200/60',
-      borderGlow: 'hover:border-sky-300/80 dark:hover:border-sky-700',
+      badgeColor: 'bg-info-soft text-info border-info/25',
+      borderGlow: 'hover:border-info/25 ',
       tag: 'Overview',
     },
     {
@@ -50,10 +78,10 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: 
       value: summary.completedTasks,
       subtitle: `${summary.completionRate}% ${t('reports.kpiCompletedSub')}`,
       icon: CheckCircle2,
-      iconBg: 'bg-pastel-mint/60 text-emerald-800 dark:text-emerald-200',
+      iconBg: 'bg-pastel-mint/60 text-success',
       badge: `${summary.completionRate}%`,
-      badgeColor: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200/60',
-      borderGlow: 'hover:border-emerald-300/80 dark:hover:border-emerald-700',
+      badgeColor: 'bg-success-soft text-success border-success/25',
+      borderGlow: 'hover:border-success/25 ',
       tag: 'Success',
     },
     {
@@ -62,10 +90,10 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: 
       value: summary.inProgressTasks,
       subtitle: t('reports.kpiInProgressSub'),
       icon: Clock,
-      iconBg: 'bg-pastel-peach/60 text-amber-800 dark:text-amber-200',
+      iconBg: 'bg-pastel-peach/60 text-warning',
       badge: t('common.inProgress'),
-      badgeColor: 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border-amber-200/60',
-      borderGlow: 'hover:border-amber-300/80 dark:hover:border-amber-700',
+      badgeColor: 'bg-warning-soft text-warning border-warning/25',
+      borderGlow: 'hover:border-warning/25 ',
       tag: 'Active',
     },
     {
@@ -74,10 +102,10 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: 
       value: summary.backlogTasks,
       subtitle: t('reports.kpiBacklogSub'),
       icon: Inbox,
-      iconBg: 'bg-pastel-lavender/60 text-purple-800 dark:text-purple-200',
+      iconBg: 'bg-pastel-lavender/60 text-accent-foreground',
       badge: 'Backlog',
-      badgeColor: 'bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border-purple-200/60',
-      borderGlow: 'hover:border-purple-300/80 dark:hover:border-purple-700',
+      badgeColor: 'bg-accent text-accent-foreground border-primary/25',
+      borderGlow: 'hover:border-primary/25 ',
       tag: 'Pipeline',
     },
     {
@@ -86,16 +114,16 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: 
       value: summary.overdueTasks,
       subtitle: t('reports.kpiOverdueSub'),
       icon: AlertTriangle,
-      iconBg: 'bg-pastel-rose/60 text-rose-800 dark:text-rose-200',
+      iconBg: 'bg-pastel-rose/60 text-danger',
       badge: summary.overdueTasks > 0 ? t('common.overdue') : t('common.onTrack'),
       badgeColor:
         summary.overdueTasks > 0
-          ? 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border-rose-200/60'
-          : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200/60',
+          ? 'bg-danger-soft text-danger border-danger/25'
+          : 'bg-success-soft text-success border-success/25',
       borderGlow:
         summary.overdueTasks > 0
-          ? 'border-rose-300/70 hover:border-rose-500'
-          : 'hover:border-emerald-300/80 dark:hover:border-emerald-700',
+          ? 'border-danger/25 hover:border-danger/25'
+          : 'hover:border-success/25 ',
       tag: 'Risk',
     },
     {
@@ -104,13 +132,13 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: 
       value: summary.dueSoonTasks,
       subtitle: t('reports.kpiDueSoonSub'),
       icon: Timer,
-      iconBg: 'bg-pastel-peach/70 text-amber-800 dark:text-amber-200',
+      iconBg: 'bg-pastel-peach/70 text-warning',
       badge: t('common.dueSoon'),
       badgeColor:
         summary.dueSoonTasks > 0
-          ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border-amber-200/60'
+          ? 'bg-warning-soft text-warning border-warning/25'
           : 'bg-muted text-muted-foreground border-border/50',
-      borderGlow: 'hover:border-amber-300/80 dark:hover:border-amber-700',
+      borderGlow: 'hover:border-warning/25 ',
       tag: 'Urgent',
     },
     {
@@ -119,10 +147,10 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: 
       value: urgentTasksCount,
       subtitle: t('reports.kpiUrgentSub'),
       icon: ArrowUp,
-      iconBg: 'bg-pastel-rose/70 text-rose-800 dark:text-rose-200',
+      iconBg: 'bg-pastel-rose/70 text-danger',
       badge: t('kanban.priorityUrgent'),
-      badgeColor: 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border-rose-200/60',
-      borderGlow: 'hover:border-rose-300/80 dark:hover:border-rose-700',
+      badgeColor: 'bg-danger-soft text-danger border-danger/25',
+      borderGlow: 'hover:border-danger/25 ',
       tag: 'Critical',
     },
     {
@@ -131,87 +159,80 @@ export function KpiCards({ summary, boardsCount, tasks, members, workspaceId }: 
       value: summary.totalMembers,
       subtitle: t('reports.kpiMembersSub', { avg: summary.averageTasksPerMember }),
       icon: Users,
-      iconBg: 'bg-pastel-lavender/60 text-purple-800 dark:text-purple-200',
+      iconBg: 'bg-pastel-lavender/60 text-accent-foreground',
       badge: t('reports.tabTeam'),
-      badgeColor: 'bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border-purple-200/60',
-      borderGlow: 'hover:border-purple-300/80 dark:hover:border-purple-700',
+      badgeColor: 'bg-accent text-accent-foreground border-primary/25',
+      borderGlow: 'hover:border-primary/25 ',
       tag: 'Capacity',
     },
   ];
 
+  const trendFor: Partial<Record<KpiMetricType, number[]>> = {
+    total: dailyTrends.map((d) => d.createdCount),
+    completed: dailyTrends.map((d) => d.completedCount),
+  };
+
   return (
     <>
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
-          <span className="font-semibold text-foreground/80">{t('reports.kpiSummaryTitle')}</span>
-          <span className="text-[11px] text-muted-foreground/70 hidden sm:inline">
-            {t('reports.clickCardHint')}
-          </span>
+      <section className="space-y-3" aria-labelledby="kpi-heading">
+        <div className="flex items-end justify-between gap-2 px-0.5">
+          <h2 id="kpi-heading" className="text-sm font-medium text-foreground">
+            {t('reports.kpiSummaryTitle')}
+          </h2>
+          <span className="hidden text-xs text-muted-foreground sm:inline">{t('reports.clickCardHint')}</span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5">
-          {cards.map((card) => {
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-4 @container">
+          {cards.map((card, i) => {
             const Icon = card.icon;
-
+            const trend = trendFor[card.metricType];
             return (
-              <div
+              <m.button
                 key={card.metricType}
-                role="button"
-                tabIndex={0}
+                type="button"
+                data-kpi={card.metricType}
+                data-value={card.value}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, ease: EASE_OUT, delay: i * 0.04 }}
                 onClick={() => setSelectedMetric(card.metricType)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setSelectedMetric(card.metricType);
-                  }
-                }}
                 className={cn(
-                  'group relative rounded-2xl bg-card/85 dark:bg-card/40 backdrop-blur-md p-3 sm:p-4 border border-border/80 shadow-xs hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-primary/40',
+                  'group relative flex min-w-0 flex-col gap-3 overflow-hidden rounded-2xl border bg-card p-3.5 text-left shadow-e1 outline-none transition-[box-shadow,border-color,transform] duration-quick sm:p-4',
+                  'hover:-translate-y-0.5 hover:shadow-e2 focus-visible:ring-2 focus-visible:ring-ring',
                   card.borderGlow
                 )}
               >
-                {/* Header Icon & Badge */}
-                <div className="flex items-center justify-between gap-1.5 mb-2.5">
-                  <div
-                    className={cn(
-                      'w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-xs shrink-0',
-                      card.iconBg
-                    )}
-                  >
-                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </div>
-                  <span
-                    className={cn(
-                      'text-2xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-full border truncate max-w-[80px] sm:max-w-none shrink-0',
-                      card.badgeColor
-                    )}
-                  >
+                <div className="flex items-start justify-between gap-2">
+                  <span className={cn('flex size-9 shrink-0 items-center justify-center rounded-xl', card.iconBg)}>
+                    <Icon className="size-[18px]" aria-hidden />
+                  </span>
+                  <span className={cn('max-w-[60%] truncate rounded-full border px-2 py-0.5 text-2xs font-medium', card.badgeColor)}>
                     {card.badge}
                   </span>
                 </div>
 
-                {/* Number & Labels */}
-                <div className="space-y-0.5">
-                  <p className="text-[11px] sm:text-xs font-medium text-muted-foreground truncate">{card.title}</p>
-                  <div className="flex items-baseline justify-between gap-1">
-                    <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
-                      {card.value}
-                    </h3>
-                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
+                <div className="min-w-0">
+                  <p className="truncate text-xs font-medium text-muted-foreground sm:text-sm">{card.title}</p>
+                  <div className="mt-0.5 flex items-end justify-between gap-2">
+                    <span className="font-mono text-[1.75rem] font-semibold leading-none tracking-tight tabular-nums text-foreground sm:text-3xl">
+                      <NumberFlow value={card.value} />
+                    </span>
+                    {trend && trend.some((v) => v > 0) && (
+                      <Sparkline values={trend} className={cn('mb-0.5 shrink-0', card.metricType === 'completed' ? 'text-success' : 'text-info')} />
+                    )}
                   </div>
-                  <p className="text-2xs sm:text-[11px] text-muted-foreground/80 truncate pt-0.5">{card.subtitle}</p>
+                  <p className="mt-1.5 truncate text-xs text-muted-foreground">{card.subtitle}</p>
                 </div>
 
-                {/* Subtle Click Hint on Hover */}
-                <div className="pt-2 mt-2 border-t border-border/40 flex items-center justify-between text-2xs text-muted-foreground/70 group-hover:text-primary transition-colors font-medium">
-                  <span>{t('common.viewDetails')}</span>
-                  <span>↗</span>
-                </div>
-              </div>
+                <span className="flex items-center justify-between border-t pt-2.5 text-xs text-muted-foreground transition-colors group-hover:text-primary">
+                  {t('common.viewDetails')}
+                  <ChevronRight className="size-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden />
+                </span>
+              </m.button>
             );
           })}
         </div>
-      </div>
+      </section>
 
       {/* Pop-up Detail Modal */}
       <KpiDetailModal

@@ -31,12 +31,12 @@ export function DeadlineHealthChart({ tasks }: DeadlineHealthChartProps) {
   const withoutDueDatePercent = Math.round((withoutDueDate / total) * 100);
 
   return (
-    <div className="rounded-2xl border border-border/80 bg-card/80 dark:bg-card/40 backdrop-blur-md p-3.5 sm:p-5 shadow-xs space-y-4">
+    <div className="rounded-2xl border border-border bg-card p-3.5 sm:p-5 shadow-xs space-y-4">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
         <div>
-          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+          <h3 className="text-[0.9375rem] font-semibold text-foreground flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-success shrink-0" />
             {t('reports.deadlineHealthTitle')}
           </h3>
           <p className="text-xs text-muted-foreground mt-0.5">
@@ -47,8 +47,8 @@ export function DeadlineHealthChart({ tasks }: DeadlineHealthChartProps) {
         <div className="self-start sm:self-auto flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary/80 border border-border/60 text-xs font-semibold text-foreground">
           <span>{t('reports.slaScore')}</span>
           <span className={cn(
-            'font-bold',
-            slaCompliance >= 90 ? 'text-emerald-600 dark:text-emerald-400' : slaCompliance >= 75 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'
+            'font-semibold',
+            slaCompliance >= 90 ? 'text-success' : slaCompliance >= 75 ? 'text-warning' : 'text-danger'
           )}>
             {t('reports.slaCompliance', { score: slaCompliance })}
           </span>
@@ -97,52 +97,52 @@ export function DeadlineHealthChart({ tasks }: DeadlineHealthChartProps) {
       {/* 4 Health Status Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
         {/* On Track */}
-        <div className="p-3 rounded-xl bg-secondary/30 border border-emerald-300/30 dark:border-emerald-700/30 space-y-1">
+        <div className="p-3 rounded-xl bg-secondary/30 border border-success/25 space-y-1">
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold text-foreground flex items-center gap-1.5 text-[11px]">
-              <span className="w-2 h-2 rounded-full bg-pastel-mint ring-2 ring-emerald-400/30" />
+              <span className="w-2 h-2 rounded-full bg-pastel-mint ring-2 ring-success/30" />
               {t('common.onTrack')}
             </span>
           </div>
           <div className="flex items-baseline justify-between pt-1">
-            <span className="text-lg sm:text-xl font-bold text-emerald-600 dark:text-emerald-400">{onTrack}</span>
+            <span className="text-lg sm:text-xl font-semibold text-success">{onTrack}</span>
             <span className="text-2xs font-semibold text-muted-foreground">{onTrackPercent}%</span>
           </div>
           <p className="text-2xs text-muted-foreground/80">{t('reports.onTrackDesc')}</p>
         </div>
 
         {/* Due Soon */}
-        <div className="p-3 rounded-xl bg-secondary/30 border border-amber-300/30 dark:border-amber-700/30 space-y-1">
+        <div className="p-3 rounded-xl bg-secondary/30 border border-warning/25 space-y-1">
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold text-foreground flex items-center gap-1.5 text-[11px]">
-              <span className="w-2 h-2 rounded-full bg-pastel-peach ring-2 ring-amber-400/30" />
+              <span className="w-2 h-2 rounded-full bg-pastel-peach ring-2 ring-warning/30" />
               {t('common.dueSoon')}
             </span>
           </div>
           <div className="flex items-baseline justify-between pt-1">
-            <span className="text-lg sm:text-xl font-bold text-amber-600 dark:text-amber-400">{dueSoon}</span>
+            <span className="text-lg sm:text-xl font-semibold text-warning">{dueSoon}</span>
             <span className="text-2xs font-semibold text-muted-foreground">{dueSoonPercent}%</span>
           </div>
           <p className="text-2xs text-muted-foreground/80">{t('reports.dueSoonDesc')}</p>
         </div>
 
         {/* Overdue */}
-        <div className="p-3 rounded-xl bg-secondary/30 border border-rose-300/30 dark:border-rose-700/30 space-y-1">
+        <div className="p-3 rounded-xl bg-secondary/30 border border-danger/25 space-y-1">
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold text-foreground flex items-center gap-1.5 text-[11px]">
-              <span className="w-2 h-2 rounded-full bg-pastel-rose ring-2 ring-rose-400/30" />
+              <span className="w-2 h-2 rounded-full bg-pastel-rose ring-2 ring-danger/30" />
               {t('common.overdue')}
             </span>
           </div>
           <div className="flex items-baseline justify-between pt-1">
-            <span className="text-lg sm:text-xl font-bold text-rose-600 dark:text-rose-400">{overdue}</span>
+            <span className="text-lg sm:text-xl font-semibold text-danger">{overdue}</span>
             <span className="text-2xs font-semibold text-muted-foreground">{overduePercent}%</span>
           </div>
           <p className="text-2xs text-muted-foreground/80">{t('reports.overdueDesc')}</p>
         </div>
 
         {/* No Deadline */}
-        <div className="p-3 rounded-xl bg-secondary/30 border border-border/70 space-y-1">
+        <div className="p-3 rounded-xl bg-secondary/30 border border-border space-y-1">
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold text-foreground flex items-center gap-1.5 text-[11px]">
               <span className="w-2 h-2 rounded-full bg-muted ring-2 ring-border" />
@@ -150,7 +150,7 @@ export function DeadlineHealthChart({ tasks }: DeadlineHealthChartProps) {
             </span>
           </div>
           <div className="flex items-baseline justify-between pt-1">
-            <span className="text-lg sm:text-xl font-bold text-foreground">{withoutDueDate}</span>
+            <span className="text-lg sm:text-xl font-semibold text-foreground">{withoutDueDate}</span>
             <span className="text-2xs font-semibold text-muted-foreground">{withoutDueDatePercent}%</span>
           </div>
           <p className="text-2xs text-muted-foreground/80">{t('reports.noDeadlineDesc')}</p>
