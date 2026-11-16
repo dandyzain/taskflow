@@ -1,207 +1,124 @@
 "use client"
 
 import * as React from "react"
+import { memo } from "react"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { GripVertical, Clock, Sparkles, ArrowDown, ArrowRight, ArrowUp } from "lucide-react"
+import { AlignLeft } from "lucide-react"
 
 import type { CardItem } from "@/types/kanban"
 import { cn } from "@/lib/utils"
-import { CardDetailModal } from "@/components/kanban/card-detail-modal"
+import { getPriority } from "@/lib/design/tokens"
 import { LabelBadge } from "@/components/kanban/label-badge"
-import { useLanguage } from "@/lib/i18n/language-context"
-
-function isOverdue(dateStr: string): boolean {
-  return new Date(dateStr) < new Date(new Date().toDateString());
-}
-
-function isDueSoon(dateStr: string): boolean {
-  const due = new Date(dateStr);
-  const now = new Date();
-  const diffDays = (due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
-  return diffDays >= 0 && diffDays <= 2;
-}
-
-function formatDueDate(dateStr: string, isIndonesian: boolean): string {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
-  if (date.toDateString() === now.toDateString()) return isIndonesian ? 'Hari ini' : 'Today';
-  if (date.toDateString() === tomorrow.toDateString()) return isIndonesian ? 'Besok' : 'Tomorrow';
-
-  return date.toLocaleDateString(isIndonesian ? 'id-ID' : 'en-US', { month: 'short', day: 'numeric' });
-}
+import { PriorityBadge } from "@/components/patterns/priority-badge"
+import { DueChip } from "@/components/patterns/due-chip"
+import { AvatarStack } from "@/components/patterns/user-avatar"
 
 interface CardItemProps {
   card: CardItem
-  boardId: string
-  workspaceId: string
   isDragOverlay?: boolean
-  onCardUpdated?: (card: CardItem) => void
-  onCardDeleted?: (cardId: string) => void
+  onOpen?: (cardId: string) => void
 }
 
-export function CardItemComponent({ card, boardId, workspaceId, isDragOverlay, onCardUpdated, onCardDeleted }: CardItemProps) {
-  const { t, lang } = useLanguage()
-  const [modalOpen, setModalOpen] = React.useState(false)
-  const {
-    setNodeRef,
-    attributes,
-    listeners,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+/** Visual body of a task card — shared by the sortable card and the drag overlay. */
+export function CardFace({ card, lifted }: { card: CardItem; lifted?: boolean }) {
+  const priority = getPriority(card.priority)
+  const hasMeta = card.priority > 0 || card.dueDate || card.assignees.length > 0
+
+  return (
+    <div
+      className={cn(
+        "relative flex flex-col gap-2 overflow-hidden rounded-xl border bg-card p-3 text-left shadow-e1",
+        "transition-[box-shadow,border-color,transform] duration-quick ease-out-expo",
+        lifted && "shadow-e3 ring-1 ring-primary/30"
+      )}
+    >
+      {/* Priority accent stripe */}
+      {card.priority > 0 && (
+        <span aria-hidden className={cn("absolute inset-y-2 left-0 w-[3px] rounded-r-full", priority.solid)} />
+      )}
+
+      {card.labels.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {card.labels.map((label) => (
+            <LabelBadge key={label.id} label={label} size="sm" />
+          ))}
+        </div>
+      )}
+
+      <h4 className="text-sm font-medium leading-snug text-foreground [overflow-wrap:anywhere]">{card.title}</h4>
+
+      {card.description && (
+        <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+          <AlignLeft className="mr-1 inline size-3 -translate-y-px opacity-60" aria-hidden />
+          {card.description}
+        </p>
+      )}
+
+      {hasMeta && (
+        <div className="mt-0.5 flex items-center justify-between gap-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+            <PriorityBadge priority={card.priority} />
+            {card.dueDate && <DueChip date={card.dueDate} />}
+          </div>
+          <AvatarStack users={card.assignees} max={3} size="sm" className="shrink-0" />
+        </div>
+      )}
+    </div>
+  )
+}
+
+function CardItemComponentInner({ card, isDragOverlay, onOpen }: CardItemProps) {
+  const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
     id: card.id,
-    disabled: modalOpen,
-    data: {
-      type: 'Card' as const,
-      card,
-    },
+    data: { type: "Card" as const, card },
   })
 
-  const style = {
-    transition,
-    transform: CSS.Transform.toString(transform),
+  if (isDragOverlay) {
+    return (
+      <div className="cursor-grabbing rotate-[2deg] scale-[1.03]">
+        <CardFace card={card} lifted />
+      </div>
+    )
   }
 
-  let priorityBadge = null
-  if (card.priority === 1) {
-    priorityBadge = (
-      <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-2xs font-medium bg-pastel-sky text-pastel-sky-text border border-sky-300/30">
-        <ArrowDown className="w-2.5 h-2.5 shrink-0" />
-        {t('kanban.priorityLow')}
-      </span>
-    )
-  } else if (card.priority === 2) {
-    priorityBadge = (
-      <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-2xs font-medium bg-pastel-peach text-pastel-peach-text border border-amber-300/30">
-        <ArrowRight className="w-2.5 h-2.5 shrink-0" />
-        {t('kanban.priorityMedium')}
-      </span>
-    )
-  } else if (card.priority === 3) {
-    priorityBadge = (
-      <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-2xs font-medium bg-pastel-rose text-pastel-rose-text border border-rose-300/30">
-        <ArrowUp className="w-2.5 h-2.5 shrink-0" />
-        {t('kanban.priorityUrgent')}
-      </span>
-    )
+  const style: React.CSSProperties = {
+    transition,
+    transform: CSS.Translate.toString(transform),
+  }
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    listeners?.onKeyDown?.(e)
+    if (e.defaultPrevented) return
+    if (e.key === "Enter" && !isDragging) {
+      e.preventDefault()
+      onOpen?.(card.id)
+    }
   }
 
   return (
-    <>
-      <div
-        ref={setNodeRef}
-        style={style}
-        {...attributes}
-        className={cn(
-          "bg-card border border-border/80 rounded-2xl p-3.5 shadow-card relative flex flex-col gap-2.5 group cursor-pointer transition-all duration-200 ease-out",
-          "hover:border-primary/40 hover:shadow-card-hover hover:-translate-y-0.5",
-          isDragging && "opacity-40 ring-2 ring-primary/60 scale-[0.98]",
-          isDragOverlay && "shadow-float rotate-[2deg] scale-[1.03] ring-2 ring-primary/40 cursor-grabbing bg-card/95 backdrop-blur-md"
-        )}
-        onClick={() => {
-          if (!isDragging && !isDragOverlay) {
-            setModalOpen(true)
-          }
-        }}
-      >
-        {/* Grip Handle */}
-        <div
-          className="absolute top-2.5 right-2.5 text-muted-foreground/60 hover:text-foreground hover-reveal transition-opacity p-1 rounded-md hover:bg-muted/60 cursor-grab active:cursor-grabbing touch-none"
-          {...listeners}
-          onClick={(e) => e.stopPropagation()}
-          title="Drag card"
-        >
-          <GripVertical size={14} />
-        </div>
-
-        {/* Labels row */}
-        {card.labels && card.labels.length > 0 && (
-          <div className="flex flex-wrap gap-1 pr-6">
-            {card.labels.map(label => (
-              <LabelBadge key={label.id} label={label} size="sm" />
-            ))}
-          </div>
-        )}
-
-        {/* Title */}
-        <h4 className="font-semibold text-sm leading-snug tracking-tight text-foreground pr-5">
-          {card.title}
-        </h4>
-
-        {/* Description preview */}
-        {card.description && (
-          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-            {card.description}
-          </p>
-        )}
-
-        {/* Card Metadata / Footer */}
-        <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/40 mt-auto">
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {priorityBadge}
-
-            {card.dueDate && (
-              <span className={cn(
-                'inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full border',
-                isOverdue(card.dueDate) ? 'bg-pastel-rose text-pastel-rose-text border-rose-300/40' :
-                isDueSoon(card.dueDate) ? 'bg-pastel-peach text-pastel-peach-text border-amber-300/40' : 
-                'bg-muted/70 text-muted-foreground border-border/40'
-              )}>
-                <Clock className="h-3 w-3" />
-                <span>{formatDueDate(card.dueDate, lang === 'id')}</span>
-              </span>
-            )}
-          </div>
-
-          {/* Assignees stack */}
-          {card.assignees && card.assignees.length > 0 && (
-            <div className="flex items-center -space-x-1.5 shrink-0">
-              {card.assignees.slice(0, 3).map((assignee, idx) => {
-                const colors = [
-                  'bg-pastel-lavender text-pastel-lavender-text',
-                  'bg-pastel-mint text-pastel-mint-text',
-                  'bg-pastel-sky text-pastel-sky-text',
-                ];
-                const colorClass = colors[idx % colors.length];
-                return (
-                  <div
-                    key={assignee.id}
-                    className={cn(
-                      "w-6 h-6 rounded-full text-2xs font-bold flex items-center justify-center border-2 border-card shadow-sm transition-transform hover:scale-110",
-                      colorClass
-                    )}
-                    title={assignee.name}
-                  >
-                    {assignee.name.charAt(0).toUpperCase()}
-                  </div>
-                );
-              })}
-              {card.assignees.length > 3 && (
-                <div className="w-6 h-6 rounded-full bg-muted text-muted-foreground text-[9px] font-bold flex items-center justify-center border-2 border-card shadow-sm">
-                  +{card.assignees.length - 3}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {!isDragOverlay && onCardUpdated && onCardDeleted && (
-        <CardDetailModal
-          card={card}
-          boardId={boardId}
-          workspaceId={workspaceId}
-          open={modalOpen}
-          onOpenChange={setModalOpen}
-          onCardUpdated={onCardUpdated}
-          onCardDeleted={onCardDeleted}
-        />
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      onKeyDown={onKeyDown}
+      aria-roledescription="sortable task"
+      data-card-id={card.id}
+      className={cn(
+        "group relative cursor-pointer rounded-xl outline-none",
+        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        "[&>div]:hover:-translate-y-px [&>div]:hover:border-border-strong [&>div]:hover:shadow-e2",
+        isDragging &&
+          "[&>*]:invisible rounded-xl border-2 border-dashed border-primary/40 bg-accent/60 [&>div]:hover:translate-y-0"
       )}
-    </>
+      onClick={() => {
+        if (!isDragging) onOpen?.(card.id)
+      }}
+    >
+      <CardFace card={card} />
+    </div>
   )
 }
+
+export const CardItemComponent = memo(CardItemComponentInner)

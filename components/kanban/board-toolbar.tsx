@@ -1,13 +1,22 @@
 'use client';
 
 import * as React from 'react';
-import { Search, X, Filter, Tag, RotateCcw, Circle, ArrowDown, ArrowRight, ArrowUp, Users, UserX } from 'lucide-react';
+import { useState } from 'react';
+import { Columns3, List, RotateCcw, Search, SlidersHorizontal, Tag, UserX, Users, Flag, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Kbd } from '@/components/ui/kbd';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
+import { PriorityBadge } from '@/components/patterns/priority-badge';
+import { UserAvatar } from '@/components/patterns/user-avatar';
 import type { PriorityFilter } from '@/hooks/use-board-filter';
+import { PRIORITY_ORDER } from '@/lib/design/tokens';
 import { useLanguage } from '@/lib/i18n/language-context';
+import { cn } from '@/lib/utils';
+
+export type BoardView = 'board' | 'list';
 
 interface BoardToolbarProps {
   searchQuery: string;
@@ -22,153 +31,192 @@ interface BoardToolbarProps {
   availableMembers: Array<{ id: string; name: string; avatarUrl: string | null }>;
   activeFilterCount: number;
   onClearFilters: () => void;
+  view: BoardView;
+  onViewChange: (view: BoardView) => void;
 }
 
-export const BoardToolbar = React.forwardRef<HTMLInputElement, BoardToolbarProps>(
-  function BoardToolbar(
-    {
-      searchQuery,
-      onSearchChange,
-      priorityFilter,
-      onPriorityFilterChange,
-      labelFilter,
-      onLabelFilterChange,
-      availableLabels,
-      employeeFilter,
-      onEmployeeFilterChange,
-      availableMembers,
-      activeFilterCount,
-      onClearFilters,
-    },
-    ref
-  ) {
-    const { t } = useLanguage();
-    return (
-      <div className="flex items-center gap-2 mb-3 sm:mb-5 flex-wrap p-2 rounded-2xl bg-card/60 backdrop-blur-md border border-border/70 shadow-xs shrink-0">
-        {/* Search Input with Shortcut Pill */}
-        <div className="relative w-full sm:w-auto sm:flex-1 sm:min-w-[180px] sm:max-w-[280px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/70" />
-          <Input
-            ref={ref}
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            placeholder={t('kanban.searchTasks')}
-            className="pl-8 pr-8 h-9 text-xs rounded-xl bg-background/80 border-border/70 focus-visible:ring-primary/40 focus-visible:bg-background transition-all w-full"
-          />
-          <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none hidden sm:inline-flex items-center px-1.5 py-0.5 text-2xs font-mono font-medium text-muted-foreground/70 bg-muted/80 rounded border border-border/60">
-            /
-          </kbd>
-        </div>
+export const BoardToolbar = React.forwardRef<HTMLInputElement, BoardToolbarProps>(function BoardToolbar(
+  {
+    searchQuery,
+    onSearchChange,
+    priorityFilter,
+    onPriorityFilterChange,
+    labelFilter,
+    onLabelFilterChange,
+    availableLabels,
+    employeeFilter,
+    onEmployeeFilterChange,
+    availableMembers,
+    activeFilterCount,
+    onClearFilters,
+    view,
+    onViewChange,
+  },
+  ref
+) {
+  const { t } = useLanguage();
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const nonSearchFilters = activeFilterCount - (searchQuery.trim() ? 1 : 0);
 
-        {/* Priority Filter */}
-        <div className="flex-1 min-w-[120px] sm:flex-initial sm:w-[140px]">
-          <Select value={priorityFilter} onValueChange={onPriorityFilterChange as (value: string) => void}>
-            <SelectTrigger className="w-full h-9 text-xs rounded-xl bg-background/80 border-border/70 focus:ring-primary/40 hover:bg-background transition-all">
-              <div className="flex items-center gap-2 truncate">
-                <Filter className="h-3.5 w-3.5 text-primary shrink-0" />
-                <SelectValue placeholder={t('kanban.allPriorities')} />
-              </div>
-            </SelectTrigger>
-            <SelectContent className="rounded-xl border-border/70 shadow-pastel">
-              <SelectItem value="all" className="text-xs">{t('kanban.allPriorities')}</SelectItem>
-              <SelectItem value="0" className="text-xs">
-                <span className="flex items-center gap-1.5">
-                  <Circle className="h-2.5 w-2.5 text-muted-foreground/60 shrink-0" />
-                  <span>{t('kanban.priorityNone')}</span>
-                </span>
-              </SelectItem>
-              <SelectItem value="1" className="text-xs">
-                <span className="flex items-center gap-1.5">
-                  <ArrowDown className="h-3 w-3 text-sky-500 shrink-0" />
-                  <span>{t('kanban.priorityLow')}</span>
-                </span>
-              </SelectItem>
-              <SelectItem value="2" className="text-xs">
-                <span className="flex items-center gap-1.5">
-                  <ArrowRight className="h-3 w-3 text-amber-500 shrink-0" />
-                  <span>{t('kanban.priorityMedium')}</span>
-                </span>
-              </SelectItem>
-              <SelectItem value="3" className="text-xs">
-                <span className="flex items-center gap-1.5">
-                  <ArrowUp className="h-3 w-3 text-rose-500 shrink-0" />
-                  <span>{t('kanban.priorityUrgent')}</span>
-                </span>
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+  const triggerCls = (active: boolean) =>
+    cn('h-9 w-full justify-start gap-2 text-sm [&>svg:last-child]:ml-auto', active && 'border-primary/50 bg-accent text-accent-foreground');
 
-        {/* Label Filter */}
-        <div className="flex-1 min-w-[120px] sm:flex-initial sm:w-[140px]">
-          <Select value={labelFilter} onValueChange={onLabelFilterChange as (value: string) => void}>
-            <SelectTrigger className="w-full h-9 text-xs rounded-xl bg-background/80 border-border/70 focus:ring-primary/40 hover:bg-background transition-all">
-              <div className="flex items-center gap-2 truncate">
-                <Tag className="h-3.5 w-3.5 text-primary shrink-0" />
-                <SelectValue placeholder={t('kanban.allLabels')} />
-              </div>
-            </SelectTrigger>
-            <SelectContent className="rounded-xl border-border/70 shadow-pastel max-h-56">
-              <SelectItem value="all" className="text-xs">{t('kanban.allLabels')}</SelectItem>
-              {availableLabels.map(label => (
-                <SelectItem key={label.id} value={label.id} className="text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: label.color }} />
-                    <span className="truncate">{label.name}</span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+  const filters = (
+    <>
+      <Select value={priorityFilter} onValueChange={onPriorityFilterChange as (v: string) => void}>
+        <SelectTrigger className={triggerCls(priorityFilter !== 'all')} aria-label={t('common.priority')}>
+          <Flag className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+            <SelectValue placeholder={t('kanban.allPriorities')} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">{t('kanban.allPriorities')}</SelectItem>
+          {PRIORITY_ORDER.map((level) => (
+            <SelectItem key={level} value={String(level)}>
+              <PriorityBadge priority={level} hideNone={false} />
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
-        {/* Employee Filter */}
-        <div className="flex-1 min-w-[125px] sm:flex-initial sm:w-[150px]">
-          <Select value={employeeFilter} onValueChange={onEmployeeFilterChange}>
-            <SelectTrigger className="w-full h-9 text-xs rounded-xl bg-background/80 border-border/70 focus:ring-primary/40 hover:bg-background transition-all">
-              <div className="flex items-center gap-2 truncate">
-                <Users className="h-3.5 w-3.5 text-primary shrink-0" />
-                <SelectValue placeholder={t('kanban.allMembers')} />
-              </div>
-            </SelectTrigger>
-            <SelectContent className="rounded-xl border-border/70 shadow-pastel max-h-56">
-              <SelectItem value="all" className="text-xs">{t('kanban.allMembers')}</SelectItem>
-              <SelectItem value="unassigned" className="text-xs">
-                <span className="flex items-center gap-1.5">
-                  <UserX className="h-3.5 w-3.5 text-muted-foreground/70 shrink-0" />
-                  <span>{t('common.unassigned')}</span>
-                </span>
-              </SelectItem>
-              {availableMembers.map(member => (
-                <SelectItem key={member.id} value={member.id} className="text-xs">
-                  <span className="flex items-center gap-2">
-                    <span className="w-4 h-4 rounded-full bg-pastel-lavender text-pastel-lavender-text text-[9px] flex items-center justify-center font-bold shrink-0">
-                      {member.name.charAt(0).toUpperCase()}
-                    </span>
-                    <span className="truncate">{member.name}</span>
-                  </span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      <Select value={labelFilter} onValueChange={onLabelFilterChange}>
+        <SelectTrigger className={triggerCls(labelFilter !== 'all')} aria-label={t('common.labels')}>
+          <Tag className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+            <SelectValue placeholder={t('kanban.allLabels')} />
+        </SelectTrigger>
+        <SelectContent className="max-h-64">
+          <SelectItem value="all">{t('kanban.allLabels')}</SelectItem>
+          {availableLabels.map((label) => (
+            <SelectItem key={label.id} value={label.id}>
+              <span className="flex items-center gap-2">
+                <span className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: label.color }} aria-hidden />
+                <span className="truncate">{label.name}</span>
+              </span>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
-        {/* Clear Filters Button */}
-        {activeFilterCount > 0 && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClearFilters}
-            className="h-9 px-3 text-xs text-muted-foreground hover:text-foreground rounded-xl hover:bg-pastel-rose/30 transition-all duration-200 animate-scale-in ml-auto sm:ml-0"
+      <Select value={employeeFilter} onValueChange={onEmployeeFilterChange}>
+        <SelectTrigger className={triggerCls(employeeFilter !== 'all')} aria-label={t('common.assignees')}>
+          <Users className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+            <SelectValue placeholder={t('kanban.allMembers')} />
+        </SelectTrigger>
+        <SelectContent className="max-h-64">
+          <SelectItem value="all">{t('kanban.allMembers')}</SelectItem>
+          <SelectItem value="unassigned">
+            <span className="flex items-center gap-2">
+              <UserX className="size-4 text-muted-foreground" aria-hidden />
+              {t('kanban.unassignedOnly')}
+            </span>
+          </SelectItem>
+          {availableMembers.map((member) => (
+            <SelectItem key={member.id} value={member.id}>
+              <span className="flex items-center gap-2">
+                <UserAvatar user={member} size="xs" />
+                <span className="truncate">{member.name}</span>
+              </span>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </>
+  );
+
+  return (
+    <div className="mb-4 flex shrink-0 flex-wrap items-center gap-2" data-print-hide>
+      {/* Search */}
+      <div className="relative min-w-0 flex-1 sm:max-w-xs">
+        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+        <Input
+          ref={ref}
+          type="search"
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          placeholder={t('kanban.searchTasks')}
+          aria-label={t('kanban.searchTasks')}
+          className="h-9 pl-9 pr-9 [&::-webkit-search-cancel-button]:hidden"
+        />
+        {searchQuery ? (
+          <button
+            type="button"
+            onClick={() => onSearchChange('')}
+            className="absolute right-2 top-1/2 flex size-6 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-secondary hover:text-foreground"
+            aria-label={t('ui.clear')}
           >
-            <RotateCcw className="h-3 w-3 mr-1.5" />
-            {t('kanban.clearFilters')}
-            <Badge className="ml-1.5 px-1.5 py-0 text-2xs font-semibold bg-primary/15 text-primary border-transparent rounded-full">
-              {activeFilterCount}
-            </Badge>
-          </Button>
+            <X className="size-3.5" />
+          </button>
+        ) : (
+          <Kbd className="pointer-events-none absolute right-2.5 top-1/2 hidden -translate-y-1/2 sm:inline-flex">/</Kbd>
         )}
       </div>
-    );
-  }
-);
+
+      {/* Desktop inline filters */}
+      <div className="hidden items-center gap-2 lg:flex [&>button]:w-[10.5rem]">{filters}</div>
+
+      {/* Compact filters button (mobile / tablet) */}
+      <Button
+        variant="outline"
+        className={cn('h-9 lg:hidden', nonSearchFilters > 0 && 'border-primary/50 bg-accent text-accent-foreground')}
+        onClick={() => setFiltersOpen(true)}
+        aria-label={nonSearchFilters > 0 ? `${t('ui.filters')} (${nonSearchFilters})` : t('ui.filters')}
+      >
+        <SlidersHorizontal className="size-4" aria-hidden />
+        <span className="hidden xs:inline">{t('ui.filters')}</span>
+        {nonSearchFilters > 0 && (
+          <span className="flex size-5 items-center justify-center rounded-full bg-primary text-2xs font-semibold text-primary-foreground">
+            {nonSearchFilters}
+          </span>
+        )}
+      </Button>
+
+      {activeFilterCount > 0 && (
+        <Button variant="ghost" size="sm" onClick={onClearFilters} className="h-9 animate-scale-in text-muted-foreground">
+          <RotateCcw className="size-3.5" aria-hidden />
+          <span className="hidden sm:inline">{t('kanban.clearFilters')}</span>
+        </Button>
+      )}
+
+      <ToggleGroup
+        type="single"
+        value={view}
+        onValueChange={(v) => v && onViewChange(v as BoardView)}
+        className="ml-auto"
+        aria-label={t('ui.viewMode')}
+      >
+        <ToggleGroupItem value="board" aria-label={t('ui.boardView')}>
+          <Columns3 aria-hidden />
+          <span className="hidden md:inline">{t('ui.boardView')}</span>
+        </ToggleGroupItem>
+        <ToggleGroupItem value="list" aria-label={t('ui.listView')}>
+          <List aria-hidden />
+          <span className="hidden md:inline">{t('ui.listView')}</span>
+        </ToggleGroupItem>
+      </ToggleGroup>
+
+      <Drawer open={filtersOpen} onOpenChange={setFiltersOpen}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>{t('ui.filters')}</DrawerTitle>
+            <DrawerDescription className="sr-only">{t('ui.filters')}</DrawerDescription>
+          </DrawerHeader>
+          <div className="grid gap-3 px-4 [&>button]:h-11">{filters}</div>
+          <DrawerFooter className="flex-row">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => {
+                onClearFilters();
+                setFiltersOpen(false);
+              }}
+            >
+              {t('kanban.clearFilters')}
+            </Button>
+            <Button className="flex-1" onClick={() => setFiltersOpen(false)}>
+              {t('common.close')}
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    </div>
+  );
+});

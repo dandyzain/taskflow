@@ -8,28 +8,29 @@ interface LabelBadgeProps {
   className?: string;
 }
 
+/**
+ * Label chip. The text colour is the label colour mixed toward the current
+ * foreground, so light colours (yellow, lime) stay readable in both themes.
+ */
 export function LabelBadge({ label, size = 'sm', onClick, className }: LabelBadgeProps) {
+  const Comp = onClick ? 'button' : 'span';
   return (
-    <span
+    <Comp
+      type={onClick ? 'button' : undefined}
       onClick={onClick}
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full font-medium transition-all duration-200 select-none border',
-        size === 'sm' && 'px-2.5 py-0.5 text-[11px]',
-        size === 'md' && 'px-3 py-1 text-xs',
-        onClick && 'cursor-pointer hover:scale-105 active:scale-95',
+        'inline-flex max-w-full items-center gap-1.5 rounded-md border font-medium leading-none select-none',
+        'bg-[color-mix(in_oklab,var(--label)_12%,transparent)] border-[color-mix(in_oklab,var(--label)_28%,transparent)]',
+        'text-[color-mix(in_oklab,var(--label)_62%,hsl(var(--foreground)))]',
+        size === 'sm' && 'h-5 px-1.5 text-2xs',
+        size === 'md' && 'h-6 px-2 text-xs',
+        onClick && 'cursor-pointer transition-transform hover:scale-105 active:scale-95',
         className
       )}
-      style={{
-        backgroundColor: `${label.color}15`,
-        borderColor: `${label.color}35`,
-        color: label.color,
-      }}
+      style={{ '--label': label.color } as React.CSSProperties}
     >
-      <span
-        className="w-1.5 h-1.5 rounded-full shrink-0"
-        style={{ backgroundColor: label.color }}
-      />
-      {label.name}
-    </span>
+      <span className="size-1.5 shrink-0 rounded-full bg-[var(--label)]" aria-hidden />
+      <span className="truncate">{label.name}</span>
+    </Comp>
   );
 }

@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import type { LabelItem } from '@/types/kanban';
+import { useLanguage } from '@/lib/i18n/language-context';
 
 const PRESET_COLORS = [
   '#ef4444', '#f97316', '#eab308', '#22c55e', '#10b981',
@@ -34,6 +35,7 @@ export function LabelPicker({
   onLabelsChange,
   onLabelCreated,
 }: LabelPickerProps) {
+  const { t } = useLanguage();
   const [isCreating, setIsCreating] = useState(false);
   const [newName, setNewName] = useState('');
   const [newColor, setNewColor] = useState(PRESET_COLORS[0]);
@@ -91,94 +93,85 @@ export function LabelPicker({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-xl text-xs border-border/80 hover:bg-secondary transition-all active:scale-95 font-medium">
-          <Tag className="h-3.5 w-3.5 text-primary" />
-          Manage Labels
+        <Button variant="outline" size="sm" className="h-8 gap-1.5">
+          <Tag className="size-3.5 text-muted-foreground" aria-hidden />
+          {t('ui.manageLabels')}
           {selectedLabels.length > 0 && (
-            <span className="ml-1 rounded-full bg-primary/15 px-1.5 py-0.2 text-2xs font-bold text-primary">
+            <span className="rounded-full bg-accent px-1.5 text-2xs font-semibold tabular-nums text-accent-foreground">
               {selectedLabels.length}
             </span>
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-3 rounded-2xl border-border/80 shadow-pastel bg-card/95 backdrop-blur-md" align="start">
-        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Available Labels</p>
-        <div className="space-y-1 max-h-[200px] overflow-y-auto">
+      <PopoverContent className="w-64 p-2" align="start">
+        <p className="px-2 pb-1.5 pt-1 text-xs font-medium text-muted-foreground">{t('ui.availableLabels')}</p>
+        <div className="max-h-[220px] space-y-0.5 overflow-y-auto" role="listbox" aria-multiselectable="true">
           {availableLabels.map(label => (
             <button
               key={label.id}
+              type="button"
+              role="option"
+              aria-selected={isSelected(label.id)}
               onClick={() => handleToggle(label)}
-              className="flex items-center gap-2 w-full rounded-xl px-2.5 py-1.5 text-xs hover:bg-secondary transition-all text-left group"
+              className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-left text-sm transition-colors hover:bg-secondary focus-visible:bg-secondary focus-visible:outline-none"
             >
-              <span
-                className="h-2.5 w-2.5 rounded-full shrink-0 shadow-xs"
-                style={{ backgroundColor: label.color }}
-              />
-              <span className="flex-1 truncate font-medium text-foreground">{label.name}</span>
-              {isSelected(label.id) && (
-                <Check className="h-3.5 w-3.5 text-primary shrink-0" />
-              )}
+              <span className="size-3 shrink-0 rounded-full" style={{ backgroundColor: label.color }} aria-hidden />
+              <span className="flex-1 truncate">{label.name}</span>
+              {isSelected(label.id) && <Check className="size-4 shrink-0 text-primary" aria-hidden />}
             </button>
           ))}
           {availableLabels.length === 0 && !isCreating && (
-            <p className="text-xs text-muted-foreground py-2 text-center italic">
-              No labels yet
-            </p>
+            <p className="py-3 text-center text-sm text-muted-foreground">{t('ui.noLabelsYet')}</p>
           )}
         </div>
 
         {isCreating ? (
-          <div className="border-t border-border/50 mt-2.5 pt-2.5 space-y-2 animate-scale-in">
+          <div className="mt-2 animate-scale-in space-y-2 border-t pt-2">
             <Input
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
-              placeholder="New label name..."
-              className="h-8 text-xs rounded-xl"
+              placeholder={t('ui.newLabelName')}
+              className="h-9"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleCreate();
                 if (e.key === 'Escape') setIsCreating(false);
               }}
               autoFocus
             />
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-1.5 px-0.5" role="radiogroup" aria-label="Color">
               {PRESET_COLORS.map(color => (
                 <button
                   key={color}
+                  type="button"
+                  role="radio"
+                  aria-checked={newColor === color}
+                  aria-label={color}
                   onClick={() => setNewColor(color)}
                   className={cn(
-                    'h-5 w-5 rounded-full transition-transform hover:scale-110 shadow-xs',
-                    newColor === color && 'ring-2 ring-offset-2 ring-primary scale-110'
+                    'size-6 rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                    newColor === color && 'scale-110 ring-2 ring-foreground/70 ring-offset-2 ring-offset-popover'
                   )}
                   style={{ backgroundColor: color }}
                 />
               ))}
             </div>
-            <div className="flex gap-1.5 pt-1">
-              <Button
-                size="sm"
-                className="h-7 text-xs flex-1 rounded-xl font-semibold shadow-xs"
-                onClick={handleCreate}
-                disabled={isSubmitting || !newName.trim()}
-              >
-                Create
+            <div className="flex gap-1.5">
+              <Button size="sm" className="flex-1" onClick={handleCreate} disabled={isSubmitting || !newName.trim()}>
+                {t('ui.createLabel')}
               </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                className="h-7 text-xs rounded-xl"
-                onClick={() => setIsCreating(false)}
-              >
-                Cancel
+              <Button size="sm" variant="ghost" onClick={() => setIsCreating(false)}>
+                {t('common.cancel')}
               </Button>
             </div>
           </div>
         ) : (
           <button
+            type="button"
             onClick={() => setIsCreating(true)}
-            className="flex items-center gap-1.5 w-full rounded-xl px-2 py-1.5 text-xs text-muted-foreground hover:bg-secondary hover:text-foreground transition-all mt-1.5 border-t border-border/50 pt-2 font-medium"
+            className="mt-1 flex w-full items-center gap-2 rounded-lg border-t px-2 py-2 pt-2.5 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
           >
-            <Plus className="h-3.5 w-3.5 text-primary" />
-            Create new label
+            <Plus className="size-4" aria-hidden />
+            {t('ui.newLabel')}
           </button>
         )}
       </PopoverContent>
