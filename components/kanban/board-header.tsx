@@ -143,7 +143,7 @@ export function BoardHeader({
 
   return (
     <div className="mb-3 flex shrink-0 items-start justify-between gap-3 sm:mb-5">
-      <div className="flex min-w-0 max-w-2xl flex-col gap-1">
+      <div className="flex min-w-0 max-w-2xl flex-1 flex-col gap-1">
         {isEditingTitle ? (
           <input
             autoFocus
